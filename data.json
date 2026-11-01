@@ -1,0 +1,137 @@
+{
+  "project": "Ramayana: Rise of a Legend — Box Office Tracker",
+  "lastUpdated": "2026-11-01T14:21:00+05:30",
+  "dataStatus": "historical_snapshot",
+  "statusNote": "Seed data from a published report snapshot. It is not a live feed; replace this file with verified updates.",
+  "releaseDate": "2026-11-05",
+  "currency": "INR",
+  "bookingSnapshots": [
+    {
+      "label": "The Week — worldwide all-dates advance bookings",
+      "timestamp": "2026-11-01T14:21:00+05:30",
+      "scope": "all_dates",
+      "worldwideCr": 63.48,
+      "indiaCr": 34.01,
+      "overseasCr": 29.47,
+      "sourceName": "The Week",
+      "sourceUrl": "https://www.theweek.in/",
+      "notes": "Published snapshot reported worldwide all-date advance bookings; India opening-day-only figure was reported separately as ₹22.77 Cr. Verify the original article and scope before treating as current."
+    },
+    {
+      "label": "BoxOfficeIndia24 — tracked dates snapshot",
+      "timestamp": "2026-11-01T23:23:00+05:30",
+      "scope": "tracked_dates",
+      "worldwideCr": 40.64,
+      "indiaCr": 21.38,
+      "overseasCr": 19.25,
+      "tickets": 592258,
+      "shows": 21240,
+      "screensOrTheatres": 3446,
+      "occupancyPct": 13.0,
+      "sourceName": "BoxOfficeIndia24",
+      "sourceUrl": "https://boxofficeindia24.com/",
+      "notes": "Different timestamp and potentially different date coverage/definition from other reports. Do not compare as a like-for-like change until scope is verified."
+    }
+  ],
+  "openingDayComparisons": [
+    {
+      "title": "2.0",
+      "worldwideCr": 105,
+      "type": "reported_estimate",
+      "note": "Approximate reported Day 1 figure; estimates vary."
+    },
+    {
+      "title": "Kalki 2898 AD",
+      "worldwideCr": 178,
+      "type": "reported_estimate",
+      "note": "Approximate benchmark; published figures vary by source."
+    },
+    {
+      "title": "Ramayana: Rise of a Legend",
+      "worldwideCr": 180,
+      "type": "forecast",
+      "note": "Illustrative base-case forecast, not an actual collection."
+    }
+  ],
+  "forecastScenarios": [
+    {
+      "name": "Worst case",
+      "valueCr": 100
+    },
+    {
+      "name": "Pessimistic",
+      "valueCr": 135
+    },
+    {
+      "name": "Moderate",
+      "valueCr": 155
+    },
+    {
+      "name": "Base case",
+      "valueCr": 180
+    },
+    {
+      "name": "Optimistic",
+      "valueCr": 200
+    },
+    {
+      "name": "Best case",
+      "valueCr": 230
+    }
+  ],
+  "riskDrivers": [
+    {
+      "name": "Advance-booking conversion",
+      "sharePct": 30
+    },
+    {
+      "name": "Overseas performance",
+      "sharePct": 25
+    },
+    {
+      "name": "Walk-ins and occupancy",
+      "sharePct": 20
+    },
+    {
+      "name": "Show count and screen reach",
+      "sharePct": 15
+    },
+    {
+      "name": "Ticket pricing and other factors",
+      "sharePct": 10
+    }
+  ],
+  "methodology": {
+    "forecastLabel": "Illustrative scenario model",
+    "warning": "India advance-booking figures in the automated panel are parsed from Sacnilk's public tracker when a scheduled check succeeds. Worldwide and overseas figures remain separately reported snapshots. Source coverage and definitions can differ; forecasts are illustrative, not official results.",
+    "refreshIntervalMinutes": 15
+  },
+  "sources": [
+    {
+      "name": "The Week",
+      "url": "https://www.theweek.in/"
+    },
+    {
+      "name": "BoxOfficeIndia24",
+      "url": "https://boxofficeindia24.com/"
+    },
+    {
+      "name": "Sacnilk",
+      "url": "https://www.sacnilk.com/"
+    }
+  ],
+  "automatedFeed": {
+    "sourceName": "Sacnilk — Ramayana advance booking live tracker",
+    "sourceUrl": "https://www.sacnilk.com/livetracker/ramayana_part_1_2026_Advance-Booking-Live",
+    "status": "pending",
+    "fetchedAt": null,
+    "sourceUpdatedText": null,
+    "indiaGrossCr": null,
+    "indiaGrossExcludingBlocksCr": null,
+    "tickets": null,
+    "ticketsExcludingBlocks": null,
+    "shows": null,
+    "occupancyPct": null,
+    "message": "Automated source check has not run yet. Existing figures are retained until a valid source snapshot is parsed."
+  }
+}
