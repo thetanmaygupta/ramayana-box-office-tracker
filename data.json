@@ -121,17 +121,18 @@
     }
   ],
   "automatedFeed": {
-    "sourceName": "Sacnilk — Ramayana advance booking live tracker",
-    "sourceUrl": "https://www.sacnilk.com/livetracker/ramayana_part_1_2026_Advance-Booking-Live",
-    "status": "pending",
-    "fetchedAt": null,
-    "sourceUpdatedText": null,
-    "indiaGrossCr": null,
+    "sourceName": "BoxOfficeIndia24 — Ramayana Day 1 advance booking",
+    "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
+    "status": "success",
+    "fetchedAt": "2026-11-02T05:04:11+05:30",
+    "sourceUpdatedText": "2026-11-02 05:02 IST",
+    "indiaGrossCr": 21.57,
     "indiaGrossExcludingBlocksCr": null,
-    "tickets": null,
+    "tickets": 461080,
     "ticketsExcludingBlocks": null,
-    "shows": null,
-    "occupancyPct": null,
-    "message": "Automated source check has not run yet. Existing figures are retained until a valid source snapshot is parsed."
+    "shows": 14238,
+    "occupancyPct": 15.4,
+    "message": "Day 1 advance-booking figures parsed from BoxOfficeIndia24. These are source-reported figures, not producer-confirmed results.",
+    "indiaGrossIncludingBlocksCr": 24.24
   }
 }
