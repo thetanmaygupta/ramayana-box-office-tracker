@@ -1,7 +1,5 @@
-
 #!/usr/bin/env python3
 """Best-effort parser for Sacnilk's public Ramayana advance-booking page."""
-
 from __future__ import annotations
 
 import json
@@ -15,12 +13,10 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data.json"
-
 SOURCE_URL = (
     "https://www.sacnilk.com/"
     "livetracker/ramayana_part_1_2026_Advance-Booking-Live"
 )
-
 IST = ZoneInfo("Asia/Kolkata")
 
 
@@ -65,14 +61,9 @@ def fetch_page():
 
     with urlopen(req, timeout=25) as response:
         if response.status != 200:
-            raise RuntimeError(
-                f"Source returned HTTP {response.status}"
-            )
+            raise RuntimeError(f"Source returned HTTP {response.status}")
 
-        return response.read().decode(
-            "utf-8",
-            errors="replace",
-        )
+        return response.read().decode("utf-8", errors="replace")
 
 
 def number(value):
@@ -89,32 +80,55 @@ def parse_page(raw):
         " ".join(parser.meta + parser.parts),
     )
 
-    match = re.search(
+    # Try several ways of locating the overall India advance gross.
+    patterns = [
         r"overall\s+advance\s*\(live\).*?"
-        r"₹\s*([\d,]+(?:\.\d+)?)\s*Cr",
-        text,
-        re.I | re.S,
-    )
+        r"(?:₹|&#8377;|&#x20b9;|rs\.?\s*)"
+        r"\s*([\d,]+(?:\.\d+)?)\s*Cr",
 
-    if not match:
-        match = re.search(
-            r"Ramayana\s+advance\s+booking"
-            r".{0,300}?₹\s*([\d,]+(?:\.\d+)?)\s*Cr",
+        r"Ramayana\s+advance\s+booking"
+        r".{0,1500}?"
+        r"(?:₹|&#8377;|&#x20b9;|rs\.?\s*)"
+        r"\s*([\d,]+(?:\.\d+)?)\s*Cr",
+
+        r"(?:India|all\s+India).*?"
+        r"(?:gross|advance).*?"
+        r"(?:₹|&#8377;|&#x20b9;|rs\.?\s*)"
+        r"\s*([\d,]+(?:\.\d+)?)\s*Cr",
+    ]
+
+    gross = None
+    match = None
+
+    for pattern in patterns:
+        candidate_match = re.search(
+            pattern,
             text,
             re.I | re.S,
         )
 
-    if not match:
+        if candidate_match:
+            candidate = number(candidate_match.group(1))
+
+            if 0 < candidate < 1000:
+                gross = candidate
+                match = candidate_match
+                break
+
+    if gross is None or match is None:
         raise RuntimeError(
-            "Could not identify the overall India advance gross"
+            "Could not identify the overall India advance gross. "
+            "Page text preview: " + text[:500]
         )
 
-    gross = number(match.group(1))
-
-    context = text[match.start():match.start() + 900]
+    # Search nearby text for supporting figures.
+    context = text[
+        max(0, match.start() - 200):
+        match.start() + 1800
+    ]
 
     gross_values = re.findall(
-        r"₹\s*([\d,]+(?:\.\d+)?)\s*Cr",
+        r"(?:₹|rs\.?\s*)\s*([\d,]+(?:\.\d+)?)\s*Cr",
         context,
         re.I,
     )
@@ -128,8 +142,8 @@ def parse_page(raw):
 
     ticket_match = re.search(
         r"([\d,.]+)\s*(lakh|lac)"
-        r"\s*(?:\[\s*([\d,.]+)\s*(?:lakh|lac)?\s*\]\s*)?"
-        r"tickets?\s+booked",
+        r"(?:\s*\[\s*([\d,.]+)\s*(?:lakh|lac)?\s*\])?"
+        r"\s*tickets?\s+booked",
         context,
         re.I,
     )
@@ -144,6 +158,7 @@ def parse_page(raw):
             if ticket_match.group(3)
             else None
         )
+
     else:
         ticket_match = re.search(
             r"([\d,]+)\s*tickets?\s+booked",
@@ -201,17 +216,11 @@ def parse_page(raw):
             f"Parsed gross outside sanity range: {gross}"
         )
 
-    if excluding is not None and not (
-        0 <= excluding <= gross
-    ):
-        raise RuntimeError(
-            "Excluding-block gross failed validation"
-        )
+    if excluding is not None and not (0 <= excluding <= gross):
+        excluding = None
 
-    if tickets is not None and not (
-        0 < tickets < 100_000_000
-    ):
-        raise RuntimeError("Ticket count failed validation")
+    if tickets is not None and not (0 < tickets < 100_000_000):
+        tickets = None
 
     return {
         "indiaGrossCr": round(gross, 2),
@@ -236,7 +245,7 @@ def main():
     feed = data.setdefault("automatedFeed", {})
 
     feed["sourceName"] = (
-        "Sacnilk — Ramayana advance booking live tracker"
+        "Sacnilk – Ramayana advance booking live tracker"
     )
     feed["sourceUrl"] = SOURCE_URL
 
@@ -255,8 +264,7 @@ def main():
 
         feed["message"] = (
             "Latest page parsed successfully. Figures are "
-            "source-reported estimates, not "
-            "producer-confirmed results."
+            "source-reported estimates, not producer-confirmed results."
         )
 
         print(
@@ -278,14 +286,12 @@ def main():
         feed["lastAttemptAt"] = fetched_at
 
         feed["message"] = (
-            f"Automatic check failed "
-            f"({type(exc).__name__}: {exc}). "
+            f"Automatic check failed ({type(exc).__name__}): {exc}. "
             "Previous successful values, if any, were retained."
         )
 
         DATA_FILE.write_text(
-            json.dumps(data, ensure_ascii=False, indent=2)
-            + "\n",
+            json.dumps(data, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
 
@@ -293,8 +299,7 @@ def main():
         raise
 
     DATA_FILE.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2)
-        + "\n",
+        json.dumps(data, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
 
