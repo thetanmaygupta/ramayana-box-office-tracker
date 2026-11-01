@@ -1,175 +1,888 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1220">
-<meta name="description" content="A transparent dashboard tracking reported advance bookings and scenario forecasts for Ramayana: Rise of a Legend.">
+<meta name="theme-color" content="#080d18">
+<meta name="description" content="Ramayana Rise of a Legend box office tracker with advance booking data, worldwide snapshots and forecasts.">
 <title>Ramayana Box Office Tracker</title>
+
 <style>
-:root{color-scheme:dark;--bg:#080d18;--panel:#111a2b;--panel2:#172238;--line:#293751;--text:#eef4ff;--muted:#9eacc4;--gold:#f4c66a;--cyan:#71d8e8;--green:#80dfb0;--red:#ff9b9b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#182744 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
-a{color:var(--cyan)}.wrap{max-width:1180px;margin:auto;padding:28px 20px 56px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;flex-wrap:wrap}.eyebrow{text-transform:uppercase;letter-spacing:.16em;color:var(--gold);font-size:.75rem;font-weight:800}.title{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;margin:.45rem 0 .7rem;letter-spacing:-.04em}.sub{color:var(--muted);max-width:690px;margin:0}.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid #765f2d;background:#302716;color:#ffe0a0;border-radius:999px;padding:8px 12px;font-size:.8rem;font-weight:750}.dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}.notice{margin:24px 0;padding:14px 16px;border:1px solid #735c30;background:#211c13;color:#f7dfac;border-radius:12px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:16px}.card{background:linear-gradient(145deg,rgba(23,34,56,.96),rgba(14,22,37,.98));border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0;box-shadow:0 12px 30px #0002}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}.section-title{font-size:1.05rem;margin:0 0 4px}.section-desc{font-size:.84rem;color:var(--muted);margin:0 0 18px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi{background:#0b1322;border:1px solid #25324a;border-radius:13px;padding:16px}.kpi .label{color:var(--muted);font-size:.8rem}.kpi .value{font-size:clamp(1.4rem,3vw,2rem);font-weight:850;letter-spacing:-.04em;margin:5px 0}.kpi .small{font-size:.76rem;color:var(--muted)}.gold{color:var(--gold)}.cyan{color:var(--cyan)}.green{color:var(--green)}.chart{display:flex;flex-direction:column;gap:13px}.barrow{display:grid;grid-template-columns:minmax(90px,150px) 1fr 70px;align-items:center;gap:10px;font-size:.85rem}.barlabel{color:#dbe5f7}.bartrack{height:13px;border-radius:99px;background:#253149;overflow:hidden}.bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#a78037,var(--gold))}.bar.cyanbar{background:linear-gradient(90deg,#328ca5,var(--cyan))}.bar.greenbar{background:linear-gradient(90deg,#298c72,var(--green))}.barvalue{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}.tag{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:3px 7px;color:var(--muted);font-size:.72rem}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:650}td strong{white-space:nowrap}.muted{color:var(--muted)}.small{font-size:.8rem}.risk{display:grid;grid-template-columns:1fr 44px;gap:10px;align-items:center;margin:13px 0}.riskbar{height:9px;border-radius:99px;background:#27344c;overflow:hidden;margin-top:6px}.riskfill{height:100%;background:linear-gradient(90deg,#328ca5,var(--cyan));border-radius:99px}.riskpct{text-align:right;font-weight:800}.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.step{border:1px solid var(--line);background:#0c1423;border-radius:10px;padding:12px 8px;text-align:center}.step b{display:block;color:var(--gold);font-size:.78rem}.step span{font-size:.78rem;color:var(--muted)}.foot{margin-top:22px;color:var(--muted);font-size:.78rem;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}.refresh{font-variant-numeric:tabular-nums}.error{color:var(--red)}button{border:1px solid var(--line);background:#172238;color:var(--text);padding:9px 12px;border-radius:9px;cursor:pointer}button:hover{border-color:var(--cyan)}@media(max-width:850px){.span-8,.span-6,.span-4{grid-column:span 12}.kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.wrap{padding:20px 13px 40px}.card{padding:15px}.kpis{grid-template-columns:1fr 1fr}.barrow{grid-template-columns:90px 1fr 58px;gap:7px}.steps{grid-template-columns:repeat(2,1fr)}.steps .step:last-child{grid-column:span 2}}
+:root {
+  --bg: #080d18;
+  --panel: #111a2b;
+  --panel2: #0c1424;
+  --line: #293751;
+  --text: #eef4ff;
+  --muted: #9ba9c0;
+  --gold: #f2c66d;
+  --cyan: #72dce8;
+  --green: #78e0b4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at top right, #192847 0, var(--bg) 54%);
+  color: var(--text);
+  font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.wrap {
+  max-width: 1180px;
+  margin: auto;
+  padding: 28px 20px 56px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 22px;
+  padding: 10px 0 28px;
+}
+
+.eyebrow {
+  color: var(--gold);
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 12px 0 14px;
+  font-size: clamp(2.4rem, 7vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -.045em;
+}
+
+h1 span {
+  display: block;
+  color: var(--gold);
+}
+
+.sub {
+  max-width: 820px;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 2.7vw, 1.4rem);
+  margin: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  border: 1px solid #7c6637;
+  background: #302513;
+  border-radius: 999px;
+  padding: 12px 18px;
+  color: #ffe1a0;
+  font-weight: 700;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex: 0 0 auto;
+}
+
+.release {
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+  padding-top: 8px;
+}
+
+.notice {
+  border: 1px solid #776239;
+  border-radius: 18px;
+  background: rgba(48,37,19,.72);
+  padding: 20px 22px;
+  color: #f5dfaa;
+  margin: 12px 0 28px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.card {
+  min-width: 0;
+  grid-column: span 6;
+  background: rgba(17,26,43,.94);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 35px rgba(0,0,0,.12);
+}
+
+.span-4 { grid-column: span 4; }
+.span-8 { grid-column: span 8; }
+.span-12 { grid-column: span 12; }
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: 1.45rem;
+  line-height: 1.3;
+}
+
+.section-desc {
+  margin: 0 0 18px;
+  color: var(--muted);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.kpi {
+  background: var(--panel2);
+  border: 1px solid #273650;
+  border-radius: 20px;
+  padding: 22px;
+  min-width: 0;
+}
+
+.label {
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.value {
+  font-size: clamp(1.65rem, 4vw, 2.25rem);
+  font-weight: 850;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.gold { color: var(--gold); }
+.cyan { color: var(--cyan); }
+.green { color: var(--green); }
+
+.small {
+  font-size: .92rem;
+  color: var(--muted);
+}
+
+.link {
+  color: var(--cyan);
+  text-underline-offset: 4px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+select,
+button {
+  background: #172238;
+  color: var(--text);
+  border: 1px solid #33435e;
+  border-radius: 12px;
+  padding: 12px 15px;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button:hover {
+  border-color: var(--cyan);
+}
+
+.chart {
+  display: grid;
+  gap: 14px;
+  margin: 22px 0 12px;
+}
+
+.barrow {
+  display: grid;
+  grid-template-columns: minmax(100px, 160px) 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.barlabel {
+  overflow-wrap: anywhere;
+}
+
+.bartrack {
+  height: 18px;
+  background: #273650;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a98232, var(--gold));
+}
+
+.bar.greenbar {
+  background: linear-gradient(90deg, #238c76, var(--green));
+}
+
+.risklist {
+  display: grid;
+  gap: 12px;
+}
+
+.risk {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--panel2);
+  border: 1px solid #273650;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #273650;
+  vertical-align: top;
+}
+
+th {
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.step {
+  background: var(--panel2);
+  border: 1px solid #273650;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.step b {
+  display: block;
+  color: var(--gold);
+}
+
+.error {
+  color: #ffaaa8;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  margin-top: 28px;
+  font-size: .9rem;
+}
+
+@media (max-width: 760px) {
+  .wrap {
+    padding: 20px 14px 40px;
+  }
+
+  .top {
+    display: block;
+  }
+
+  .release {
+    text-align: left;
+    white-space: normal;
+    padding-top: 18px;
+  }
+
+  .card,
+  .span-4,
+  .span-8,
+  .span-12 {
+    grid-column: span 12;
+    padding: 20px;
+  }
+
+  .kpis {
+    gap: 10px;
+  }
+
+  .kpi {
+    padding: 16px;
+  }
+
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .barrow {
+    grid-template-columns: 90px 1fr;
+  }
+
+  .barrow strong {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 420px) {
+  .kpis {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
+
 <body>
 <main class="wrap">
-  <header class="top">
-    <div>
-      <div class="eyebrow">Box office intelligence · India / Worldwide</div>
-      <h1 class="title">RAMAYANA<br><span class="gold">BOX OFFICE TRACKER</span></h1>
-      <p class="sub">Advance-booking snapshots, worldwide Day 1 benchmarks, scenario forecasts and a transparent risk-driver view for <em>Ramayana: Rise of a Legend</em>.</p>
-    </div>
-    <div>
-      <div class="badge"><span class="dot"></span><span id="statusBadge">Snapshot data · not live</span></div>
-      <p class="small muted" style="margin-top:10px;text-align:right">Release date: <strong>5 November 2026</strong></p>
-    </div>
-  </header>
 
-  <div class="notice"><strong>Data integrity notice:</strong> India advance-booking data is checked automatically from Sacnilk on a schedule when the source is accessible and its figures can be parsed safely. Worldwide and overseas figures remain separately reported snapshots. Automated checks do not guarantee a source is current; see the fetch timestamp and source status below.</div>
+<header class="top">
+  <div>
+    <div class="eyebrow">Box Office Intelligence · India / Worldwide</div>
 
-  <section class="card">
-    <h2 class="section-title">Automated India advance-booking check</h2>
-    <p class="section-desc">Best-effort scheduled check of Sacnilk's public tracker. The fetch time is shown separately from the source's own update label. If parsing fails, the last successful values are kept.</p>
-    <div class="kpis">
-      <div class="kpi"><div class="label">India advance gross</div><div class="value gold" id="autoIndiaGross">—</div><div class="small muted" id="autoIndiaGrossNote">Waiting for first successful check</div></div>
-      <div class="kpi"><div class="label">Gross excluding block seats</div><div class="value" id="autoIndiaNet">—</div></div>
-      <div class="kpi"><div class="label">Tickets booked</div><div class="value" id="autoTickets">—</div><div class="small muted" id="autoTicketsNote"></div></div>
-      <div class="kpi"><div class="label">Shows / occupancy</div><div class="value" id="autoShows">—</div><div class="small muted" id="autoOccupancy"></div></div>
-    </div>
-    <p class="small muted" style="margin-top:14px">Last fetched: <strong id="autoFetchedAt">Not yet fetched</strong> · Source update: <strong id="autoSourceUpdated">Not available</strong></p>
-    <p class="small" id="autoFeedMessage">The scheduled workflow has not run yet.</p>
-    <p class="small"><a href="https://www.sacnilk.com/livetracker/ramayana_part_1_2026_Advance-Booking-Live" target="_blank" rel="noopener noreferrer">Open Sacnilk source ↗</a></p>
-  </section>
-  <section class="card">
-    <h2 class="section-title">Latest loaded booking snapshot</h2>
-    <p class="section-desc">Snapshot scope and timestamp are shown explicitly. Do not compare snapshots as growth unless their coverage matches.</p>
-    <div class="kpis">
-      <div class="kpi"><div class="label">Worldwide reported</div><div class="value gold" id="worldwide">—</div><div class="small" id="worldScope">Choose a snapshot below</div></div>
-      <div class="kpi"><div class="label">India reported</div><div class="value" id="india">—</div><div class="small">Advance-booking gross</div></div>
-      <div class="kpi"><div class="label">Overseas reported</div><div class="value cyan" id="overseas">—</div><div class="small">Advance-booking gross</div></div>
-      <div class="kpi"><div class="label">Day 1 base forecast</div><div class="value green">₹180 Cr</div><div class="small">Forecast, not actual collection</div></div>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px">
-      <label for="snapshotSelect" class="small muted">Snapshot:</label><select id="snapshotSelect" style="background:#0b1322;color:var(--text);border:1px solid var(--line);padding:9px;border-radius:8px"></select>
-      <button id="reloadBtn" type="button">Reload data</button>
-      <span id="snapshotTime" class="small muted"></span>
-    </div>
-    <p id="snapshotNotes" class="small muted"></p>
-  </section>
+    <h1>
+      RAMAYANA
+      <span>BOX OFFICE TRACKER</span>
+    </h1>
 
-  <div class="grid">
-    <section class="card span-8">
-      <h2 class="section-title">Worldwide Day 1 comparison</h2>
-      <p class="section-desc">Approximate reported benchmarks compared with the current illustrative forecast.</p>
-      <div id="comparisonChart" class="chart"></div>
-      <p class="small muted">Reported Day 1 figures can differ by source, exchange rate and gross/net methodology. Forecast is not a verified result.</p>
-    </section>
-    <section class="card span-4">
-      <h2 class="section-title">Forecast scenarios</h2>
-      <p class="section-desc">Worldwide Day 1 gross · ₹ crore</p>
-      <div id="scenarioChart" class="chart"></div>
-      <p class="small muted">Scenario range: ₹100–230 Cr. Central planning estimate: ₹180 Cr.</p>
-    </section>
-    <section class="card span-12">
-      <h2 class="section-title">Booking snapshots & source coverage</h2>
-      <p class="section-desc">Published reports are preserved separately rather than blended into a false single live number.</p>
-      <div class="table-wrap"><table><thead><tr><th>Report / timestamp</th><th>Scope</th><th>Worldwide</th><th>India</th><th>Overseas</th><th>Extra metrics</th><th>Source</th></tr></thead><tbody id="snapshotTable"></tbody></table></div>
-    </section>
-    <section class="card span-6">
-      <h2 class="section-title">Pareto-style risk drivers</h2>
-      <p class="section-desc">Illustrative prioritisation assumptions, not measured statistical causality.</p>
-      <div id="riskChart"></div>
-    </section>
-    <section class="card span-6">
-      <h2 class="section-title">Six Sigma review loop</h2>
-      <p class="section-desc">Use DMAIC to keep the forecast auditable as better data arrives.</p>
-      <div class="steps">
-        <div class="step"><b>DEFINE</b><span>Lock Day 1 scope</span></div>
-        <div class="step"><b>MEASURE</b><span>Timestamp sources</span></div>
-        <div class="step"><b>ANALYSE</b><span>Reconcile coverage</span></div>
-        <div class="step"><b>IMPROVE</b><span>Revise assumptions</span></div>
-        <div class="step"><b>CONTROL</b><span>Log every update</span></div>
-      </div>
-      <p class="small muted" style="margin-top:15px">A forecast should move only when comparable evidence changes—not merely because a newer headline appears.</p>
-    </section>
-    <section class="card span-12">
-      <h2 class="section-title">Sources & methodology</h2>
-      <p class="section-desc">Open source pages to verify the latest report. The current seed dataset records only the figures and caveats documented in the project README.</p>
-      <div id="sourceLinks" class="small"></div>
-      <p id="methodWarning" class="small muted"></p>
-    </section>
+    <p class="sub">
+      Advance-booking snapshots, worldwide Day 1 benchmarks, scenario
+      forecasts and a transparent risk-driver view for
+      <em>Ramayana: Rise of a Legend</em>.
+    </p>
+
+    <div class="badge">
+      <span class="dot"></span>
+      <span id="statusBadge">Loading data status…</span>
+    </div>
   </div>
-  <footer class="foot"><span>Open-source dashboard · static HTML · no API keys required</span><span>Last app check: <strong class="refresh" id="appCheck">—</strong></span><span id="loadStatus">Loading data…</span></footer>
+
+  <div class="release">
+    Release date: <strong>5 November 2026</strong>
+  </div>
+</header>
+
+<div class="notice">
+  <strong>Data integrity notice:</strong>
+  India advance-booking data is checked automatically from
+  BoxOfficeIndia24.com when the source is accessible and its figures
+  can be parsed safely. Worldwide and overseas figures remain separately
+  reported snapshots. Automated checks do not guarantee that a source is
+  current; see the fetch timestamp and source status below.
+</div>
+
+<div class="grid">
+
+<section class="card span-12">
+  <h2 class="section-title">Automated India advance-booking check</h2>
+
+  <p class="section-desc">
+    Best-effort scheduled check of BoxOfficeIndia24.com's Day 1
+    advance-booking report. Fetch time is shown separately from the
+    source's own update label. If parsing fails, the last successful
+    values are retained.
+  </p>
+
+  <div class="kpis">
+
+    <div class="kpi">
+      <div class="label">India advance gross</div>
+      <div class="value gold" id="autoIndiaGross">—</div>
+      <div class="small" id="autoIndiaNote">Waiting for data.json</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">India gross including block seats</div>
+      <div class="value" id="autoIndiaWithBlocks">—</div>
+      <div class="small">Source-reported total including blocks, when available</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Tickets booked</div>
+      <div class="value" id="autoTickets">—</div>
+      <div class="small" id="autoTicketsNote"></div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Shows</div>
+      <div class="value" id="autoShows">—</div>
+      <div class="small" id="autoOccupancy">Occupancy not reported</div>
+    </div>
+
+  </div>
+
+  <p class="small" style="margin-top:14px">
+    Last fetched: <strong id="autoFetchedAt">Not yet fetched</strong>
+    · Source update: <strong id="autoSourceUpdated">Not available</strong>
+  </p>
+
+  <p class="small" id="autoFeedMessage">
+    The scheduled workflow has not run yet.
+  </p>
+
+  <p class="small">
+    <a class="link"
+       id="autoSourceLink"
+       href="https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105"
+       target="_blank"
+       rel="noopener noreferrer">
+      Open BoxOfficeIndia24 source ↗
+    </a>
+  </p>
+</section>
+
+<section class="card span-12">
+  <h2 class="section-title">Latest loaded booking snapshot</h2>
+
+  <p class="section-desc">
+    Snapshot scope and timestamp are shown explicitly. Do not compare
+    snapshots as growth unless their coverage matches.
+  </p>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">Worldwide reported</div>
+      <div class="value gold" id="worldwide">—</div>
+      <div class="small">Scope: all dates</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">India reported</div>
+      <div class="value" id="india">—</div>
+      <div class="small">Advance-booking gross</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Overseas reported</div>
+      <div class="value cyan" id="overseas">—</div>
+      <div class="small">Advance-booking gross</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Day 1 base forecast</div>
+      <div class="value green" id="day1Forecast">₹180 Cr</div>
+      <div class="small">Forecast, not actual collection</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <label for="snapshotSelect" class="small">Snapshot:</label>
+    <select id="snapshotSelect" aria-label="Choose booking snapshot"></select>
+    <button id="reloadBtn" type="button">Reload data</button>
+  </div>
+
+  <p id="snapshotTime" class="small"></p>
+  <p id="snapshotNotes" class="small"></p>
+</section>
+
+<section class="card span-8">
+  <h2 class="section-title">Worldwide Day 1 comparison</h2>
+
+  <p class="section-desc">
+    Approximate reported benchmarks compared with the current
+    illustrative forecast.
+  </p>
+
+  <div id="comparisonChart" class="chart"></div>
+
+  <p class="small">
+    Reported Day 1 figures can differ by source, exchange rate and
+    gross/net methodology.
+  </p>
+</section>
+
+<section class="card span-4">
+  <h2 class="section-title">Forecast scenarios</h2>
+
+  <p class="section-desc">Worldwide Day 1 gross · ₹ crore</p>
+
+  <div id="scenarioChart" class="chart"></div>
+
+  <p class="small" id="scenarioRange">
+    Scenario range: ₹100–230 Cr. Central planning estimate: ₹180 Cr.
+  </p>
+</section>
+
+<section class="card span-12">
+  <h2 class="section-title">Booking snapshots &amp; source coverage</h2>
+
+  <p class="section-desc">
+    Published reports are preserved separately rather than blended into
+    a false single timeline.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Report / timestamp</th>
+          <th>Scope</th>
+          <th>Worldwide</th>
+          <th>India</th>
+          <th>Overseas</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="snapshotTable"></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card span-6">
+  <h2 class="section-title">Pareto-style risk drivers</h2>
+
+  <p class="section-desc">
+    Illustrative prioritisation assumptions, not measured statistical causality.
+  </p>
+
+  <div id="riskChart" class="risklist"></div>
+</section>
+
+<section class="card span-6">
+  <h2 class="section-title">Six Sigma review loop</h2>
+
+  <p class="section-desc">
+    Use DMAIC to keep the forecast auditable as better data arrives.
+  </p>
+
+  <div class="steps">
+    <div class="step"><b>DEFINE</b><span>Lock Day 1 scope</span></div>
+    <div class="step"><b>MEASURE</b><span>Timestamp sources</span></div>
+    <div class="step"><b>ANALYSE</b><span>Reconcile coverage</span></div>
+    <div class="step"><b>IMPROVE</b><span>Revise assumptions</span></div>
+    <div class="step"><b>CONTROL</b><span>Log every update</span></div>
+  </div>
+
+  <p class="small" style="margin-top:15px">
+    A forecast should move only when comparable evidence changes.
+  </p>
+</section>
+
+<section class="card span-12">
+  <h2 class="section-title">Sources &amp; methodology</h2>
+
+  <p class="section-desc">
+    Open source pages to verify the latest report. Automated figures are
+    source-reported, not producer-confirmed. Forecasts are planning estimates,
+    not guaranteed outcomes.
+  </p>
+
+  <div id="sourceLinks" class="small"></div>
+  <p id="methodWarning" class="small"></p>
+</section>
+
+</div>
+
+<footer>
+  <span>Open-source dashboard · Static HTML · No API keys required</span>
+  <span>Last page check: <strong id="appCheck">Not checked</strong></span>
+</footer>
+
 </main>
+
 <script>
 const DATA_URL = './data.json';
 let data;
-const fmt = n => (n == null ? '—' : '₹' + Number(n).toLocaleString('en-IN',{maximumFractionDigits:2}) + ' Cr');
-const dateFmt = s => { if(!s) return 'Timestamp unavailable'; const d=new Date(s); return isNaN(d)?s:d.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})+' IST'; };
-function el(id){return document.getElementById(id)}
-function safeText(v){return String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function loadData(){
-  el('loadStatus').textContent='Checking data.json…';
-  try{
-    const r=await fetch(DATA_URL+'?t='+Date.now(),{cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const next=await r.json();
-    if(!Array.isArray(next.bookingSnapshots)||!Array.isArray(next.openingDayComparisons)) throw new Error('Unexpected data format');
-    data=next; render();
-    el('loadStatus').textContent='Data loaded successfully';
-    el('appCheck').textContent=new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata'});
-  }catch(e){el('loadStatus').innerHTML='<span class="error">Could not load data.json: '+safeText(e.message)+'</span>';el('statusBadge').textContent='Data load error';}
+
+const el = id => document.getElementById(id);
+
+const fmt = n =>
+  n == null || !Number.isFinite(Number(n))
+    ? '—'
+    : '₹' + Number(n).toLocaleString('en-IN', {
+        maximumFractionDigits: 2
+      }) + ' Cr';
+
+const dateFmt = s => {
+  if (!s) return 'Timestamp unavailable';
+
+  const d = new Date(s);
+
+  return Number.isNaN(d.getTime())
+    ? String(s)
+    : d.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata'
+      }) + ' IST';
+};
+
+const safeText = value =>
+  String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
+
+const numberText = n =>
+  n == null || !Number.isFinite(Number(n))
+    ? '—'
+    : Number(n).toLocaleString('en-IN');
+
+async function loadData() {
+  try {
+    const response = await fetch(
+      DATA_URL + '?t=' + Date.now(),
+      { cache: 'no-store' }
+    );
+
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+
+    const next = await response.json();
+
+    if (
+      !Array.isArray(next.bookingSnapshots) ||
+      !Array.isArray(next.openingDayComparisons)
+    ) {
+      throw new Error('Unexpected data.json format');
+    }
+
+    data = next;
+
+    el('appCheck').textContent =
+      new Date().toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata'
+      }) + ' IST';
+
+    render();
+
+  } catch (error) {
+    el('appCheck').innerHTML =
+      '<span class="error">Could not load data.json: ' +
+      safeText(error.message) + '</span>';
+
+    el('statusBadge').textContent = 'Data unavailable';
+  }
 }
-function render(){
-  const snapshots=data.bookingSnapshots;
-  el('statusBadge').textContent=data.automatedFeed && data.automatedFeed.status==='success'?'Auto-checked India data · worldwide snapshots separate':'Snapshot data · auto-check configured';
+
+function render() {
+  const snapshots = data.bookingSnapshots;
+  const feed = data.automatedFeed || {};
+
+  el('statusBadge').textContent =
+    feed.status === 'success'
+      ? 'Auto-checked India data · worldwide snapshots separate'
+      : 'Automated source status: ' + (feed.status || 'not available');
+
   renderAutomatedFeed();
-  const select=el('snapshotSelect'); const prior=select.value;
-  select.innerHTML=snapshots.map((s,i)=>`<option value="${i}">${safeText(s.sourceName)} · ${safeText(dateFmt(s.timestamp))}</option>`).join('');
-  if(prior && Number(prior)<snapshots.length) select.value=prior;
-  select.onchange=()=>renderSelected(Number(select.value));
-  renderSelected(Number(select.value)||0);
-  const max=Math.max(...data.openingDayComparisons.map(x=>x.worldwideCr),1);
-  el('comparisonChart').innerHTML=data.openingDayComparisons.map(x=>{
-    const klass=x.forecast?'greenbar':(x.title.startsWith('Ramayana')?'greenbar':'');
-    return `<div class="barrow"><div class="barlabel">${safeText(x.title)}</div><div class="bartrack"><div class="bar ${klass}" style="width:${Math.min(100,x.worldwideCr/max*100)}%"></div></div><div class="barvalue">${fmt(x.worldwideCr)}</div></div>`;
+
+  const select = el('snapshotSelect');
+  const previous = select.value;
+
+  select.innerHTML = snapshots.map((snapshot, index) =>
+    `<option value="${index}">
+      ${safeText(snapshot.sourceName)} ·
+      ${safeText(dateFmt(snapshot.timestamp))}
+    </option>`
+  ).join('');
+
+  if (previous && Number(previous) < snapshots.length) {
+    select.value = previous;
+  }
+
+  select.onchange = () =>
+    renderSelected(Number(select.value));
+
+  renderSelected(Number(select.value || 0));
+
+  const comparisons = data.openingDayComparisons || [];
+
+  const max = Math.max(
+    ...comparisons.map(x => Number(x.worldwideCr) || 0),
+    1
+  );
+
+  el('comparisonChart').innerHTML = comparisons.map(item => {
+    const className = item.forecast ? 'greenbar' : '';
+
+    const width = Math.max(
+      0,
+      Math.min(100, (Number(item.worldwideCr) || 0) / max * 100)
+    );
+
+    return `
+      <div class="barrow">
+        <div class="barlabel">${safeText(item.title)}</div>
+        <div class="bartrack">
+          <div class="bar ${className}" style="width:${width}%"></div>
+        </div>
+        <strong>${fmt(item.worldwideCr)}</strong>
+      </div>
+    `;
   }).join('');
-  const sm=Math.max(...data.forecastScenarios.map(x=>x.valueCr),1);
-  el('scenarioChart').innerHTML=data.forecastScenarios.map(x=>`<div class="barrow" style="grid-template-columns:90px 1fr 58px"><div class="barlabel">${safeText(x.name)}</div><div class="bartrack"><div class="bar ${x.valueCr===180?'greenbar':''}" style="width:${x.valueCr/sm*100}%"></div></div><div class="barvalue">${x.valueCr}</div></div>`).join('');
-  el('riskChart').innerHTML=data.riskDrivers.map(x=>`<div class="risk"><div><div>${safeText(x.name)}</div><div class="riskbar"><div class="riskfill" style="width:${Math.max(0,Math.min(100,x.sharePct))}%"></div></div></div><div class="riskpct">${x.sharePct}%</div></div>`).join('');
-  el('snapshotTable').innerHTML=snapshots.map(s=>{
-    const extra=[s.tickets?Number(s.tickets).toLocaleString('en-IN')+' tickets':'',s.shows?Number(s.shows).toLocaleString('en-IN')+' shows':'',s.screensOrTheatres?Number(s.screensOrTheatres).toLocaleString('en-IN')+' screens/theatres':'',s.occupancyPct!=null?s.occupancyPct+'% occupancy':''].filter(Boolean).join('<br>')||'—';
-    return `<tr><td><strong>${safeText(s.sourceName)}</strong><br><span class="muted small">${safeText(dateFmt(s.timestamp))}</span></td><td><span class="tag">${safeText(s.scope.replaceAll('_',' '))}</span></td><td><strong>${fmt(s.worldwideCr)}</strong></td><td>${fmt(s.indiaCr)}</td><td>${fmt(s.overseasCr)}</td><td>${extra}</td><td><a href="${safeText(s.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open source ↗</a></td></tr>`;
+
+  const scenarios = data.forecastScenarios || [];
+
+  const maxScenario = Math.max(
+    ...scenarios.map(x => Number(x.valueCr) || 0),
+    1
+  );
+
+  el('scenarioChart').innerHTML = scenarios.map(item => {
+    const width = Math.max(
+      0,
+      Math.min(100, (Number(item.valueCr) || 0) / maxScenario * 100)
+    );
+
+    return `
+      <div class="barrow">
+        <div class="barlabel">${safeText(item.name)}</div>
+        <div class="bartrack">
+          <div class="bar" style="width:${width}%"></div>
+        </div>
+        <strong>${fmt(item.valueCr)}</strong>
+      </div>
+    `;
   }).join('');
-  el('sourceLinks').innerHTML=data.sources.map(s=>`<a href="${safeText(s.url)}" target="_blank" rel="noopener noreferrer" style="margin-right:16px">${safeText(s.name)} ↗</a>`).join('');
-  el('methodWarning').textContent=data.methodology.warning+' Auto-reload interval: '+data.methodology.refreshIntervalMinutes+' minutes.';
-  el('appCheck').textContent=new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata'});
+
+  if (scenarios.length) {
+    const values = scenarios.map(x => Number(x.valueCr) || 0);
+
+    el('scenarioRange').textContent =
+      `Scenario range: ${fmt(Math.min(...values))}–${fmt(Math.max(...values))}. ` +
+      `Central planning estimate: ${fmt(data.centralForecastCr ?? 180)}.`;
+  } else {
+    el('scenarioRange').textContent = 'No scenario data available.';
+  }
+
+  el('riskChart').innerHTML =
+    (data.riskDrivers || []).map(item => `
+      <div class="risk">
+        <strong>${safeText(item.name)}</strong>
+        <div class="small">${safeText(item.note || '')}</div>
+      </div>
+    `).join('');
+
+  el('snapshotTable').innerHTML = snapshots.map(snapshot => `
+    <tr>
+      <td>
+        <strong>${safeText(snapshot.sourceName)}</strong><br>
+        <span class="small">${safeText(dateFmt(snapshot.timestamp))}</span>
+      </td>
+      <td>${safeText(snapshot.scope || 'Not specified')}</td>
+      <td>${fmt(snapshot.worldwideCr)}</td>
+      <td>${fmt(snapshot.indiaCr)}</td>
+      <td>${fmt(snapshot.overseasCr)}</td>
+      <td>${safeText(snapshot.notes || '')}</td>
+    </tr>
+  `).join('');
+
+  el('sourceLinks').innerHTML =
+    (data.sources || []).map(source => `
+      <p>
+        <a class="link"
+           href="${safeText(source.url)}"
+           target="_blank"
+           rel="noopener noreferrer">${safeText(source.name)}</a>
+        ${source.note ? ' — ' + safeText(source.note) : ''}
+      </p>
+    `).join('');
+
+  el('methodWarning').textContent =
+    data.methodologyWarning ||
+    'Source timestamps and scope are retained separately; forecasts are estimates.';
 }
-function renderAutomatedFeed(){
-  const f=data && data.automatedFeed ? data.automatedFeed : {};
-  const numberText=n=>n==null?'—':Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});
-  el('autoIndiaGross').textContent=f.indiaGrossCr==null?'—':fmt(f.indiaGrossCr);
-  el('autoIndiaNet').textContent=f.indiaGrossExcludingBlocksCr==null?'—':fmt(f.indiaGrossExcludingBlocksCr);
-  el('autoTickets').textContent=f.tickets==null?'—':numberText(f.tickets);
-  el('autoTicketsNote').textContent=f.ticketsExcludingBlocks==null?'':numberText(f.ticketsExcludingBlocks)+' excluding block seats';
-  el('autoShows').textContent=f.shows==null?'—':numberText(f.shows);
-  el('autoOccupancy').textContent=f.occupancyPct==null?'Occupancy not reported':numberText(f.occupancyPct)+'% occupancy';
-  el('autoFetchedAt').textContent=f.fetchedAt?dateFmt(f.fetchedAt):'Not yet fetched';
-  el('autoSourceUpdated').textContent=f.sourceUpdatedText||'Not available';
-  el('autoFeedMessage').textContent=f.message||(f.status==='success'?'Latest source snapshot parsed successfully.':'Waiting for a successful scheduled check.');
+
+function renderAutomatedFeed() {
+  const feed = data.automatedFeed || {};
+
+  el('autoIndiaGross').textContent =
+    fmt(feed.indiaGrossCr);
+
+  el('autoIndiaNote').textContent =
+    feed.status === 'success'
+      ? 'Day 1 advance-booking gross'
+      : 'Last successful value, if available';
+
+  el('autoIndiaWithBlocks').textContent =
+    fmt(feed.indiaGrossIncludingBlocksCr);
+
+  el('autoTickets').textContent =
+    numberText(feed.tickets);
+
+  el('autoTicketsNote').textContent =
+    feed.ticketsExcludingBlocks == null
+      ? ''
+      : numberText(feed.ticketsExcludingBlocks) + ' excluding blocks';
+
+  el('autoShows').textContent =
+    numberText(feed.shows);
+
+  el('autoOccupancy').textContent =
+    feed.occupancyPct == null
+      ? 'Occupancy not reported'
+      : Number(feed.occupancyPct).toLocaleString('en-IN') + '% occupancy';
+
+  el('autoFetchedAt').textContent =
+    feed.fetchedAt ? dateFmt(feed.fetchedAt) : 'Not yet fetched';
+
+  el('autoSourceUpdated').textContent =
+    feed.sourceUpdatedText || 'Not available';
+
+  el('autoFeedMessage').textContent =
+    feed.message ||
+    (feed.status === 'success'
+      ? 'Latest source snapshot parsed successfully.'
+      : 'No successful automated fetch recorded yet.');
+
+  if (feed.sourceUrl) {
+    el('autoSourceLink').href = feed.sourceUrl;
+  }
+
+  el('autoSourceLink').textContent =
+    'Open ' + (feed.sourceName || 'BoxOfficeIndia24 source') + ' ↗';
 }
-function renderSelected(i){
-  if(!data||!data.bookingSnapshots.length)return;
-  const s=data.bookingSnapshots[Math.max(0,Math.min(i,data.bookingSnapshots.length-1))];
-  el('worldwide').textContent=fmt(s.worldwideCr);el('india').textContent=fmt(s.indiaCr);el('overseas').textContent=fmt(s.overseasCr);
-  el('worldScope').textContent='Scope: '+s.scope.replaceAll('_',' ');
-  el('snapshotTime').textContent='Reported timestamp: '+dateFmt(s.timestamp);
-  el('snapshotNotes').textContent=s.notes||'';
+
+function renderSelected(index) {
+  if (!data || !data.bookingSnapshots.length) return;
+
+  const snapshots = data.bookingSnapshots;
+  const safeIndex = Math.max(0, Math.min(index, snapshots.length - 1));
+  const snapshot = snapshots[safeIndex];
+
+  el('worldwide').textContent = fmt(snapshot.worldwideCr);
+  el('india').textContent = fmt(snapshot.indiaCr);
+  el('overseas').textContent = fmt(snapshot.overseasCr);
+
+  el('snapshotTime').textContent =
+    'Reported timestamp: ' + dateFmt(snapshot.timestamp);
+
+  el('snapshotNotes').textContent =
+    snapshot.notes || 'No additional notes supplied for this snapshot.';
 }
-el('reloadBtn').addEventListener('click',loadData);
+
+el('reloadBtn').addEventListener('click', loadData);
+
 loadData();
-setInterval(loadData,15*60*1000);
+setInterval(loadData, 15 * 60 * 1000);
 </script>
+
 </body>
 </html>
