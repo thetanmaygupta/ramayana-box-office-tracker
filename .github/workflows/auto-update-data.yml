@@ -1,185 +1,47 @@
-#!/usr/bin/env python3
+name: Auto-update box office data
 
-import json
-import re
-import sys
-from datetime import datetime, timezone
-from html.parser import HTMLParser
-from pathlib import Path
-from urllib.request import Request, urlopen
-from zoneinfo import ZoneInfo
+'on':
+schedule:
+- cron: '17 * * * *'
+workflow_dispatch:
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_FILE = ROOT / "data.json"
+permissions:
+contents: write
+pages: write
+id-token: write
 
-SOURCE_URL = (
-    "https://www.sacnilk.com/"
-    "livetracker/ramayana_part_1_2026_Advance-Booking-Live"
-)
+concurrency:
+group: pages
+cancel-in-progress: true
 
-IST = ZoneInfo("Asia/Kolkata")
+jobs:
+update-and-deploy:
+runs-on: ubuntu-latest
 
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
 
-class PageText(HTMLParser):
-    def __init__(self):
-        super().__init__(convert_charrefs=True)
-        self.parts = []
-        self.skip = 0
+  - name: Set up Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: '3.12'
 
-    def handle_starttag(self, tag, attrs):
-        if tag in ("script", "style", "noscript", "svg"):
-            self.skip += 1
+  - name: Fetch latest booking data
+    run: python scripts/update_data.py
 
-    def handle_endtag(self, tag):
-        if tag in ("script", "style", "noscript", "svg"):
-            self.skip = max(0, self.skip - 1)
+  - name: Commit updated data
+    uses: stefanzweifel/git-auto-commit-action@v5
+    with:
+      commit_message: 'Update automated box-office data'
 
-    def handle_data(self, data):
-        if not self.skip and data.strip():
-            self.parts.append(data.strip())
+  - name: Configure GitHub Pages
+    uses: actions/configure-pages@v5
 
+  - name: Upload Pages artifact
+    uses: actions/upload-pages-artifact@v3
+    with:
+      path: '.'
 
-def fetch_page():
-    request = Request(
-        SOURCE_URL,
-        headers={
-            "User-Agent": "Mozilla/5.0 (compatible; RamayanaTracker/1.0)",
-            "Accept": "text/html,application/xhtml+xml",
-        },
-    )
-
-    with urlopen(request, timeout=30) as response:
-        if response.status != 200:
-            raise RuntimeError(f"HTTP status {response.status}")
-
-        return response.read().decode("utf-8", errors="replace")
-
-
-def as_number(value):
-    return float(value.replace(",", ""))
-
-
-def parse_page(raw):
-    parser = PageText()
-    parser.feed(raw)
-
-    text = re.sub(r"\s+", " ", " ".join(parser.parts))
-
-    # Look for a gross value near advance-booking terminology.
-    patterns = [
-        r"advance\s+booking.{0,180}?"
-        r"(?:₹|Rs\.?\s*)([\d,]+(?:\.\d+)?)\s*Cr",
-        r"(?:₹|Rs\.?\s*)([\d,]+(?:\.\d+)?)\s*Cr"
-        r".{0,180}?advance\s+booking",
-        r"India\s+gross.{0,100}?"
-        r"(?:₹|Rs\.?\s*)([\d,]+(?:\.\d+)?)\s*Cr",
-    ]
-
-    gross = None
-
-    for pattern in patterns:
-        match = re.search(pattern, text, re.I)
-        if match:
-            candidate = as_number(match.group(1))
-            if 0 < candidate < 1000:
-                gross = candidate
-                break
-
-    if gross is None:
-        raise RuntimeError(
-            "No reliable India advance gross found in page text. "
-            "The source layout may have changed."
-        )
-
-    # Optional fields. Leave them unavailable if not clearly identified.
-    tickets = None
-    shows = None
-    occupancy = None
-    excluding = None
-
-    ticket_match = re.search(
-        r"([\d,.]+)\s*(lakh|lac)\s*tickets?\s+booked",
-        text,
-        re.I,
-    )
-
-    if ticket_match:
-        tickets = round(as_number(ticket_match.group(1)) * 100000)
-
-    show_match = re.search(
-        r"([\d,]+)\s*shows?\b",
-        text,
-        re.I,
-    )
-
-    if show_match:
-        shows = int(show_match.group(1).replace(",", ""))
-
-    occupancy_match = re.search(
-        r"([\d,.]+)\s*%\s*occupancy",
-        text,
-        re.I,
-    )
-
-    if occupancy_match:
-        occupancy = as_number(occupancy_match.group(1))
-
-    return {
-        "indiaGrossCr": round(gross, 2),
-        "indiaGrossExcludingBlocksCr": excluding,
-        "tickets": tickets,
-        "ticketsExcludingBlocks": None,
-        "shows": shows,
-        "occupancyPct": occupancy,
-    }
-
-
-def main():
-    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
-    feed = data.setdefault("automatedFeed", {})
-
-    now = datetime.now(timezone.utc).astimezone(IST)
-    fetched_at = now.isoformat(timespec="seconds")
-
-    feed["sourceName"] = "Sacnilk advance-booking tracker"
-    feed["sourceUrl"] = SOURCE_URL
-
-    try:
-        parsed = parse_page(fetch_page())
-
-        feed.update(parsed)
-        feed["status"] = "success"
-        feed["fetchedAt"] = fetched_at
-        feed["message"] = (
-            "Page fetched and a candidate gross was parsed. "
-            "Check the source page to confirm the metric and scope."
-        )
-
-        print(json.dumps(parsed, indent=2))
-
-    except Exception as exc:
-        feed["status"] = (
-            "stale" if feed.get("fetchedAt") else "error"
-        )
-        feed["lastAttemptAt"] = fetched_at
-        feed["message"] = (
-            f"Fetch or parsing failed: {type(exc).__name__}: {exc}. "
-            "Previous values were retained."
-        )
-
-        DATA_FILE.write_text(
-            json.dumps(data, indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
-        )
-
-        print(feed["message"], file=sys.stderr)
-        raise
-
-    DATA_FILE.write_text(
-        json.dumps(data, indent=2, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-    )
-
-
-if __name__ == "__main__":
-    main()
+  - name: Deploy to GitHub Pages
+    uses: actions/deploy-pages@v4
