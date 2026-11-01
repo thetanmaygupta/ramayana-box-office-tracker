@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Best-effort parser for Sacnilk's public Ramayana advance-booking page."""
-from __future__ import annotations
+"""Fetch Ramayana Day 1 advance-booking data from BoxOfficeIndia24."""
 
 import json
 import re
@@ -13,10 +12,12 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data.json"
+
 SOURCE_URL = (
-    "https://www.sacnilk.com/"
-    "livetracker/ramayana_part_1_2026_Advance-Booking-Live"
+    "https://www.boxofficeindia24.com/quicknews/"
+    "ramayana-day-1-advance-booking-20261105"
 )
+
 IST = ZoneInfo("Asia/Kolkata")
 
 
@@ -24,17 +25,11 @@ class TextExtractor(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.parts = []
-        self.meta = []
         self.skip = 0
 
     def handle_starttag(self, tag, attrs):
-        attrs = dict(attrs)
-
         if tag in ("script", "style", "noscript", "svg"):
             self.skip += 1
-
-        if tag == "meta" and attrs.get("content"):
-            self.meta.append(attrs["content"])
 
     def handle_endtag(self, tag):
         if tag in ("script", "style", "noscript", "svg") and self.skip:
@@ -46,191 +41,139 @@ class TextExtractor(HTMLParser):
 
 
 def fetch_page():
-    req = Request(
+    request = Request(
         SOURCE_URL,
         headers={
             "User-Agent": (
-                "Mozilla/5.0 (compatible; "
-                "RamayanaBoxOfficeTracker/1.0; "
-                "+https://github.com/thetanmaygupta/"
-                "ramayana-box-office-tracker)"
+                "Mozilla/5.0 "
+                "(compatible; RamayanaBoxOfficeTracker/1.0)"
             ),
             "Accept": "text/html,application/xhtml+xml",
         },
     )
 
-    with urlopen(req, timeout=25) as response:
+    with urlopen(request, timeout=30) as response:
         if response.status != 200:
-            raise RuntimeError(f"Source returned HTTP {response.status}")
+            raise RuntimeError(
+                f"Source returned HTTP {response.status}"
+            )
 
         return response.read().decode("utf-8", errors="replace")
-
-
-def number(value):
-    return float(value.replace(",", ""))
 
 
 def parse_page(raw):
     parser = TextExtractor()
     parser.feed(raw)
 
-    text = re.sub(
-        r"\s+",
-        " ",
-        " ".join(parser.meta + parser.parts),
-    )
+    text = re.sub(r"\s+", " ", " ".join(parser.parts))
 
-    # Try several ways of locating the overall India advance gross.
-    patterns = [
-        r"overall\s+advance\s*\(live\).*?"
-        r"(?:₹|&#8377;|&#x20b9;|rs\.?\s*)"
-        r"\s*([\d,]+(?:\.\d+)?)\s*Cr",
-
-        r"Ramayana\s+advance\s+booking"
-        r".{0,1500}?"
-        r"(?:₹|&#8377;|&#x20b9;|rs\.?\s*)"
-        r"\s*([\d,]+(?:\.\d+)?)\s*Cr",
-
-        r"(?:India|all\s+India).*?"
-        r"(?:gross|advance).*?"
-        r"(?:₹|&#8377;|&#x20b9;|rs\.?\s*)"
-        r"\s*([\d,]+(?:\.\d+)?)\s*Cr",
-    ]
-
-    gross = None
-    match = None
-
-    for pattern in patterns:
-        candidate_match = re.search(
-            pattern,
-            text,
-            re.I | re.S,
-        )
-
-        if candidate_match:
-            candidate = number(candidate_match.group(1))
-
-            if 0 < candidate < 1000:
-                gross = candidate
-                match = candidate_match
-                break
-
-    if gross is None or match is None:
+    # Require the expected Day 1 report before parsing figures.
+    if "Ramayana Day 1 Advance Booking" not in text:
         raise RuntimeError(
-            "Could not identify the overall India advance gross. "
-            "Page text preview: " + text[:500]
+            "Expected Ramayana Day 1 report was not found."
         )
 
-    # Search nearby text for supporting figures.
-    context = text[
-        max(0, match.start() - 200):
-        match.start() + 1800
-    ]
-
-    gross_values = re.findall(
-        r"(?:₹|rs\.?\s*)\s*([\d,]+(?:\.\d+)?)\s*Cr",
-        context,
+    # Extract India gross, tickets and shows from Key highlights.
+    india_match = re.search(
+        r"India\s*:\s*₹\s*([\d,]+(?:\.\d+)?)\s*Cr"
+        r"\s*gross\s+from\s+([\d,]+)\s+tickets?"
+        r"\s+across\s+([\d,]+)\s+shows?",
+        text,
         re.I,
     )
 
-    excluding = (
-        number(gross_values[1])
-        if len(gross_values) > 1
-        and re.search(r"without\s+block", context, re.I)
+    if not india_match:
+        raise RuntimeError(
+            "Could not identify India gross, tickets and shows. "
+            "The source layout may have changed."
+        )
+
+    india_gross = float(
+        india_match.group(1).replace(",", "")
+    )
+    tickets = int(india_match.group(2).replace(",", ""))
+    shows = int(india_match.group(3).replace(",", ""))
+
+    # Extract the separate gross that includes block seats.
+    blocks_match = re.search(
+        r"WITH\s+BLOCKS\s*₹\s*"
+        r"([\d,]+(?:\.\d+)?)\s*Cr",
+        text,
+        re.I,
+    )
+
+    gross_with_blocks = (
+        float(blocks_match.group(1).replace(",", ""))
+        if blocks_match
         else None
     )
 
-    ticket_match = re.search(
-        r"([\d,.]+)\s*(lakh|lac)"
-        r"(?:\s*\[\s*([\d,.]+)\s*(?:lakh|lac)?\s*\])?"
-        r"\s*tickets?\s+booked",
-        context,
-        re.I,
-    )
-
-    if ticket_match:
-        tickets = round(
-            number(ticket_match.group(1)) * 100000
-        )
-
-        tickets_excl = (
-            round(number(ticket_match.group(3)) * 100000)
-            if ticket_match.group(3)
-            else None
-        )
-
-    else:
-        ticket_match = re.search(
-            r"([\d,]+)\s*tickets?\s+booked",
-            context,
-            re.I,
-        )
-
-        tickets = (
-            int(ticket_match.group(1).replace(",", ""))
-            if ticket_match
-            else None
-        )
-
-        tickets_excl = None
-
-    shows_match = re.search(
-        r"([\d,]+)\s*shows?\b",
-        context,
-        re.I,
-    )
-
-    shows = (
-        int(shows_match.group(1).replace(",", ""))
-        if shows_match
-        else None
-    )
-
+    # Extract occupancy if the expected label is present.
     occupancy_match = re.search(
-        r"([\d,.]+)\s*%\s*(?:occupancy)?",
-        context,
+        r"OCCUPANCY\s+([\d,.]+)\s*%",
+        text,
         re.I,
     )
 
     occupancy = (
-        number(occupancy_match.group(1))
+        float(occupancy_match.group(1).replace(",", ""))
         if occupancy_match
         else None
     )
 
-    source_updated_match = re.search(
-        r"(?:Updated|as of)\s+\d{1,2}:\d{2}\s*"
-        r"(?:AM|PM)\s*IST",
+    # Example: Last updated: 2026-11-02 04:52 IST
+    updated_match = re.search(
+        r"Last updated:\s*"
+        r"(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}\s+IST)",
         text,
         re.I,
     )
 
     source_updated = (
-        source_updated_match.group(0)
-        if source_updated_match
+        updated_match.group(1)
+        if updated_match
         else None
     )
 
-    if not (0 < gross < 1000):
+    # Sanity checks prevent obviously incorrect values being published.
+    if not (0 < india_gross < 1000):
         raise RuntimeError(
-            f"Parsed gross outside sanity range: {gross}"
+            f"India gross outside expected range: {india_gross}"
         )
 
-    if excluding is not None and not (0 <= excluding <= gross):
-        excluding = None
+    if not (0 < tickets < 100_000_000):
+        raise RuntimeError(
+            f"Ticket count outside expected range: {tickets}"
+        )
 
-    if tickets is not None and not (0 < tickets < 100_000_000):
-        tickets = None
+    if not (0 < shows < 1_000_000):
+        raise RuntimeError(
+            f"Show count outside expected range: {shows}"
+        )
+
+    if (
+        gross_with_blocks is not None
+        and gross_with_blocks < india_gross
+    ):
+        raise RuntimeError(
+            "Gross including block seats is below India gross."
+        )
+
+    if occupancy is not None and not (0 <= occupancy <= 100):
+        raise RuntimeError(
+            f"Occupancy outside expected range: {occupancy}"
+        )
 
     return {
-        "indiaGrossCr": round(gross, 2),
-        "indiaGrossExcludingBlocksCr": (
-            round(excluding, 2)
-            if excluding is not None
+        "indiaGrossCr": round(india_gross, 2),
+        "indiaGrossExcludingBlocksCr": None,
+        "indiaGrossIncludingBlocksCr": (
+            round(gross_with_blocks, 2)
+            if gross_with_blocks is not None
             else None
         ),
         "tickets": tickets,
-        "ticketsExcludingBlocks": tickets_excl,
+        "ticketsExcludingBlocks": None,
         "shows": shows,
         "occupancyPct": occupancy,
         "sourceUpdatedText": source_updated,
@@ -245,7 +188,7 @@ def main():
     feed = data.setdefault("automatedFeed", {})
 
     feed["sourceName"] = (
-        "Sacnilk – Ramayana advance booking live tracker"
+        "BoxOfficeIndia24 — Ramayana Day 1 advance booking"
     )
     feed["sourceUrl"] = SOURCE_URL
 
@@ -261,10 +204,11 @@ def main():
         feed.update(parsed)
         feed["status"] = "success"
         feed["fetchedAt"] = fetched_at
-
+        feed.pop("lastAttemptAt", None)
         feed["message"] = (
-            "Latest page parsed successfully. Figures are "
-            "source-reported estimates, not producer-confirmed results."
+            "Day 1 advance-booking figures parsed from "
+            "BoxOfficeIndia24. These are source-reported "
+            "figures, not producer-confirmed results."
         )
 
         print(
@@ -282,12 +226,11 @@ def main():
         feed["status"] = (
             "stale" if feed.get("fetchedAt") else "error"
         )
-
         feed["lastAttemptAt"] = fetched_at
-
         feed["message"] = (
-            f"Automatic check failed ({type(exc).__name__}): {exc}. "
-            "Previous successful values, if any, were retained."
+            f"Automatic check failed "
+            f"({type(exc).__name__}): {exc}. "
+            "Previous successful values were retained."
         )
 
         DATA_FILE.write_text(
