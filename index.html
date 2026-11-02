@@ -9,7 +9,28 @@
 <style>
 :root{--bg:#070b13;--panel:#101a2b;--line:#263650;--text:#edf3ff;--muted:#98a8c2;--gold:#f2c66d;--cyan:#70dce8;--green:#78e0b4;--red:#ff8f91;--purple:#b8a1ff;--shadow:0 18px 50px rgba(0,0,0,.22)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 78% -10%,#1a2c4b 0,transparent 42%),linear-gradient(180deg,#080d18,#070b13 70%);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--cyan);text-underline-offset:4px}
-button,select{font:inherit;color:var(--text);background:#152239;border:1px solid #344762;border-radius:10px;padding:10px 13px}button{cursor:pointer;font-weight:750}.wrap{max-width:1440px;margin:auto;padding:28px 24px 48px}.masthead{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:12px 0 26px}.kicker{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:.76rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.kicker:before{content:"";width:28px;height:2px;background:var(--gold)}h1{font-size:clamp(2.2rem,5vw,4.3rem);line-height:.98;letter-spacing:-.055em;margin:15px 0 14px}h1 span{display:block;color:var(--gold)}.subtitle{max-width:790px;margin:0;color:var(--muted);font-size:1.05rem}.release-box{min-width:190px;border:1px solid var(--line);border-radius:16px;padding:15px 17px;background:rgba(16,26,43,.8)}.small-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.release-box strong{display:block;font-size:1.1rem;margin-top:4px}.status-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.status-pill{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid #66572f;border-radius:999px;background:#251f15;color:#ffe1a0;font-size:.82rem;font-weight:750}.status-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px #f2c66d18}.meta-pill{padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.8rem;background:#0d1626}.notice{display:flex;gap:13px;align-items:flex-start;border:1px solid #68542d;background:linear-gradient(120deg,#251f15,#171b23);padding:15px 18px;border-radius:15px;color:#f0dca9;margin:4px 0 24px}.notice b{color:#ffe3a2}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}.panel{min-width:0;background:linear-gradient(145deg,rgba(17,28,46,.97),rgba(12,20,35,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:17px}.section-head h2{margin:0;font-size:1.18rem;letter-spacing:-.02em}.section-head p{margin:5px 0 0;color:var(--muted);font-size:.88rem}.eyebrow{font-size:.69rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.kpi{padding:17px 17px 15px;border-radius:15px;background:linear-gradient(145deg,#0b1423,#0e192b);border:1px solid #273750;min-width:0;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--gold));opacity:.8}.kpi-label{font-size:.78rem;color:var(--muted);margin-bottom:10px}.kpi-value{font-size:clamp(1.35rem,2.5vw,2rem);font-weight:850;line-height:1.15;letter-spacing:-.035em;overflow-wrap:anywhere}.kpi-sub{font-size:.76rem;color:var(--muted);margin-top:9px}.gold{color:var(--gold)}.cyan{color:var(--cyan)}.green{color:var(--green)}.purple{color:var(--purple)}.red{color:var(--red)}.metric-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}.metric{border-top:1px solid var(--line);padding-top:12px;min-width:0}.metric span{display:block;color:var(--muted);font-size:.76rem}.metric strong{display:block;font-size:1rem;margin-top:3px;overflow-wrap:anywhere}.callout{padding:13px 15px;border-radius:12px;background:#0b1423;border:1px solid #273750;color:var(--muted);font-size:.82rem;margin-top:14px}.callout strong{color:var(--text)}.chart-wrap{position:relative;min-width:0;width:100%}.chart{display:block;width:100%;height:auto;overflow:visible}.chart text{font-family:inherit;fill:var(--muted);font-size:11px}.chart .axis{stroke:#2a3a53;stroke-width:1}.chart .gridline{stroke:#25344b;stroke-width:1;stroke-dasharray:3 5}.chart .label{fill:var(--text);font-size:12px}.chart .value{fill:var(--text);font-weight:800;font-size:12px}.chart-legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:.76rem;margin-top:9px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.controls{display:none!important}.table-wrap{overflow:auto;border:1px solid #263650;border-radius:12px}table{width:100%;border-collapse:collapse;min-width:720px;font-size:.82rem}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #24334a;vertical-align:top}th{color:var(--gold);background:#0c1525;font-size:.73rem;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0}.muted{color:var(--muted)}.tag{display:inline-block;padding:4px 7px;border:1px solid #35445c;border-radius:6px;color:var(--muted);font-size:.7rem;white-space:nowrap}.tag.good{color:var(--green);border-color:#286553;background:#10251f}.tag.warn{color:var(--gold);border-color:#68572f;background:#252014}.tag.bad{color:var(--red);border-color:#67363a;background:#281619}.source-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.source-card{padding:15px;border:1px solid #283951;border-radius:13px;background:#0b1423;min-width:0}.source-card a{font-weight:800;text-decoration:none}.source-card p{font-size:.78rem;color:var(--muted);margin:8px 0 0}.risk-list{display:grid;gap:13px}.risk-row{display:grid;grid-template-columns:minmax(135px,1.2fr) 2fr 38px;gap:12px;align-items:center}.risk-name{font-size:.82rem}.risk-track{height:10px;background:#273650;border-radius:99px;overflow:hidden}.risk-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#8e6825,var(--gold))}.risk-value{text-align:right;color:var(--gold);font-weight:800;font-size:.82rem}.dmaic{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.dmaic-step{border:1px solid #2a3b55;border-radius:12px;background:#0b1423;padding:13px;min-height:105px}.dmaic-step b{display:block;color:var(--gold);font-size:.75rem;letter-spacing:.08em;margin-bottom:8px}.dmaic-step span{font-size:.78rem;color:var(--muted)}.footnote{font-size:.76rem;color:var(--muted);line-height:1.6}footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:25px;color:var(--muted);font-size:.8rem}.empty{color:var(--muted);font-size:.85rem;padding:22px;text-align:center;border:1px dashed #33435b;border-radius:12px}
+button,select{font:inherit;color:var(--text);background:#152239;border:1px solid #344762;border-radius:10px;padding:10px 13px}button{cursor:pointer;font-weight:750}.wrap{max-width:1440px;margin:auto;padding:28px 24px 48px}.masthead{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:12px 0 26px}.kicker{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:.76rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.kicker:before{content:"";width:28px;height:2px;background:var(--gold)}h1{font-size:clamp(2.2rem,5vw,4.3rem);line-height:.98;letter-spacing:-.055em;margin:15px 0 14px}h1 span{display:block;color:var(--gold)}.subtitle{max-width:790px;margin:0;color:var(--muted);font-size:1.05rem}.release-box{min-width:190px;border:1px solid var(--line);border-radius:16px;padding:15px 17px;background:rgba(16,26,43,.8)}.small-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.release-box strong{display:block;font-size:1.1rem;margin-top:4px}.status-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.status-pill{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid #66572f;border-radius:999px;background:#251f15;color:#ffe1a0;font-size:.82rem;font-weight:750}.status-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px #f2c66d18}.meta-pill{padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.8rem;background:#0d1626}.notice{display:flex;gap:13px;align-items:flex-start;border:1px solid #68542d;background:linear-gradient(120deg,#251f15,#171b23);padding:15px 18px;border-radius:15px;color:#f0dca9;margin:4px 0 24px}.notice b{color:#ffe3a2}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}.panel{min-width:0;background:linear-gradient(145deg,rgba(17,28,46,.97),rgba(12,20,35,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:17px}.section-head h2{margin:0;font-size:1.18rem;letter-spacing:-.02em}.section-head p{margin:5px 0 0;color:var(--muted);font-size:.88rem}.eyebrow{font-size:.69rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.kpi{padding:17px 17px 15px;border-radius:15px;background:linear-gradient(145deg,#0b1423,#0e192b);border:1px solid #273750;min-width:0;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--gold));opacity:.8}.kpi-label{font-size:.78rem;color:var(--muted);margin-bottom:10px}.kpi-value{font-size:clamp(1.35rem,2.5vw,2rem);font-weight:850;line-height:1.15;letter-spacing:-.035em;overflow-wrap:anywhere}.kpi-sub{font-size:.76rem;color:var(--muted);margin-top:9px}.gold{color:var(--gold)}.cyan{color:var(--cyan)}.green{color:var(--green)}.purple{color:var(--purple)}.red{color:var(--red)}.metric-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}.metric{border-top:1px solid var(--line);padding-top:12px;min-width:0}.metric span{display:block;color:var(--muted);font-size:.76rem}.metric strong{display:block;font-size:1rem;margin-top:3px;overflow-wrap:anywhere}.callout{padding:13px 15px;border-radius:12px;background:#0b1423;border:1px solid #273750;color:var(--muted);font-size:.82rem;margin-top:14px}.callout strong{color:var(--text)}.chart-wrap{position:relative;min-width:0;width:100%}.chart{display:block;width:100%;height:auto;overflow:visible}.chart text{font-family:inherit;fill:var(--muted);font-size:11px}.chart .axis{stroke:#2a3a53;stroke-width:1}.chart .gridline{stroke:#25344b;stroke-width:1;stroke-dasharray:3 5}.chart .label{fill:var(--text);font-size:12px}.chart .value{fill:var(--text);font-weight:800;font-size:12px}.chart-legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:.76rem;margin-top:9px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.controls label{font-size:.78rem;color:var(--muted)}.table-wrap{overflow:auto;border:1px solid #263650;border-radius:12px}table{width:100%;border-collapse:collapse;min-width:720px;font-size:.82rem}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #24334a;vertical-align:top}th{color:var(--gold);background:#0c1525;font-size:.73rem;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0}.muted{color:var(--muted)}.tag{display:inline-block;padding:4px 7px;border:1px solid #35445c;border-radius:6px;color:var(--muted);font-size:.7rem;white-space:nowrap}.tag.good{color:var(--green);border-color:#286553;background:#10251f}.tag.warn{color:var(--gold);border-color:#68572f;background:#252014}.tag.bad{color:var(--red);border-color:#67363a;background:#281619}.source-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.source-card{padding:15px;border:1px solid #283951;border-radius:13px;background:#0b1423;min-width:0}.source-card a{font-weight:800;text-decoration:none}.source-card p{font-size:.78rem;color:var(--muted);margin:8px 0 0}.risk-list{display:grid;gap:13px}.risk-row{display:grid;grid-template-columns:minmax(135px,1.2fr) 2fr 38px;gap:12px;align-items:center}.risk-name{font-size:.82rem}.risk-track{height:10px;background:#273650;border-radius:99px;overflow:hidden}.risk-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#8e6825,var(--gold))}.risk-value{text-align:right;color:var(--gold);font-weight:800;font-size:.82rem}.dmaic{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.dmaic-step{border:1px solid #2a3b55;border-radius:12px;background:#0b1423;padding:13px;min-height:105px}.dmaic-step b{display:block;color:var(--gold);font-size:.75rem;letter-spacing:.08em;margin-bottom:8px}.dmaic-step span{font-size:.78rem;color:var(--muted)}.footnote{font-size:.76rem;color:var(--muted);line-height:1.6}footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:25px;color:var(--muted);font-size:.8rem}.empty{color:var(--muted);font-size:.85rem;padding:22px;text-align:center;border:1px dashed #33435b;border-radius:12px}
+/* Liquid Glass visual layer */
+:root{--glass:rgba(20,32,52,.52);--glass-strong:rgba(14,24,42,.72);--glass-border:rgba(190,220,255,.17);--glass-highlight:rgba(255,255,255,.08);--shadow:0 20px 60px rgba(0,0,0,.30)}
+body{background:radial-gradient(ellipse at 12% 0%,rgba(76,120,190,.23),transparent 36%),radial-gradient(ellipse at 88% 8%,rgba(83,191,205,.14),transparent 32%),linear-gradient(155deg,#070b13 0%,#0a1221 52%,#070b13 100%);background-attachment:fixed}
+.panel,.release-box,.kpi,.callout,.source-card,.dmaic-step,.meta-pill,.status-pill,.notice{backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
+.panel{background:linear-gradient(145deg,rgba(28,43,66,.68),rgba(10,19,34,.68));border-color:var(--glass-border);box-shadow:inset 0 1px 0 var(--glass-highlight),var(--shadow)}
+.release-box{background:linear-gradient(135deg,rgba(36,53,78,.64),rgba(12,22,39,.52));border-color:var(--glass-border);box-shadow:inset 0 1px 0 var(--glass-highlight)}
+.kpi{background:linear-gradient(145deg,rgba(9,20,36,.72),rgba(28,43,65,.48));border-color:rgba(190,220,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.055)}
+.callout,.source-card,.dmaic-step{background:rgba(7,16,29,.43);border-color:rgba(190,220,255,.14)}
+.meta-pill{background:rgba(15,27,45,.42);border-color:rgba(190,220,255,.15)}
+.status-pill{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.notice{background:linear-gradient(120deg,rgba(72,54,24,.48),rgba(20,27,39,.62));border-color:rgba(242,198,109,.32)}
+button,select{background:rgba(25,42,65,.65);border-color:rgba(190,220,255,.22);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+button:hover{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(112,220,232,.09)}
+.table-wrap{border-color:rgba(190,220,255,.15)}th{background:rgba(12,21,37,.88);backdrop-filter:blur(12px)}
+.source-card,.kpi,.panel{transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease}
+@media(hover:hover){.panel:hover{border-color:rgba(190,220,255,.24)}.kpi:hover{transform:translateY(-2px);border-color:rgba(190,220,255,.23)}}
+button,select{min-height:42px}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.meta-pill{font-variant-numeric:tabular-nums}
+#forecastIntegrity{font-size:.8rem}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 @media(max-width:1000px){.span-8,.span-7,.span-5,.span-4{grid-column:span 12}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.source-list{grid-template-columns:1fr 1fr}.masthead{display:block}.release-box{margin-top:18px;display:inline-block}.dmaic{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:620px){.wrap{padding:18px 12px 32px}.panel{padding:16px;border-radius:16px}.grid{gap:12px}.kpi-grid{gap:9px}.kpi{padding:13px}.kpi-label{font-size:.72rem}.kpi-value{font-size:1.3rem}.kpi-sub{font-size:.69rem}.section-head{display:block}.metric-strip{grid-template-columns:1fr 1fr}.source-list{grid-template-columns:1fr}.dmaic{grid-template-columns:repeat(2,minmax(0,1fr))}.risk-row{grid-template-columns:110px 1fr 30px;gap:8px}.chart text{font-size:10px}.notice{font-size:.82rem}}
 @media(max-width:390px){.kpi-grid{grid-template-columns:1fr}.metric-strip{grid-template-columns:1fr}.dmaic{grid-template-columns:1fr 1fr}}
@@ -19,13 +40,14 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
 <main class="wrap">
 <header class="masthead">
   <div>
-    <div class="kicker">Cinema intelligence / India + worldwide</div>
+    <div class="kicker">Cinema intelligence / India + worldwide · Liquid Glass</div>
     <h1>RAMAYANA <span>BOX OFFICE INTELLIGENCE</span></h1>
     <p class="subtitle">A source-aware analytical dashboard for advance bookings, opening-day benchmarks, scenario modelling and data quality. Published figures, automated observations and forecasts are kept distinct.</p>
     <div class="status-row">
       <span class="status-pill"><i class="status-dot"></i><span id="statusBadge" aria-live="polite">Loading data status…</span></span>
       <span class="meta-pill">Release date · 5 November 2026</span>
       <span class="meta-pill">Currency · ₹ crore unless stated</span>
+      <span class="meta-pill" id="lastCheckedPill">Browser check · waiting</span>
     </div>
   </div>
   <div class="release-box"><div class="small-label">Tracking window</div><strong>Pre-release / Day 1</strong><div class="footnote" style="margin-top:5px">Refreshes from data.json</div></div>
@@ -46,7 +68,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
 </section>
 
 <section class="panel span-12">
-  <div class="section-head"><div><div class="eyebrow">02 / Automated observation</div><h2>India Day 1 advance-booking monitor</h2><p>Values from the latest successful scheduled fetch, when available.</p></div><span id="feedStatusTag" class="tag warn">Status pending</span></div>
+  <div class="section-head"><div><div class="eyebrow">02 / Automated observation</div><h2>India Day 1 advance-booking monitor</h2><p>Source-reported India Day 1 figures, with workflow verification shown separately.</p></div><span id="feedStatusTag" class="tag warn">Status pending</span></div>
   <div class="kpi-grid">
     <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">India advance gross</div><div class="kpi-value gold" id="autoIndiaGross">—</div><div class="kpi-sub">Source-reported Day 1 gross</div></div>
     <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">Gross including block seats</div><div class="kpi-value cyan" id="autoIndiaWithBlocks">—</div><div class="kpi-sub">If reported by source</div></div>
@@ -58,8 +80,8 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
   <p class="footnote"><a id="autoSourceLink" href="https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105" target="_blank" rel="noopener noreferrer">Open automated source ↗</a> · If parsing fails, the workflow may retain the last successful value; check status and timestamp before using it.</p>
 </section>
 
-<section class="panel span-8"><div class="section-head"><div><div class="eyebrow">03 / Benchmark analysis</div><h2>Worldwide opening-day comparison</h2><p>Reported benchmark figures versus the current forecast. Bars are scaled to the largest value in this chart.</p></div></div><div id="comparisonChart" class="chart-wrap"></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>Reported benchmark</span><span><i class="legend-dot" style="background:var(--green)"></i>Forecast</span></div><div class="callout">Method note: reported Day 1 grosses may differ by source, territory coverage, currency conversion and gross/net accounting. Only compare like-for-like figures.</div></section>
-<section class="panel span-4"><div class="section-head"><div><div class="eyebrow">04 / Scenario model</div><h2>Day 1 forecast range</h2><p>Worldwide gross · ₹ crore</p></div></div><div id="scenarioChart" class="chart-wrap"></div><div class="metric-strip"><div class="metric"><span>Low case</span><strong id="scenarioLow">—</strong></div><div class="metric"><span>Central case</span><strong class="green" id="scenarioCentral">—</strong></div><div class="metric"><span>High case</span><strong id="scenarioHigh">—</strong></div></div><p class="footnote" id="scenarioRange">Scenario range depends on data.json.</p></section>
+<section class="panel span-8"><div class="section-head"><div><div class="eyebrow">03 / Benchmark analysis</div><h2>Worldwide opening-day comparison</h2><p>Reported benchmark figures versus the central scenario from data.json. The Ramayana bar follows the current forecast scenario.</p></div></div><div id="comparisonChart" class="chart-wrap"></div><div class="callout" id="comparisonIntegrity">Benchmark coverage is being checked.</div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>Reported benchmark</span><span><i class="legend-dot" style="background:var(--green)"></i>Forecast</span></div><div class="callout">Method note: reported Day 1 grosses may differ by source, territory coverage, currency conversion and gross/net accounting. Only compare like-for-like figures.</div></section>
+<section class="panel span-4"><div class="section-head"><div><div class="eyebrow">04 / Scenario model</div><h2>Day 1 forecast range</h2><p>Worldwide gross · ₹ crore · values refresh from data.json</p></div></div><div id="scenarioChart" class="chart-wrap"></div><div class="metric-strip"><div class="metric"><span>Low case</span><strong id="scenarioLow">—</strong></div><div class="metric"><span>Central case</span><strong class="green" id="scenarioCentral">—</strong></div><div class="metric"><span>High case</span><strong id="scenarioHigh">—</strong></div></div><p class="footnote" id="scenarioRange">Scenario range depends on data.json.</p><div class="callout" id="forecastIntegrity">Checking forecast integrity…</div></section>
 <section class="panel span-7"><div class="section-head"><div><div class="eyebrow">05 / Snapshot history</div><h2>Published booking snapshots</h2><p>Snapshot records are preserved individually; this chart does not imply comparable growth unless scope matches.</p></div></div><div id="historyChart" class="chart-wrap"></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>Worldwide reported</span><span><i class="legend-dot" style="background:var(--cyan)"></i>India reported</span><span><i class="legend-dot" style="background:var(--purple)"></i>Overseas reported</span></div><div class="callout">The x-axis follows available snapshots. Missing values remain missing; the chart does not interpolate absent figures.</div></section>
 <section class="panel span-5"><div class="section-head"><div><div class="eyebrow">06 / Risk prioritisation</div><h2>Key forecast drivers</h2><p>Illustrative ranking, not measured statistical causality.</p></div></div><div id="riskChart" class="risk-list"></div><div class="callout"><strong>Interpretation:</strong> treat these as variables to monitor, not as quantified contributions to gross.</div></section>
 
@@ -69,7 +91,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
 <div class="dmaic-step"><b>ANALYSE</b><span>Reconcile duplicate reports, block seats, territories and gross/net definitions.</span></div>
 <div class="dmaic-step"><b>IMPROVE</b><span>Update only after validating source changes and scope consistency.</span></div>
 <div class="dmaic-step"><b>CONTROL</b><span>Preserve timestamps, retain last successful data and flag stale observations.</span></div>
-</div><div class="callout"><strong>Data caveat:</strong> this dashboard displays the contents of <code>data.json</code>. It does not independently verify the source websites, and a browser refresh cannot update the JSON unless the scheduled workflow publishes a new file.</div></section>
+</div><div class="callout"><strong>Data caveat:</strong> this dashboard displays the contents of <code>data.json</code>. Charts redraw when that file changes. Forecast scenarios remain authored values unless an explicitly enabled and configured <code>forecastModel</code> is present. A page refresh does not fetch source websites or change <code>data.json</code>. The dashboard labels unverified workflow snapshots rather than presenting them as live data.</div></section>
 
 <section class="panel span-12"><div class="section-head"><div><div class="eyebrow">08 / Sources</div><h2>Source directory</h2><p>Open source pages to validate original reporting and definitions.</p></div></div><div id="sourceList" class="source-list"></div><p class="footnote" id="lastUpdatedNote"></p></section>
 
@@ -86,9 +108,13 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
 (() => {
   "use strict";
   const REFRESH_MS = 15 * 60 * 1000;
+  const HISTORY_KEY = "ramayana-box-office-observations-v1";
+  const MAX_HISTORY = 96;
+  const FEED_STALE_MS = 6 * 60 * 60 * 1000;
   const $ = id => document.getElementById(id);
   let currentData = null;
   let selectedSnapshotIndex = 0;
+  let requestInFlight = false;
 
   const safe = value => String(value ?? "");
   const number = value => Number.isFinite(Number(value)) && value !== null && value !== "" ? Number(value) : null;
@@ -118,6 +144,84 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     const preferred = rows.find(x => /base case|moderate|central/i.test(safe(x?.name)));
     return number(preferred?.valueCr);
   }
+  function feedAgeMs(feed) {
+    const stamp = feed?.fetchedAt ? Date.parse(feed.fetchedAt) : NaN;
+    return Number.isFinite(stamp) ? Math.max(0, Date.now() - stamp) : null;
+  }
+  function feedFreshness(feed) {
+    const status = safe(feed?.status).toLowerCase();
+    const age = feedAgeMs(feed);
+    if (status !== "success") {
+      if (status === "snapshot_only" || (feed?.sourceUpdatedAt && !feed?.fetchedAt)) {
+        const sourceStamp = Date.parse(feed.sourceUpdatedAt || "");
+        if (Number.isFinite(sourceStamp) && Date.now() - sourceStamp > FEED_STALE_MS) {
+          return { label: "Manual snapshot · source timestamp is stale", kind: "bad" };
+        }
+        return { label: "Manual snapshot · workflow fetch unverified", kind: "warn" };
+      }
+      return { label: "No verified successful fetch", kind: "warn" };
+    }
+    if (age === null) return { label: "Fetch time unavailable", kind: "warn" };
+    if (age > FEED_STALE_MS) return { label: "Last successful fetch is stale", kind: "bad" };
+    const sourceStamp = Date.parse(feed?.sourceUpdatedAt || "");
+    if (Number.isFinite(sourceStamp) && Date.now() - sourceStamp > FEED_STALE_MS) {
+      return { label: "Fetch succeeded; source report is stale", kind: "warn" };
+    }
+    return { label: "Recent successful fetch · verify source timestamp", kind: "good" };
+  }
+  function effectiveComparisonRows(data) {
+    const rows = Array.isArray(data?.openingDayComparisons) ? data.openingDayComparisons.map(r => ({...r})) : [];
+    const central = getCentralForecast(effectiveForecastData(data));
+    const ramayana = rows.find(r => /ramayana/i.test(safe(r.title)) || safe(r.type).toLowerCase().includes("forecast"));
+    if (ramayana && central !== null) {
+      ramayana.worldwideCr = central;
+      ramayana.type = "forecast";
+      ramayana.note = "Linked to the current central scenario in forecastScenarios; illustrative forecast, not an actual collection.";
+    }
+    return rows;
+  }
+  function readObservationHistory() {
+    try { const rows = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); return Array.isArray(rows) ? rows : []; }
+    catch { return []; }
+  }
+  function saveObservation(feed) {
+    if (!feed || safe(feed.status).toLowerCase() !== "success" || !feed.fetchedAt) return;
+    const stamp = Date.parse(feed.fetchedAt); if (!Number.isFinite(stamp)) return;
+    const row = { fetchedAt: new Date(stamp).toISOString(), sourceUpdatedText: safe(feed.sourceUpdatedText), grossCr: number(feed.indiaGrossCr), tickets: number(feed.tickets), shows: number(feed.shows), occupancyPct: number(feed.occupancyPct), sourceName: safe(feed.sourceName) };
+    try {
+      const rows = readObservationHistory();
+      if (!rows.some(x => x.fetchedAt === row.fetchedAt && x.grossCr === row.grossCr)) rows.push(row);
+      rows.sort((a,b) => Date.parse(a.fetchedAt)-Date.parse(b.fetchedAt));
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(rows.slice(-MAX_HISTORY)));
+    } catch (e) { console.warn("Could not persist local observation history:", e); }
+  }
+  function calculateForecast(data) {
+    /* Transparent, opt-in model. It only adjusts scenarios when data.json supplies
+       forecastModel with explicit calibration parameters; otherwise it preserves
+       the authored scenarios rather than inventing a multiplier. */
+    const model = data.forecastModel;
+    const rows = Array.isArray(data.forecastScenarios) ? data.forecastScenarios : [];
+    const base = rows.map(r => ({...r, value: number(r.valueCr)})).filter(r => r.value !== null);
+    if (!model || model.enabled !== true || !Number.isFinite(number(model.baseIndiaAdvanceCr)) || !Number.isFinite(number(model.maxAdjustmentPct))) {
+      return { rows: base, mode: "static", note: "Using the scenario values published in data.json. Add a calibrated forecastModel to enable model-driven adjustments." };
+    }
+    const observed = number(data.automatedFeed?.indiaGrossCr);
+    const feedAge = feedAgeMs(data.automatedFeed);
+    if (observed === null || feedAge === null || feedAge > FEED_STALE_MS || safe(data.automatedFeed?.status).toLowerCase() !== "success") {
+      return { rows: base, mode: "static", note: "Forecast model held: a recent successful India advance-booking observation is required." };
+    }
+    const reference = number(model.baseIndiaAdvanceCr);
+    if (reference <= 0) return { rows: base, mode: "static", note: "Forecast model held: baseIndiaAdvanceCr must be greater than zero." };
+    const maxAdj = Math.max(0, Math.min(30, number(model.maxAdjustmentPct)));
+    const raw = (observed / reference) - 1;
+    const adjustmentPct = Math.max(-maxAdj, Math.min(maxAdj, raw * 100 * Math.max(0, Math.min(1, number(model.sensitivity) ?? 0.5))));
+    const factor = 1 + adjustmentPct / 100;
+    return { rows: base.map(r => ({...r, value: r.value * factor})), mode: "model", adjustmentPct, note: `Model adjustment ${adjustmentPct >= 0 ? "+" : ""}${adjustmentPct.toFixed(1)}% versus configured India advance-booking reference. Calibration quality depends on the assumptions in data.json.` };
+  }
+  function effectiveForecastData(data) {
+    const result = calculateForecast(data);
+    return {...data, forecastScenarios: result.rows.map(r => ({...r, valueCr: r.value}))};
+  }
   function renderSnapshot(data) {
     const rows = Array.isArray(data.bookingSnapshots) ? data.bookingSnapshots : [];
     if (!rows.length) {
@@ -136,9 +240,10 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
   }
   function renderFeed(feed) {
     const f = feed && typeof feed === "object" ? feed : {};
+    const freshness = feedFreshness(f);
     const ok = safe(f.status).toLowerCase() === "success";
     const tag = $("feedStatusTag");
-    if (tag) { tag.textContent = f.status ? safe(f.status).replaceAll("_"," ") : "status unavailable"; tag.className = "tag " + (ok ? "good" : f.status ? "bad" : "warn"); }
+    if (tag) { tag.textContent = freshness.label; tag.className = "tag " + freshness.kind; }
     text("autoIndiaGross",cr(number(f.indiaGrossCr)));
     const withBlocks = number(f.indiaGrossIncludingBlocksCr);
     text("autoIndiaWithBlocks",cr(withBlocks));
@@ -148,18 +253,23 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     text("autoOccupancy",number(f.occupancyPct) !== null ? pct(number(f.occupancyPct)) + " reported occupancy" : "Occupancy not reported");
     text("autoFetchedAt",date(f.fetchedAt));
     text("autoSourceUpdated",f.sourceUpdatedText || "Not available");
-    text("autoFeedShort",ok ? "Latest fetch succeeded" : (f.status || "No successful feed status"));
+    text("autoFeedShort", ok ? "Latest fetch succeeded" : (safe(f.status).toLowerCase()==="snapshot_only" ? "Manual snapshot · fetch unverified" : (f.status || "No successful feed status")));
     text("autoFeedMessage",f.message || "No feed message supplied. Treat missing values as unavailable, not zero.");
     const link = $("autoSourceLink");
     if (link) { link.href = validUrl(f.sourceUrl || "https://www.boxofficeindia24.com/"); link.textContent = "Open " + (f.sourceName || "automated source") + " ↗"; }
   }
   function svgStart(w,h,label) { return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}" xmlns="http://www.w3.org/2000/svg">`; }
   function renderComparison(data) {
-    const el = $("comparisonChart"), rows = Array.isArray(data.openingDayComparisons) ? data.openingDayComparisons : [];
+    const el = $("comparisonChart"), rows = effectiveComparisonRows(data);
     if (!el) return;
     if (!rows.length) { el.innerHTML = empty("No benchmark data available."); return; }
     const vals = rows.map(x => number(x.worldwideCr)).filter(v => v !== null);
     if (!vals.length) { el.innerHTML = empty("Benchmark values are missing or invalid."); return; }
+    const comparables = rows.filter(x => !/ramayana/i.test(safe(x.title)) && !safe(x.type).toLowerCase().includes("forecast"));
+    const integrity = $("comparisonIntegrity");
+    if (integrity) integrity.textContent = comparables.length
+      ? `${comparables.length} reported comparator(s) supplied. Confirm each source uses worldwide Day 1 gross and a comparable reporting definition before drawing conclusions.`
+      : "No historical comparator is supplied in data.json. This chart can show the Ramayana forecast, but it cannot yet support a meaningful benchmark comparison. Add verified comparable Day 1 figures to data.json.";
     const max = Math.max(...vals,1) * 1.12, w=640, rowH=54, h=28+rows.length*rowH;
     let svg = svgStart(w,h,"Worldwide opening day comparisons");
     rows.forEach((r,i) => {
@@ -173,7 +283,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     svg += "</svg>"; el.innerHTML=svg;
   }
   function renderScenarios(data) {
-    const el=$("scenarioChart"), rows=Array.isArray(data.forecastScenarios)?data.forecastScenarios:[];
+    const el=$("scenarioChart"), forecast = calculateForecast(data), rows=forecast.rows.map(r=>({...r,valueCr:r.value}));
     if(!el)return;
     const valid=rows.map(r=>({...r,v:number(r.valueCr)})).filter(r=>r.v!==null);
     if(!valid.length){el.innerHTML=empty("No valid forecast scenarios.");["scenarioLow","scenarioCentral","scenarioHigh","scenarioRange"].forEach(id=>text(id,"Unavailable"));return;}
@@ -181,7 +291,12 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     const low=valid.find(r=>/worst|low/i.test(safe(r.name)))?.v ?? min;
     const high=valid.find(r=>/best|high|optimistic/i.test(safe(r.name)))?.v ?? max;
     text("scenarioLow",cr(low));text("scenarioCentral",cr(central));text("scenarioHigh",cr(high));
-    text("scenarioRange",`Illustrative range: ${cr(min)}–${cr(max)}. These are scenarios, not reported collections.`);
+    text("scenarioRange",`Illustrative range: ${cr(min)}–${cr(max)}. ${forecast.note}`);
+    const integrity = $("forecastIntegrity");
+    if (integrity) {
+      const enabled = forecast.mode === "model";
+      integrity.innerHTML = `<strong>${enabled ? "Model-driven adjustment active" : "Scenario-only mode"}</strong><br>${esc(enabled ? "Forecast values are adjusted by the configured rule. This is still a heuristic, not a statistically validated prediction." : "No calibrated forecast model is enabled in data.json. The displayed values are planning scenarios and will not move just because the booking figure changes.")}`;
+    }
     const w=360,rowH=37,h=20+valid.length*rowH;let svg=svgStart(w,h,"Day one forecast scenarios");
     valid.forEach((r,i)=>{const y=13+i*rowH,width=max>0?(r.v/max)*205:0;const centralish=/base case|moderate|central/i.test(safe(r.name));svg+=`<text x="0" y="${y+11}">${esc(r.name)}</text><rect x="0" y="${y+17}" width="205" height="9" rx="4" fill="#1c2a40"/><rect x="0" y="${y+17}" width="${width}" height="9" rx="4" fill="${centralish?"var(--green)":"var(--gold)"}"/><text x="214" y="${y+25}" class="value">${Math.round(r.v)}</text>`;});
     el.innerHTML=svg+"</svg>";
@@ -218,13 +333,20 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
   }
   function renderAll(data) {
     currentData=data;
+    saveObservation(data.automatedFeed);
     renderSnapshot(data);renderFeed(data.automatedFeed);renderComparison(data);renderScenarios(data);renderHistory(data);renderRisks(data);renderSources(data);renderTable(data);
-    const central=getCentralForecast(data);text("day1Forecast",cr(central));
+    const central=getCentralForecast(effectiveForecastData(data));text("day1Forecast",cr(central));
     text("lastUpdatedNote",`Data file last updated: ${date(data.lastUpdated)} · Data status: ${data.dataStatus||"not specified"}. ${data.statusNote||""}`);
-    const feedOk=safe(data.automatedFeed?.status).toLowerCase()==="success";
-    setStatus(feedOk?"Data loaded · feed reports success":"Data loaded · feed status needs review",feedOk?"good":"warn");
+    const freshness = feedFreshness(data.automatedFeed);
+    text("lastCheckedPill", "Browser check · " + new Date().toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", timeZone:"Asia/Kolkata"}) + " IST");
+    const dataFileStamp = data.lastUpdated ? Date.parse(data.lastUpdated) : NaN;
+    const dataFileStale = Number.isFinite(dataFileStamp) && Date.now() - dataFileStamp > 24 * 60 * 60 * 1000;
+    if (dataFileStale) setStatus("Dashboard loaded · data.json is over 24h old", "bad");
+    else setStatus(`Dashboard loaded · ${freshness.label.toLowerCase()}`, freshness.kind);
   }
   async function loadData({quiet=false}={}) {
+    if (requestInFlight) return;
+    requestInFlight = true;
     if(!quiet)setStatus("Loading data…","warn");
     try {
       const url = new URL("./data.json", location.href);
@@ -242,14 +364,20 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
       text("autoFeedMessage","Dashboard data could not be loaded. The figures above are unavailable until data.json loads successfully.");
       const chartIds=["comparisonChart","scenarioChart","historyChart","riskChart"];
       chartIds.forEach(id=>{if($(id))$(id).innerHTML=empty("Data unavailable — check data.json and deployment path.");});
-      if(!quiet)text("lastUpdatedNote","Check the browser console and GitHub Pages deployment path.");
+      if(!quiet)text("lastUpdatedNote","Check the browser console and published path for index.html and data.json.");
+    } finally {
+      requestInFlight = false;
     }
   }
-  document.addEventListener("DOMContentLoaded",()=>{
+  document.addEventListener("DOMContentLoaded", async ()=>{
     const btn=$("reloadBtn");if(btn)btn.addEventListener("click",()=>loadData());
     const select=$("snapshotSelect");if(select)select.addEventListener("change",()=>{selectedSnapshotIndex=Number(select.value)||0;if(currentData)renderSnapshot(currentData);});
-    loadData();
-    window.setInterval(()=>loadData({quiet:true}),REFRESH_MS);
+    await loadData();
+    const configuredMinutes = Number(currentData?.methodology?.refreshIntervalMinutes);
+    const interval = Number.isFinite(configuredMinutes) && configuredMinutes > 0
+      ? Math.max(5, Math.min(120, configuredMinutes)) * 60 * 1000
+      : REFRESH_MS;
+    window.setInterval(()=>loadData({quiet:true}),interval);
   });
 })();
 </script>
