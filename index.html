@@ -1,84 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d18">
-<meta name="description" content="Analytical box-office dashboard for Ramayana: Rise of a Legend — advance bookings, benchmarks and scenario forecasts.">
-<title>Ramayana | Box Office Intelligence</title>
+<meta name="description" content="रामायण चलचित्र व्यवसाय विश्लेषण: अग्रिम बुकिंग, उद्घाटन दिवस के अनुमान, तुलनात्मक आँकड़े और स्रोत सत्यापन।">
+<title>रामायण | चलचित्र व्यवसाय विश्लेषण</title>
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Cinzel:wght@500;600;700&display=swap");
 :root{--bg:#070b13;--panel:#101a2b;--line:#263650;--text:#edf3ff;--muted:#98a8c2;--gold:#f2c66d;--cyan:#70dce8;--green:#78e0b4;--red:#ff8f91;--purple:#b8a1ff;--shadow:0 18px 50px rgba(0,0,0,.22)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 78% -10%,#1a2c4b 0,transparent 42%),linear-gradient(180deg,#080d18,#070b13 70%);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--cyan);text-underline-offset:4px}
-button,select{font:inherit;color:var(--text);background:#152239;border:1px solid #344762;border-radius:10px;padding:10px 13px}button{cursor:pointer;font-weight:750}.wrap{max-width:1440px;margin:auto;padding:28px 24px 48px}.masthead{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:12px 0 26px}.kicker{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:.76rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.kicker:before{content:"";width:28px;height:2px;background:var(--gold)}h1{font-size:clamp(2.2rem,5vw,4.3rem);line-height:.98;letter-spacing:-.055em;margin:15px 0 14px}h1 span{display:block;color:var(--gold)}.subtitle{max-width:790px;margin:0;color:var(--muted);font-size:1.05rem}.release-box{min-width:190px;border:1px solid var(--line);border-radius:16px;padding:15px 17px;background:rgba(16,26,43,.8)}.small-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.release-box strong{display:block;font-size:1.1rem;margin-top:4px}.status-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.status-pill{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid #66572f;border-radius:999px;background:#251f15;color:#ffe1a0;font-size:.82rem;font-weight:750}.status-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px #f2c66d18}.meta-pill{padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.8rem;background:#0d1626}.notice{display:flex;gap:13px;align-items:flex-start;border:1px solid #68542d;background:linear-gradient(120deg,#251f15,#171b23);padding:15px 18px;border-radius:15px;color:#f0dca9;margin:4px 0 24px}.notice b{color:#ffe3a2}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}.panel{min-width:0;background:linear-gradient(145deg,rgba(17,28,46,.97),rgba(12,20,35,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:17px}.section-head h2{margin:0;font-size:1.18rem;letter-spacing:-.02em}.section-head p{margin:5px 0 0;color:var(--muted);font-size:.88rem}.eyebrow{font-size:.69rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.kpi{padding:17px 17px 15px;border-radius:15px;background:linear-gradient(145deg,#0b1423,#0e192b);border:1px solid #273750;min-width:0;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--gold));opacity:.8}.kpi-label{font-size:.78rem;color:var(--muted);margin-bottom:10px}.kpi-value{font-size:clamp(1.35rem,2.5vw,2rem);font-weight:850;line-height:1.15;letter-spacing:-.035em;overflow-wrap:anywhere}.kpi-sub{font-size:.76rem;color:var(--muted);margin-top:9px}.gold{color:var(--gold)}.cyan{color:var(--cyan)}.green{color:var(--green)}.purple{color:var(--purple)}.red{color:var(--red)}.metric-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}.metric{border-top:1px solid var(--line);padding-top:12px;min-width:0}.metric span{display:block;color:var(--muted);font-size:.76rem}.metric strong{display:block;font-size:1rem;margin-top:3px;overflow-wrap:anywhere}.callout{padding:13px 15px;border-radius:12px;background:#0b1423;border:1px solid #273750;color:var(--muted);font-size:.82rem;margin-top:14px}.callout strong{color:var(--text)}.chart-wrap{position:relative;min-width:0;width:100%}.chart{display:block;width:100%;height:auto;overflow:visible}.chart text{font-family:inherit;fill:var(--muted);font-size:11px}.chart .axis{stroke:#2a3a53;stroke-width:1}.chart .gridline{stroke:#25344b;stroke-width:1;stroke-dasharray:3 5}.chart .label{fill:var(--text);font-size:12px}.chart .value{fill:var(--text);font-weight:800;font-size:12px}.chart-legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:.76rem;margin-top:9px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.controls{display:none!important}.table-wrap{overflow:auto;border:1px solid #263650;border-radius:12px}table{width:100%;border-collapse:collapse;min-width:720px;font-size:.82rem}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #24334a;vertical-align:top}th{color:var(--gold);background:#0c1525;font-size:.73rem;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0}.muted{color:var(--muted)}.tag{display:inline-block;padding:4px 7px;border:1px solid #35445c;border-radius:6px;color:var(--muted);font-size:.7rem;white-space:nowrap}.tag.good{color:var(--green);border-color:#286553;background:#10251f}.tag.warn{color:var(--gold);border-color:#68572f;background:#252014}.tag.bad{color:var(--red);border-color:#67363a;background:#281619}.source-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.source-card{padding:15px;border:1px solid #283951;border-radius:13px;background:#0b1423;min-width:0}.source-card a{font-weight:800;text-decoration:none}.source-card p{font-size:.78rem;color:var(--muted);margin:8px 0 0}.risk-list{display:grid;gap:13px}.risk-row{display:grid;grid-template-columns:minmax(135px,1.2fr) 2fr 38px;gap:12px;align-items:center}.risk-name{font-size:.82rem}.risk-track{height:10px;background:#273650;border-radius:99px;overflow:hidden}.risk-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#8e6825,var(--gold))}.risk-value{text-align:right;color:var(--gold);font-weight:800;font-size:.82rem}.dmaic{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.dmaic-step{border:1px solid #2a3b55;border-radius:12px;background:#0b1423;padding:13px;min-height:105px}.dmaic-step b{display:block;color:var(--gold);font-size:.75rem;letter-spacing:.08em;margin-bottom:8px}.dmaic-step span{font-size:.78rem;color:var(--muted)}.footnote{font-size:.76rem;color:var(--muted);line-height:1.6}footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:25px;color:var(--muted);font-size:.8rem}.empty{color:var(--muted);font-size:.85rem;padding:22px;text-align:center;border:1px dashed #33435b;border-radius:12px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{position:relative;isolation:isolate;margin:0;background:radial-gradient(ellipse at 78% -10%,#1a2c4b 0,transparent 42%),linear-gradient(180deg,#080d18,#070b13 70%);color:var(--text);font:15px/1.65 "Noto Sans Devanagari",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--cyan);text-underline-offset:4px}
+button,select{font:inherit;color:var(--text);background:#152239;border:1px solid #344762;border-radius:10px;padding:10px 13px}button{cursor:pointer;font-weight:750}.wrap{max-width:1440px;margin:auto;padding:28px 24px 48px}.masthead{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:12px 0 26px}.kicker{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:.76rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.kicker:before{content:"";width:28px;height:2px;background:var(--gold)}h1{font-family:"Cinzel","Noto Sans Devanagari",serif;font-size:clamp(2.2rem,5vw,4.3rem);line-height:.98;letter-spacing:-.055em;margin:15px 0 14px}h1 span{display:block;color:var(--gold)}.subtitle{max-width:790px;margin:0;color:var(--muted);font-size:1.05rem}.release-box{min-width:190px;border:1px solid var(--line);border-radius:16px;padding:15px 17px;background:rgba(16,26,43,.8)}.small-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.release-box strong{display:block;font-size:1.1rem;margin-top:4px}.status-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.status-pill{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid #66572f;border-radius:999px;background:#251f15;color:#ffe1a0;font-size:.82rem;font-weight:750}.status-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px #f2c66d18}.meta-pill{padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.8rem;background:#0d1626}.notice{display:flex;gap:13px;align-items:flex-start;border:1px solid #68542d;background:linear-gradient(120deg,#251f15,#171b23);padding:15px 18px;border-radius:15px;color:#f0dca9;margin:4px 0 24px}.notice b{color:#ffe3a2}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}.panel{min-width:0;background:linear-gradient(145deg,rgba(17,28,46,.97),rgba(12,20,35,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:17px}.section-head h2{margin:0;font-size:1.18rem;letter-spacing:-.02em}.section-head p{margin:5px 0 0;color:var(--muted);font-size:.88rem}.eyebrow{font-size:.69rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.kpi{padding:17px 17px 15px;border-radius:15px;background:linear-gradient(145deg,#0b1423,#0e192b);border:1px solid #273750;min-width:0;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--gold));opacity:.8}.kpi-label{font-size:.78rem;color:var(--muted);margin-bottom:10px}.kpi-value{font-size:clamp(1.35rem,2.5vw,2rem);font-weight:850;line-height:1.15;letter-spacing:-.035em;overflow-wrap:anywhere}.kpi-sub{font-size:.76rem;color:var(--muted);margin-top:9px}.gold{color:var(--gold)}.cyan{color:var(--cyan)}.green{color:var(--green)}.purple{color:var(--purple)}.red{color:var(--red)}.metric-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}.metric{border-top:1px solid var(--line);padding-top:12px;min-width:0}.metric span{display:block;color:var(--muted);font-size:.76rem}.metric strong{display:block;font-size:1rem;margin-top:3px;overflow-wrap:anywhere}.callout{padding:13px 15px;border-radius:12px;background:#0b1423;border:1px solid #273750;color:var(--muted);font-size:.82rem;margin-top:14px}.callout strong{color:var(--text)}.chart-wrap{position:relative;min-width:0;width:100%}.chart{display:block;width:100%;height:auto;overflow:visible}.chart text{font-family:inherit;fill:var(--muted);font-size:11px}.chart .axis{stroke:#2a3a53;stroke-width:1}.chart .gridline{stroke:#25344b;stroke-width:1;stroke-dasharray:3 5}.chart .label{fill:var(--text);font-size:12px}.chart .value{fill:var(--text);font-weight:800;font-size:12px}.chart-legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:.76rem;margin-top:9px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.controls{display:none!important}.table-wrap{overflow:auto;border:1px solid #263650;border-radius:12px}table{width:100%;border-collapse:collapse;min-width:720px;font-size:.82rem}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #24334a;vertical-align:top}th{color:var(--gold);background:#0c1525;font-size:.73rem;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0}.muted{color:var(--muted)}.tag{display:inline-block;padding:4px 7px;border:1px solid #35445c;border-radius:6px;color:var(--muted);font-size:.7rem;white-space:nowrap}.tag.good{color:var(--green);border-color:#286553;background:#10251f}.tag.warn{color:var(--gold);border-color:#68572f;background:#252014}.tag.bad{color:var(--red);border-color:#67363a;background:#281619}.source-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.source-card{padding:15px;border:1px solid #283951;border-radius:13px;background:#0b1423;min-width:0}.source-card a{font-weight:800;text-decoration:none}.source-card p{font-size:.78rem;color:var(--muted);margin:8px 0 0}.risk-list{display:grid;gap:13px}.risk-row{display:grid;grid-template-columns:minmax(135px,1.2fr) 2fr 38px;gap:12px;align-items:center}.risk-name{font-size:.82rem}.risk-track{height:10px;background:#273650;border-radius:99px;overflow:hidden}.risk-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#8e6825,var(--gold))}.risk-value{text-align:right;color:var(--gold);font-weight:800;font-size:.82rem}.dmaic{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.dmaic-step{border:1px solid #2a3b55;border-radius:12px;background:#0b1423;padding:13px;min-height:105px}.dmaic-step b{display:block;color:var(--gold);font-size:.75rem;letter-spacing:.08em;margin-bottom:8px}.dmaic-step span{font-size:.78rem;color:var(--muted)}.footnote{font-size:.76rem;color:var(--muted);line-height:1.6}footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:25px;color:var(--muted);font-size:.8rem}.empty{color:var(--muted);font-size:.85rem;padding:22px;text-align:center;border:1px dashed #33435b;border-radius:12px}
 @media(max-width:1000px){.span-8,.span-7,.span-5,.span-4{grid-column:span 12}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.source-list{grid-template-columns:1fr 1fr}.masthead{display:block}.release-box{margin-top:18px;display:inline-block}.dmaic{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:620px){.wrap{padding:18px 12px 32px}.panel{padding:16px;border-radius:16px}.grid{gap:12px}.kpi-grid{gap:9px}.kpi{padding:13px}.kpi-label{font-size:.72rem}.kpi-value{font-size:1.3rem}.kpi-sub{font-size:.69rem}.section-head{display:block}.metric-strip{grid-template-columns:1fr 1fr}.source-list{grid-template-columns:1fr}.dmaic{grid-template-columns:repeat(2,minmax(0,1fr))}.risk-row{grid-template-columns:110px 1fr 30px;gap:8px}.chart text{font-size:10px}.notice{font-size:.82rem}}
 @media(max-width:390px){.kpi-grid{grid-template-columns:1fr}.metric-strip{grid-template-columns:1fr}.dmaic{grid-template-columns:1fr 1fr}}
+
+/* Subtle Ramayana-inspired Devanagari scripture texture */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.13;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='360' viewBox='0 0 560 360'%3E%3Cg fill='%23d7b56d' fill-opacity='.62' font-family='serif' font-size='19'%3E%3Ctext x='22' y='48'%3E%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A5%80%E0%A4%B0%E0%A4%BE%E0%A4%AE%20%E0%A4%9C%E0%A4%AF%20%E0%A4%B0%E0%A4%BE%E0%A4%AE%20%E0%A4%9C%E0%A4%AF%20%E0%A4%9C%E0%A4%AF%20%E0%A4%B0%E0%A4%BE%E0%A4%AE%3C/text%3E%3Ctext x='78' y='126'%3E%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A5%8B%20%E0%A4%B5%E0%A4%BF%E0%A4%97%E0%A5%8D%E0%A4%B0%E0%A4%B9%E0%A4%B5%E0%A4%BE%E0%A4%A8%E0%A5%8D%20%E0%A4%A7%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%83%3C/text%3E%3Ctext x='10' y='204'%3E%E0%A4%A7%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A5%8B%20%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%A4%E0%A4%BF%20%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%BF%E0%A4%A4%E0%A4%83%3C/text%3E%3Ctext x='100' y='282'%3E%E0%A4%B8%E0%A4%A4%E0%A5%8D%E0%A4%AF%E0%A4%AE%E0%A5%87%E0%A4%B5%20%E0%A4%9C%E0%A4%AF%E0%A4%A4%E0%A5%87%3C/text%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:repeat;
+  background-size:560px 360px;
+  mix-blend-mode:screen;
+  filter:sepia(.18);
+}
+.wrap{position:relative;z-index:1}
+@media(max-width:600px){body::before{opacity:.065;background-size:420px 270px}}
+
 </style>
 </head>
 <body>
 <main class="wrap">
 <header class="masthead">
   <div>
-    <div class="kicker">Cinema intelligence / India + worldwide</div>
-    <h1>RAMAYANA <span>BOX OFFICE INTELLIGENCE</span></h1>
-    <p class="subtitle">A source-aware analytical dashboard for advance bookings, opening-day benchmarks, scenario modelling and data quality. Published figures, automated observations and forecasts are kept distinct.</p>
+    <div class="kicker">चलचित्र विश्लेषण / भारत एवं विश्व</div>
+    <h1>रामायण <span>चलचित्र व्यवसाय विश्लेषण</span></h1>
+    <p class="subtitle">अग्रिम बुकिंग, प्रथम-दिवस के तुलनात्मक आँकड़ों, संभावित परिदृश्यों और आँकड़ों की विश्वसनीयता का स्रोत-आधारित विश्लेषण। प्रकाशित आँकड़े, स्वचालित जानकारी और अनुमान अलग-अलग दर्शाए गए हैं।</p>
     <div class="status-row">
-      <span class="status-pill"><i class="status-dot"></i><span id="statusBadge" aria-live="polite">Loading data status…</span></span>
-      <span class="meta-pill">Release date · 5 November 2026</span>
-      <span class="meta-pill">Currency · ₹ crore unless stated</span>
+      <span class="status-pill"><i class="status-dot"></i><span id="statusBadge" aria-live="polite">आँकड़ों की स्थिति लोड हो रही है…</span></span>
+      <span class="meta-pill">प्रदर्शन तिथि · 5 नवम्बर 2026</span>
+      <span class="meta-pill">मुद्रा · अन्यथा न बताया जाए तो ₹ करोड़</span>
     </div>
   </div>
-  <div class="release-box"><div class="small-label">Tracking window</div><strong>Pre-release / Day 1</strong><div class="footnote" style="margin-top:5px">Refreshes from data.json</div></div>
+  <div class="release-box"><div class="small-label">निगरानी अवधि</div><strong>प्रदर्शन-पूर्व / प्रथम दिवस</strong><div class="footnote" style="margin-top:5px">data.json से अद्यतन</div></div>
 </header>
-<div class="notice"><span class="notice-icon">⚠</span><div><b>Data integrity rule.</b> A page refresh is not proof of a new source report. Automated values are accepted only when the scheduled fetch succeeds; published snapshots retain their original timestamp and scope. Forecasts are estimates, never actual collections.</div></div>
+<div class="notice"><span class="notice-icon">⚠</span><div><b>आँकड़ा-विश्वसनीयता नियम।</b> पृष्ठ को पुनः लोड करना नई स्रोत-रिपोर्ट का प्रमाण नहीं है। स्वचालित आँकड़े नियोजित प्राप्ति सफल होने पर ही स्वीकार किए जाते हैं। प्रकाशित अभिलेखों का मूल समय और दायरा सुरक्षित रहता है। अनुमान वास्तविक कमाई नहीं हैं।</div></div>
 
 <div class="grid">
 <section class="panel span-12">
-  <div class="section-head"><div><div class="eyebrow">01 / Executive snapshot</div><h2>Current reported position</h2><p>Selected published snapshot, with automated India feed shown separately below.</p></div><div class="controls"><label for="snapshotSelect">Published snapshot</label><select id="snapshotSelect"></select><button id="reloadBtn" type="button">Refresh data</button></div></div>
+  <div class="section-head"><div><div class="eyebrow">०१ / मुख्य सारांश</div><h2>वर्तमान प्रकाशित स्थिति</h2><p>चयनित प्रकाशित अभिलेख; भारत से प्राप्त स्वचालित आँकड़े नीचे अलग दर्शाए गए हैं।</p></div><div class="controls"><label for="snapshotSelect">Published snapshot</label><select id="snapshotSelect"></select><button id="reloadBtn" type="button">Refresh data</button></div></div>
   <div class="kpi-grid">
-    <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">Worldwide reported bookings</div><div class="kpi-value gold" id="worldwide">—</div><div class="kpi-sub">Selected snapshot · all reported markets</div></div>
-    <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">India reported bookings</div><div class="kpi-value cyan" id="india">—</div><div class="kpi-sub">Scope depends on source report</div></div>
-    <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">Overseas reported bookings</div><div class="kpi-value purple" id="overseas">—</div><div class="kpi-sub">Do not assume same coverage window</div></div>
-    <div class="kpi" style="--accent:var(--green)"><div class="kpi-label">Day 1 central forecast</div><div class="kpi-value green" id="day1Forecast">—</div><div class="kpi-sub">Planning estimate · not a collection</div></div>
+    <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">विश्वव्यापी अग्रिम बुकिंग</div><div class="kpi-value gold" id="worldwide">—</div><div class="kpi-sub">चयनित अभिलेख · सभी रिपोर्ट किए गए बाज़ार</div></div>
+    <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">भारत की अग्रिम बुकिंग</div><div class="kpi-value cyan" id="india">—</div><div class="kpi-sub">दायरा स्रोत-रिपोर्ट पर निर्भर</div></div>
+    <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">विदेशों की अग्रिम बुकिंग</div><div class="kpi-value purple" id="overseas">—</div><div class="kpi-sub">समान समयावधि मानकर न चलें</div></div>
+    <div class="kpi" style="--accent:var(--green)"><div class="kpi-label">प्रथम दिवस का केंद्रीय अनुमान</div><div class="kpi-value green" id="day1अनुमान">—</div><div class="kpi-sub">योजनागत अनुमान · वास्तविक कमाई नहीं</div></div>
   </div>
-  <div class="metric-strip"><div class="metric"><span>Selected report timestamp</span><strong id="snapshotTime">—</strong></div><div class="metric"><span>Snapshot coverage</span><strong id="snapshotScope">—</strong></div><div class="metric"><span>Source note</span><strong id="snapshotSource">—</strong></div></div>
-  <div class="callout" id="snapshotNotes">Snapshot notes will appear here.</div>
+  <div class="metric-strip"><div class="metric"><span>चयनित रिपोर्ट का समय</span><strong id="snapshotTime">—</strong></div><div class="metric"><span>अभिलेख का दायरा</span><strong id="snapshotदायरा">—</strong></div><div class="metric"><span>स्रोत टिप्पणी</span><strong id="snapshotSource">—</strong></div></div>
+  <div class="callout" id="snapshotNotes">अभिलेख संबंधी टिप्पणी यहाँ दिखाई जाएगी।</div>
 </section>
 
 <section class="panel span-12">
-  <div class="section-head"><div><div class="eyebrow">02 / Automated observation</div><h2>India Day 1 advance-booking monitor</h2><p>Values from the latest successful scheduled fetch, when available.</p></div><span id="feedStatusTag" class="tag warn">Status pending</span></div>
+  <div class="section-head"><div><div class="eyebrow">०२ / स्वचालित अवलोकन</div><h2>भारत में प्रथम-दिवस अग्रिम बुकिंग निगरानी</h2><p>उपलब्ध होने पर नवीनतम सफल नियोजित प्राप्ति के आँकड़े।</p></div><span id="feedStatusTag" class="tag warn">Status pending</span></div>
   <div class="kpi-grid">
-    <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">India advance gross</div><div class="kpi-value gold" id="autoIndiaGross">—</div><div class="kpi-sub">Source-reported Day 1 gross</div></div>
-    <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">Gross including block seats</div><div class="kpi-value cyan" id="autoIndiaWithBlocks">—</div><div class="kpi-sub">If reported by source</div></div>
-    <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">Tickets booked</div><div class="kpi-value purple" id="autoTickets">—</div><div class="kpi-sub" id="autoTicketsNote">Ticket count unavailable</div></div>
-    <div class="kpi" style="--accent:var(--green)"><div class="kpi-label">Shows / occupancy</div><div class="kpi-value green" id="autoShows">—</div><div class="kpi-sub" id="autoOccupancy">Occupancy not reported</div></div>
+    <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">भारत की अग्रिम सकल कमाई</div><div class="kpi-value gold" id="autoभारतGross">—</div><div class="kpi-sub">स्रोत द्वारा बताई गई प्रथम-दिवस सकल कमाई</div></div>
+    <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">अवरोधित सीटों सहित सकल कमाई</div><div class="kpi-value cyan" id="autoभारतWithBlocks">—</div><div class="kpi-sub">स्रोत में उपलब्ध होने पर</div></div>
+    <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">बुक किए गए टिकट</div><div class="kpi-value purple" id="autoTickets">—</div><div class="kpi-sub" id="autoTicketsNote">टिकट संख्या उपलब्ध नहीं</div></div>
+    <div class="kpi" style="--accent:var(--green)"><div class="kpi-label">शो / दर्शक-भराव</div><div class="kpi-value green" id="autoShows">—</div><div class="kpi-sub" id="autoOccupancy">दर्शक-भराव की सूचना उपलब्ध नहीं</div></div>
   </div>
-  <div class="metric-strip"><div class="metric"><span>Fetch timestamp</span><strong id="autoFetchedAt">Not yet fetched</strong></div><div class="metric"><span>Source update label</span><strong id="autoSourceUpdated">Not available</strong></div><div class="metric"><span>Feed status</span><strong id="autoFeedShort">Waiting for feed</strong></div></div>
-  <div class="callout" id="autoFeedMessage">The scheduled workflow has not reported a status.</div>
-  <p class="footnote"><a id="autoSourceLink" href="https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105" target="_blank" rel="noopener noreferrer">Open automated source ↗</a> · If parsing fails, the workflow may retain the last successful value; check status and timestamp before using it.</p>
+  <div class="metric-strip"><div class="metric"><span>प्राप्ति का समय</span><strong id="autoFetchedAt">अभी प्राप्त नहीं हुआ</strong></div><div class="metric"><span>स्रोत अद्यतन समय</span><strong id="autoSourceUpdated">उपलब्ध नहीं</strong></div><div class="metric"><span>डेटा-प्रवाह की स्थिति</span><strong id="autoFeedShort">डेटा की प्रतीक्षा</strong></div></div>
+  <div class="callout" id="autoFeedMessage">नियोजित प्रक्रिया ने अभी स्थिति नहीं बताई है।</div>
+  <p class="footnote"><a id="autoSourceLink" href="https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105" target="_blank" rel="noopener noreferrer">स्वचालित स्रोत खोलें ↗</a> · यदि आँकड़े पढ़ने में त्रुटि हो, तो पिछला सफल मान बना रह सकता है; उपयोग से पहले स्थिति और समय जाँचें।</p>
 </section>
 
-<section class="panel span-8"><div class="section-head"><div><div class="eyebrow">03 / Benchmark analysis</div><h2>Worldwide opening-day comparison</h2><p>Reported benchmark figures versus the current forecast. Bars are scaled to the largest value in this chart.</p></div></div><div id="comparisonChart" class="chart-wrap"></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>Reported benchmark</span><span><i class="legend-dot" style="background:var(--green)"></i>Forecast</span></div><div class="callout">Method note: reported Day 1 grosses may differ by source, territory coverage, currency conversion and gross/net accounting. Only compare like-for-like figures.</div></section>
-<section class="panel span-4"><div class="section-head"><div><div class="eyebrow">04 / Scenario model</div><h2>Day 1 forecast range</h2><p>Worldwide gross · ₹ crore</p></div></div><div id="scenarioChart" class="chart-wrap"></div><div class="metric-strip"><div class="metric"><span>Low case</span><strong id="scenarioLow">—</strong></div><div class="metric"><span>Central case</span><strong class="green" id="scenarioCentral">—</strong></div><div class="metric"><span>High case</span><strong id="scenarioHigh">—</strong></div></div><p class="footnote" id="scenarioRange">Scenario range depends on data.json.</p></section>
-<section class="panel span-7"><div class="section-head"><div><div class="eyebrow">05 / Snapshot history</div><h2>Published booking snapshots</h2><p>Snapshot records are preserved individually; this chart does not imply comparable growth unless scope matches.</p></div></div><div id="historyChart" class="chart-wrap"></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>Worldwide reported</span><span><i class="legend-dot" style="background:var(--cyan)"></i>India reported</span><span><i class="legend-dot" style="background:var(--purple)"></i>Overseas reported</span></div><div class="callout">The x-axis follows available snapshots. Missing values remain missing; the chart does not interpolate absent figures.</div></section>
-<section class="panel span-5"><div class="section-head"><div><div class="eyebrow">06 / Risk prioritisation</div><h2>Key forecast drivers</h2><p>Illustrative ranking, not measured statistical causality.</p></div></div><div id="riskChart" class="risk-list"></div><div class="callout"><strong>Interpretation:</strong> treat these as variables to monitor, not as quantified contributions to gross.</div></section>
+<section class="panel span-8"><div class="section-head"><div><div class="eyebrow">०३ / तुलनात्मक विश्लेषण</div><h2>विश्वव्यापी प्रथम-दिवस तुलना</h2><p>प्रकाशित तुलनात्मक आँकड़ों और वर्तमान अनुमान की तुलना। पट्टियों का पैमाना इस आलेख के सबसे बड़े मान के अनुसार है।</p></div></div><div id="comparisonChart" class="chart-wrap"></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>प्रकाशित तुलनात्मक आँकड़ा</span><span><i class="legend-dot" style="background:var(--green)"></i>अनुमान</span></div><div class="callout">पद्धति टिप्पणी: प्रथम-दिवस की सकल कमाई स्रोत, क्षेत्रीय दायरे, मुद्रा-परिवर्तन तथा सकल/शुद्ध गणना के कारण अलग हो सकती है। केवल समान आधार वाले आँकड़ों की तुलना करें।</div></section>
+<section class="panel span-4"><div class="section-head"><div><div class="eyebrow">०४ / संभावित परिदृश्य</div><h2>प्रथम-दिवस अनुमान-सीमा</h2><p>विश्वव्यापी सकल कमाई · ₹ करोड़</p></div></div><div id="scenarioChart" class="chart-wrap"></div><div class="metric-strip"><div class="metric"><span>निम्न अनुमान</span><strong id="scenarioLow">—</strong></div><div class="metric"><span>मध्य अनुमान</span><strong class="green" id="scenarioCentral">—</strong></div><div class="metric"><span>उच्च अनुमान</span><strong id="scenarioHigh">—</strong></div></div><p class="footnote" id="scenarioRange">अनुमान-सीमा data.json पर निर्भर है।</p></section>
+<section class="panel span-7"><div class="section-head"><div><div class="eyebrow">०५ / प्रकाशित अभिलेख</div><h2>प्रकाशित बुकिंग अभिलेख</h2><p>प्रत्येक अभिलेख अलग सुरक्षित रखा गया है; समान दायरा होने पर ही इस आलेख से वृद्धि की तुलना करें।</p></div></div><div id="historyChart" class="chart-wrap"></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>विश्वव्यापी प्रकाशित आँकड़ा</span><span><i class="legend-dot" style="background:var(--cyan)"></i>भारत का प्रकाशित आँकड़ा</span><span><i class="legend-dot" style="background:var(--purple)"></i>विदेशों का प्रकाशित आँकड़ा</span></div><div class="callout">क्षैतिज अक्ष उपलब्ध अभिलेखों के अनुसार है। अनुपलब्ध मान अनुपलब्ध ही रहते हैं; आलेख काल्पनिक मान नहीं जोड़ता।</div></section>
+<section class="panel span-5"><div class="section-head"><div><div class="eyebrow">०६ / जोखिम प्राथमिकता</div><h2>अनुमान को प्रभावित करने वाले प्रमुख कारक</h2><p>यह संकेतात्मक क्रम है, मापा गया सांख्यिकीय कारण-संबंध नहीं।</p></div></div><div id="riskChart" class="risk-list"></div><div class="callout"><strong>अर्थ-व्याख्या:</strong> इन्हें निगरानी योग्य कारक मानें, सकल कमाई में मापा हुआ योगदान नहीं।</div></section>
 
-<section class="panel span-12"><div class="section-head"><div><div class="eyebrow">07 / Methodology &amp; controls</div><h2>Analytical control framework</h2><p>A repeatable review loop for updating the forecast without mixing incompatible data.</p></div></div><div class="dmaic">
-<div class="dmaic-step"><b>DEFINE</b><span>Fix the target: worldwide Day 1 gross, local currency and market scope.</span></div>
-<div class="dmaic-step"><b>MEASURE</b><span>Capture the source, publication time, fetch time and reported coverage.</span></div>
-<div class="dmaic-step"><b>ANALYSE</b><span>Reconcile duplicate reports, block seats, territories and gross/net definitions.</span></div>
-<div class="dmaic-step"><b>IMPROVE</b><span>Update only after validating source changes and scope consistency.</span></div>
-<div class="dmaic-step"><b>CONTROL</b><span>Preserve timestamps, retain last successful data and flag stale observations.</span></div>
-</div><div class="callout"><strong>Data caveat:</strong> this dashboard displays the contents of <code>data.json</code>. It does not independently verify the source websites, and a browser refresh cannot update the JSON unless the scheduled workflow publishes a new file.</div></section>
+<section class="panel span-12"><div class="section-head"><div><div class="eyebrow">०७ / कार्य-पद्धति एवं नियंत्रण</div><h2>विश्लेषणात्मक नियंत्रण-ढाँचा</h2><p>असंगत आँकड़ों को मिलाए बिना अनुमान अद्यतन करने की दोहराई जा सकने वाली समीक्षा-प्रक्रिया।</p></div></div><div class="dmaic">
+<div class="dmaic-step"><b>परिभाषित करें</b><span>लक्ष्य तय करें: विश्वव्यापी प्रथम-दिवस सकल कमाई, स्थानीय मुद्रा और बाज़ार-दायरा।</span></div>
+<div class="dmaic-step"><b>मापें</b><span>स्रोत, प्रकाशन-समय, प्राप्ति-समय और रिपोर्ट का दायरा दर्ज करें।</span></div>
+<div class="dmaic-step"><b>विश्लेषण करें</b><span>दोहराई गई रिपोर्टों, अवरोधित सीटों, क्षेत्रों और सकल/शुद्ध परिभाषाओं का मिलान करें।</span></div>
+<div class="dmaic-step"><b>सुधारें</b><span>स्रोत में बदलाव और दायरे की संगति जाँचने के बाद ही अद्यतन करें।</span></div>
+<div class="dmaic-step"><b>नियंत्रित रखें</b><span>समय सुरक्षित रखें, अंतिम सफल आँकड़े बनाए रखें और पुराने अवलोकनों को चिह्नित करें।</span></div>
+</div><div class="callout"><strong>आँकड़ा-संबंधी सावधानी:</strong> यह डैशबोर्ड केवल इस फ़ाइल की सामग्री दिखाता है: <code>data.json</code>. यह स्रोत वेबसाइटों की स्वतंत्र पुष्टि नहीं करता। नियोजित प्रक्रिया नई JSON फ़ाइल प्रकाशित न करे तो ब्राउज़र रीफ़्रेश से आँकड़े नहीं बदलते।</div></section>
 
-<section class="panel span-12"><div class="section-head"><div><div class="eyebrow">08 / Sources</div><h2>Source directory</h2><p>Open source pages to validate original reporting and definitions.</p></div></div><div id="sourceList" class="source-list"></div><p class="footnote" id="lastUpdatedNote"></p></section>
+<section class="panel span-12"><div class="section-head"><div><div class="eyebrow">०८ / स्रोत</div><h2>स्रोत-सूची</h2><p>मूल रिपोर्ट और परिभाषाओं की पुष्टि के लिए स्रोत-पृष्ठ खोलें।</p></div></div><div id="sourceList" class="source-list"></div><p class="footnote" id="lastUpdatedNote"></p></section>
 
-<section class="panel span-12" id="snapshotRegisterPanel"><div class="section-head"><div><div class="eyebrow">09 / Audit trail</div><h2>Source coverage &amp; snapshot register</h2><p>Use timestamp and scope before interpreting differences between reports.</p></div></div><div class="table-wrap"><table><thead><tr><th>Source / report time</th><th>Scope</th><th>Worldwide</th><th>India</th><th>Overseas</th><th>Coverage / notes</th></tr></thead><tbody id="snapshotTable"></tbody></table></div></section>
+<section class="panel span-12" id="snapshotRegisterPanel"><div class="section-head"><div><div class="eyebrow">०९ / लेखा-परीक्षण अभिलेख</div><h2>स्रोत-दायरा एवं अभिलेख-सूची</h2><p>रिपोर्टों के अंतर की व्याख्या से पहले समय और दायरा जाँचें।</p></div></div><div class="table-wrap"><table><thead><tr><th>स्रोत / रिपोर्ट का समय</th><th>दायरा</th><th>विश्वव्यापी</th><th>भारत</th><th>विदेश</th><th>दायरा / टिप्पणी</th></tr></thead><tbody id="snapshotTable"></tbody></table></div></section>
 </div>
 <footer>
-  <span>Ramayana | Box Office Intelligence</span>
-  <span>Made by a cinema lover · <a href="https://x.com/thetanmaygupta" target="_blank" rel="noopener noreferrer">@thetanmaygupta</a></span>
-  <span>Analytical dashboard · Forecasts are not official results</span>
+  <span>रामायण | चलचित्र व्यवसाय विश्लेषण</span>
+  <span>एक सिनेमा-प्रेमी द्वारा निर्मित · <a href="https://x.com/thetanmaygupta" target="_blank" rel="noopener noreferrer">@thetanmaygupta</a></span>
+  <span>Analytical dashboard · अनुमानs are not official results</span>
 </footer>
 </main>
 
@@ -96,7 +115,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
   const integer = value => value === null || value === undefined || !Number.isFinite(Number(value)) ? "—" : Math.round(Number(value)).toLocaleString("en-IN");
   const pct = value => value === null || value === undefined || !Number.isFinite(Number(value)) ? "—" : Number(value).toLocaleString("en-IN",{maximumFractionDigits:1}) + "%";
   const date = value => {
-    if (!value) return "Not available";
+    if (!value) return "उपलब्ध नहीं";
     const d = new Date(value);
     return Number.isNaN(d.getTime()) ? safe(value) : d.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}) + " IST";
   };
@@ -109,11 +128,11 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     const pill = $("statusBadge")?.closest(".status-pill");
     if (pill) { pill.style.borderColor = kind === "good" ? "#286553" : kind === "bad" ? "#67363a" : "#66572f"; pill.style.color = kind === "good" ? "var(--green)" : kind === "bad" ? "var(--red)" : "#ffe1a0"; }
   }
-  function snapshotScope(s) {
-    const scope = safe(s?.scope || "scope not stated").replaceAll("_"," ");
+  function snapshotदायरा(s) {
+    const scope = safe(s?.scope || "दायरा नहीं बताया गया").replaceAll("_"," ");
     return scope.replace(/\b\w/g, c => c.toUpperCase());
   }
-  function getCentralForecast(data) {
+  function getCentralअनुमान(data) {
     const rows = Array.isArray(data?.forecastScenarios) ? data.forecastScenarios : [];
     const preferred = rows.find(x => /base case|moderate|central/i.test(safe(x?.name)));
     return number(preferred?.valueCr);
@@ -121,7 +140,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
   function renderSnapshot(data) {
     const rows = Array.isArray(data.bookingSnapshots) ? data.bookingSnapshots : [];
     if (!rows.length) {
-      ["worldwide","india","overseas","snapshotTime","snapshotScope","snapshotSource","snapshotNotes"].forEach(id => text(id,"No published snapshots in data.json"));
+      ["worldwide","india","overseas","snapshotTime","snapshotदायरा","snapshotSource","snapshotNotes"].forEach(id => text(id,"data.json में कोई प्रकाशित अभिलेख उपलब्ध नहीं है।"));
       return;
     }
     const index = Math.min(Math.max(selectedSnapshotIndex,0),rows.length-1);
@@ -130,7 +149,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     text("india",cr(number(s.indiaCr)));
     text("overseas",cr(number(s.overseasCr)));
     text("snapshotTime",date(s.timestamp));
-    text("snapshotScope",snapshotScope(s));
+    text("snapshotदायरा",snapshotदायरा(s));
     text("snapshotSource",s.sourceName || "Source not specified");
     text("snapshotNotes",s.notes || "No source notes supplied.");
   }
@@ -139,15 +158,15 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     const ok = safe(f.status).toLowerCase() === "success";
     const tag = $("feedStatusTag");
     if (tag) { tag.textContent = f.status ? safe(f.status).replaceAll("_"," ") : "status unavailable"; tag.className = "tag " + (ok ? "good" : f.status ? "bad" : "warn"); }
-    text("autoIndiaGross",cr(number(f.indiaGrossCr)));
+    text("autoभारतGross",cr(number(f.indiaGrossCr)));
     const withBlocks = number(f.indiaGrossIncludingBlocksCr);
-    text("autoIndiaWithBlocks",cr(withBlocks));
+    text("autoभारतWithBlocks",cr(withBlocks));
     text("autoTickets",integer(number(f.tickets)));
     text("autoTicketsNote",number(f.ticketsExcludingBlocks) !== null ? integer(f.ticketsExcludingBlocks) + " excluding blocks" : "Source-reported ticket count");
     text("autoShows",integer(number(f.shows)));
-    text("autoOccupancy",number(f.occupancyPct) !== null ? pct(number(f.occupancyPct)) + " reported occupancy" : "Occupancy not reported");
+    text("autoOccupancy",number(f.occupancyPct) !== null ? pct(number(f.occupancyPct)) + " reported occupancy" : "दर्शक-भराव की सूचना उपलब्ध नहीं");
     text("autoFetchedAt",date(f.fetchedAt));
-    text("autoSourceUpdated",f.sourceUpdatedText || "Not available");
+    text("autoSourceUpdated",f.sourceUpdatedText || "उपलब्ध नहीं");
     text("autoFeedShort",ok ? "Latest fetch succeeded" : (f.status || "No successful feed status"));
     text("autoFeedMessage",f.message || "No feed message supplied. Treat missing values as unavailable, not zero.");
     const link = $("autoSourceLink");
@@ -161,7 +180,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     const vals = rows.map(x => number(x.worldwideCr)).filter(v => v !== null);
     if (!vals.length) { el.innerHTML = empty("Benchmark values are missing or invalid."); return; }
     const max = Math.max(...vals,1) * 1.12, w=640, rowH=54, h=28+rows.length*rowH;
-    let svg = svgStart(w,h,"Worldwide opening day comparisons");
+    let svg = svgStart(w,h,"विश्वव्यापी opening day comparisons");
     rows.forEach((r,i) => {
       const y=22+i*rowH, v=number(r.worldwideCr), width=v===null?0:Math.max(0,(v/max)*390);
       const forecast = safe(r.type).toLowerCase().includes("forecast") || /ramayana/i.test(safe(r.title));
@@ -177,7 +196,7 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
     if(!el)return;
     const valid=rows.map(r=>({...r,v:number(r.valueCr)})).filter(r=>r.v!==null);
     if(!valid.length){el.innerHTML=empty("No valid forecast scenarios.");["scenarioLow","scenarioCentral","scenarioHigh","scenarioRange"].forEach(id=>text(id,"Unavailable"));return;}
-    const vals=valid.map(r=>r.v), min=Math.min(...vals), max=Math.max(...vals), central=getCentralForecast(data);
+    const vals=valid.map(r=>r.v), min=Math.min(...vals), max=Math.max(...vals), central=getCentralअनुमान(data);
     const low=valid.find(r=>/worst|low/i.test(safe(r.name)))?.v ?? min;
     const high=valid.find(r=>/best|high|optimistic/i.test(safe(r.name)))?.v ?? max;
     text("scenarioLow",cr(low));text("scenarioCentral",cr(central));text("scenarioHigh",cr(high));
@@ -214,12 +233,12 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
   function renderTable(data) {
     const body=$("snapshotTable");if(!body)return;
     const rows=Array.isArray(data.bookingSnapshots)?data.bookingSnapshots:[];
-    body.innerHTML=rows.length?rows.map(s=>`<tr><td><strong>${esc(s.sourceName||s.label||"Source")}</strong><br><span class="muted">${esc(date(s.timestamp))}</span></td><td>${esc(snapshotScope(s))}</td><td>${esc(cr(number(s.worldwideCr)))}</td><td>${esc(cr(number(s.indiaCr)))}</td><td>${esc(cr(number(s.overseasCr)))}</td><td>${esc(s.notes||"No notes supplied.")}</td></tr>`).join(""):`<tr><td colspan="6">No snapshot records found.</td></tr>`;
+    body.innerHTML=rows.length?rows.map(s=>`<tr><td><strong>${esc(s.sourceName||s.label||"Source")}</strong><br><span class="muted">${esc(date(s.timestamp))}</span></td><td>${esc(snapshotदायरा(s))}</td><td>${esc(cr(number(s.worldwideCr)))}</td><td>${esc(cr(number(s.indiaCr)))}</td><td>${esc(cr(number(s.overseasCr)))}</td><td>${esc(s.notes||"No notes supplied.")}</td></tr>`).join(""):`<tr><td colspan="6">No snapshot records found.</td></tr>`;
   }
   function renderAll(data) {
     currentData=data;
     renderSnapshot(data);renderFeed(data.automatedFeed);renderComparison(data);renderScenarios(data);renderHistory(data);renderRisks(data);renderSources(data);renderTable(data);
-    const central=getCentralForecast(data);text("day1Forecast",cr(central));
+    const central=getCentralअनुमान(data);text("day1अनुमान",cr(central));
     text("lastUpdatedNote",`Data file last updated: ${date(data.lastUpdated)} · Data status: ${data.dataStatus||"not specified"}. ${data.statusNote||""}`);
     const feedOk=safe(data.automatedFeed?.status).toLowerCase()==="success";
     setStatus(feedOk?"Data loaded · feed reports success":"Data loaded · feed status needs review",feedOk?"good":"warn");
