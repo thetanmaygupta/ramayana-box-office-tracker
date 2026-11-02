@@ -67,7 +67,7 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
 </section>
 
 <section class="panel span-8"><div class="section-head"><div><div class="eyebrow">03 / Benchmark analysis</div><h2>Worldwide opening-day comparison</h2><p>Reported benchmark figures versus the central scenario from data.json. The Ramayana bar follows the current forecast scenario.</p></div></div><div id="comparisonChart" class="chart-wrap"></div><div class="callout" id="comparisonIntegrity">Benchmark coverage is being checked.</div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>Reported benchmark</span><span><i class="legend-dot" style="background:var(--green)"></i>Forecast</span></div><div class="callout">Method note: reported Day 1 grosses may differ by source, territory coverage, currency conversion and gross/net accounting. Only compare like-for-like figures.</div></section>
-<section class="panel span-4"><div class="section-head"><div><div class="eyebrow">04 / Scenario model</div><h2>Day 1 forecast range</h2><p>Worldwide gross · ₹ crore · scenarios respond to reported India advance gross</p></div></div><div id="scenarioChart" class="chart-wrap"></div><div class="metric-strip"><div class="metric"><span>Low case</span><strong id="scenarioLow">—</strong></div><div class="metric"><span>Central case</span><strong class="green" id="scenarioCentral">—</strong></div><div class="metric"><span>High case</span><strong id="scenarioHigh">—</strong></div></div><p class="footnote" id="scenarioRange">Scenario range depends on data.json.</p><div class="callout" id="forecastIntegrity">Checking forecast integrity…</div></section>
+<section class="panel span-4"><div class="section-head"><div><div class="eyebrow">04 / Scenario model</div><h2>Day 1 forecast range</h2><p>Worldwide gross · ₹ crore · values refresh from data.json</p></div></div><div id="scenarioChart" class="chart-wrap"></div><div class="metric-strip"><div class="metric"><span>Low case</span><strong id="scenarioLow">—</strong></div><div class="metric"><span>Central case</span><strong class="green" id="scenarioCentral">—</strong></div><div class="metric"><span>High case</span><strong id="scenarioHigh">—</strong></div></div><p class="footnote" id="scenarioRange">Scenario range depends on data.json.</p><div class="callout" id="forecastIntegrity">Checking forecast integrity…</div></section>
 <section class="panel span-7"><div class="section-head"><div><div class="eyebrow">05 / Snapshot history</div><h2>Published booking snapshots</h2><p>Snapshot records are preserved individually; this chart does not imply comparable growth unless scope matches.</p></div></div><div id="historyChart" class="chart-wrap"></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--gold)"></i>Worldwide reported</span><span><i class="legend-dot" style="background:var(--cyan)"></i>India reported</span><span><i class="legend-dot" style="background:var(--purple)"></i>Overseas reported</span></div><div class="callout">The x-axis follows available snapshots. Missing values remain missing; the chart does not interpolate absent figures.</div></section>
 <section class="panel span-5"><div class="section-head"><div><div class="eyebrow">06 / Risk prioritisation</div><h2>Key forecast drivers</h2><p>Illustrative ranking, not measured statistical causality.</p></div></div><div id="riskChart" class="risk-list"></div><div class="callout"><strong>Interpretation:</strong> treat these as variables to monitor, not as quantified contributions to gross.</div></section>
 
@@ -134,45 +134,26 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     const stamp = feed?.fetchedAt ? Date.parse(feed.fetchedAt) : NaN;
     return Number.isFinite(stamp) ? Math.max(0, Date.now() - stamp) : null;
   }
-  function relativeAge(milliseconds) {
-    if (!Number.isFinite(milliseconds) || milliseconds < 0) return "age unavailable";
-    const minutes = Math.floor(milliseconds / 60000);
-    if (minutes < 1) return "just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 48) return `${hours}h ${minutes % 60}m ago`;
-    const days = Math.floor(hours / 24);
-    return `${days}d ${hours % 24}h ago`;
-  }
   function feedFreshness(feed) {
     const status = safe(feed?.status).toLowerCase();
     const age = feedAgeMs(feed);
-    const sourceStamp = Date.parse(feed?.sourceUpdatedAt || "");
-    const sourceAge = Number.isFinite(sourceStamp) ? Math.max(0, Date.now() - sourceStamp) : null;
     if (status !== "success") {
       if (status === "snapshot_only" || (feed?.sourceUpdatedAt && !feed?.fetchedAt)) {
-        if (sourceAge !== null && sourceAge > FEED_STALE_MS) {
-          return { label: `Manual snapshot · source report ${relativeAge(sourceAge)}`, kind: "bad" };
+        const sourceStamp = Date.parse(feed.sourceUpdatedAt || "");
+        if (Number.isFinite(sourceStamp) && Date.now() - sourceStamp > FEED_STALE_MS) {
+          return { label: "Manual snapshot · source timestamp is stale", kind: "bad" };
         }
-        return { label: "Manual snapshot · fetch unverified", kind: "warn" };
+        return { label: "Manual snapshot · workflow fetch unverified", kind: "warn" };
       }
       return { label: "No verified successful fetch", kind: "warn" };
     }
     if (age === null) return { label: "Fetch time unavailable", kind: "warn" };
-    if (age > FEED_STALE_MS) {
-      return { label: `Fetch ${relativeAge(age)} · last successful fetch is stale`, kind: "bad" };
+    if (age > FEED_STALE_MS) return { label: "Last successful fetch is stale", kind: "bad" };
+    const sourceStamp = Date.parse(feed?.sourceUpdatedAt || "");
+    if (Number.isFinite(sourceStamp) && Date.now() - sourceStamp > FEED_STALE_MS) {
+      return { label: "Fetch succeeded; source report is stale", kind: "warn" };
     }
-    if (sourceAge === null) {
-      const sourceLabel = safe(feed?.sourceUpdatedText).trim();
-      if (sourceLabel) {
-        return { label: `Fetch ${relativeAge(age)} · source update label ${sourceLabel} (unverified)`, kind: "warn" };
-      }
-      return { label: `Fetch ${relativeAge(age)} · source timestamp not provided`, kind: "warn" };
-    }
-    if (sourceAge > FEED_STALE_MS) {
-      return { label: `Fetch ${relativeAge(age)} · source report ${relativeAge(sourceAge)}`, kind: "warn" };
-    }
-    return { label: `Fetch ${relativeAge(age)} · source updated ${relativeAge(sourceAge)}`, kind: "good" };
+    return { label: "Recent successful fetch · verify source timestamp", kind: "good" };
   }
   function effectiveComparisonRows(data) {
     const rows = Array.isArray(data?.openingDayComparisons) ? data.openingDayComparisons.map(r => ({...r})) : [];
@@ -201,46 +182,27 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     } catch (e) { console.warn("Could not persist local observation history:", e); }
   }
   function calculateForecast(data) {
-    /* Transparent heuristic scenario model. This is intentionally NOT described as
-       statistically calibrated: it scales six planning scenarios using the latest
-       India Day 1 advance gross relative to a documented reference observation. */
-    const sourceRows = Array.isArray(data?.forecastScenarios) ? data.forecastScenarios : [];
-    const source = sourceRows.map(r => ({...r, value: number(r.valueCr)})).filter(r => r.value !== null);
-    const centralRow = source.find(r => /base case|moderate|central/i.test(safe(r.name)));
-    const central = number(centralRow?.value) ?? 155;
-    const observed = number(data?.automatedFeed?.indiaGrossCr);
-    // Reference point comes from the project snapshot available when this model was added.
-    // Update this constant only when intentionally resetting the comparison baseline.
-    const referenceIndiaAdvanceCr = 23.91;
-    const validObservation = observed !== null && observed > 0;
-    const rawChangePct = validObservation ? ((observed / referenceIndiaAdvanceCr) - 1) * 100 : 0;
-    // Damp booking changes and cap the effect at +/-20% to avoid runaway projections.
-    const adjustmentPct = validObservation ? Math.max(-20, Math.min(20, rawChangePct * 0.5)) : 0;
+    /* Transparent, opt-in model. It only adjusts scenarios when data.json supplies
+       forecastModel with explicit calibration parameters; otherwise it preserves
+       the authored scenarios rather than inventing a multiplier. */
+    const model = data.forecastModel;
+    const rows = Array.isArray(data.forecastScenarios) ? data.forecastScenarios : [];
+    const base = rows.map(r => ({...r, value: number(r.valueCr)})).filter(r => r.value !== null);
+    if (!model || model.enabled !== true || !Number.isFinite(number(model.baseIndiaAdvanceCr)) || !Number.isFinite(number(model.maxAdjustmentPct))) {
+      return { rows: base, mode: "static", note: "Using the scenario values published in data.json. Add a calibrated forecastModel to enable model-driven adjustments." };
+    }
+    const observed = number(data.automatedFeed?.indiaGrossCr);
+    const feedAge = feedAgeMs(data.automatedFeed);
+    if (observed === null || feedAge === null || feedAge > FEED_STALE_MS || safe(data.automatedFeed?.status).toLowerCase() !== "success") {
+      return { rows: base, mode: "static", note: "Forecast model held: a recent successful India advance-booking observation is required." };
+    }
+    const reference = number(model.baseIndiaAdvanceCr);
+    if (reference <= 0) return { rows: base, mode: "static", note: "Forecast model held: baseIndiaAdvanceCr must be greater than zero." };
+    const maxAdj = Math.max(0, Math.min(30, number(model.maxAdjustmentPct)));
+    const raw = (observed / reference) - 1;
+    const adjustmentPct = Math.max(-maxAdj, Math.min(maxAdj, raw * 100 * Math.max(0, Math.min(1, number(model.sensitivity) ?? 0.5))));
     const factor = 1 + adjustmentPct / 100;
-    const templates = [
-      {name:"Worst case", base:100, band:"downside"},
-      {name:"Pessimistic", base:125, band:"downside"},
-      {name:"Moderate", base:145, band:"central"},
-      {name:"Base case", base:central, band:"central"},
-      {name:"Optimistic", base:190, band:"upside"},
-      {name:"Best case", base:220, band:"upside"}
-    ];
-    const rows = templates.map(t => ({
-      name:t.name,
-      value:t.base * factor,
-      valueCr:t.base * factor,
-      assumption:`Illustrative ${t.band} planning scenario; scaled ${adjustmentPct >= 0 ? "+" : ""}${adjustmentPct.toFixed(1)}% from the reference booking observation.`,
-      basis:"Heuristic scenario, not a calibrated statistical prediction or an official collection."
-    }));
-    const feedStatus = safe(data?.automatedFeed?.status).toLowerCase();
-    const sourceTime = data?.automatedFeed?.sourceUpdatedAt ? date(data.automatedFeed.sourceUpdatedAt) : "timestamp unavailable";
-    const verification = feedStatus === "success" ? "The feed reports a successful fetch" : "The source observation is not workflow-verified";
-    return {
-      rows,
-      mode: "dynamic-heuristic",
-      adjustmentPct,
-      note: `${verification}. India Day 1 advance gross is ${validObservation ? cr(observed) : "unavailable"}; reference is ${cr(referenceIndiaAdvanceCr)} (${sourceTime}). Scenarios are scaled by half the relative booking change, capped at ±20%. This is a transparent heuristic, not a calibrated prediction.`
-    };
+    return { rows: base.map(r => ({...r, value: r.value * factor})), mode: "model", adjustmentPct, note: `Model adjustment ${adjustmentPct >= 0 ? "+" : ""}${adjustmentPct.toFixed(1)}% versus configured India advance-booking reference. Calibration quality depends on the assumptions in data.json.` };
   }
   function effectiveForecastData(data) {
     const result = calculateForecast(data);
@@ -295,14 +257,15 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     if(!el)return;
     const valid=rows.map(r=>({...r,v:number(r.valueCr)})).filter(r=>r.v!==null);
     if(!valid.length){el.innerHTML=empty("No valid forecast scenarios.");["scenarioLow","scenarioCentral","scenarioHigh","scenarioRange"].forEach(id=>text(id,"Unavailable"));return;}
-    const vals=valid.map(r=>r.v), min=Math.min(...vals), max=Math.max(...vals), central=getCentralForecast(effectiveForecastData(data));
+    const vals=valid.map(r=>r.v), min=Math.min(...vals), max=Math.max(...vals), central=getCentralForecast(data);
     const low=valid.find(r=>/worst|low/i.test(safe(r.name)))?.v ?? min;
     const high=valid.find(r=>/best|high|optimistic/i.test(safe(r.name)))?.v ?? max;
     text("scenarioLow",cr(low));text("scenarioCentral",cr(central));text("scenarioHigh",cr(high));
     text("scenarioRange",`Illustrative range: ${cr(min)}–${cr(max)}. ${forecast.note}`);
     const integrity = $("forecastIntegrity");
     if (integrity) {
-      integrity.innerHTML = `<strong>Dynamic scenario model · heuristic</strong><br>${esc(forecast.note)}`;
+      const enabled = forecast.mode === "model";
+      integrity.innerHTML = `<strong>${enabled ? "Model-driven adjustment active" : "Scenario-only mode"}</strong><br>${esc(enabled ? "Forecast values are adjusted by the configured rule. This is still a heuristic, not a statistically validated prediction." : "No calibrated forecast model is enabled in data.json. The displayed values are planning scenarios and will not move just because the booking figure changes.")}`;
     }
     const w=360,rowH=37,h=20+valid.length*rowH;let svg=svgStart(w,h,"Day one forecast scenarios");
     valid.forEach((r,i)=>{const y=13+i*rowH,width=max>0?(r.v/max)*205:0;const centralish=/base case|moderate|central/i.test(safe(r.name));svg+=`<text x="0" y="${y+11}">${esc(r.name)}</text><rect x="0" y="${y+17}" width="205" height="9" rx="4" fill="#1c2a40"/><rect x="0" y="${y+17}" width="${width}" height="9" rx="4" fill="${centralish?"var(--green)":"var(--gold)"}"/><text x="214" y="${y+25}" class="value">${Math.round(r.v)}</text>`;});
@@ -346,7 +309,11 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     text("lastUpdatedNote",`Data file last updated: ${date(data.lastUpdated)} · Data status: ${data.dataStatus||"not specified"}. ${data.statusNote||""}`);
     const freshness = feedFreshness(data.automatedFeed);
     text("lastCheckedPill", "Browser check · " + new Date().toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", timeZone:"Asia/Kolkata"}) + " IST");
-    setStatus(`Dashboard loaded · ${freshness.label.toLowerCase()}`, freshness.kind);
+    const dataFileStamp = data.lastUpdated ? Date.parse(data.lastUpdated) : NaN;
+    const dataFileStale = Number.isFinite(dataFileStamp) && Date.now() - dataFileStamp > 24 * 60 * 60 * 1000;
+    const feedIsRecent = safe(data.automatedFeed?.status).toLowerCase() === "success" && feedAgeMs(data.automatedFeed) !== null && feedAgeMs(data.automatedFeed) <= FEED_STALE_MS;
+    if (dataFileStale && !feedIsRecent) setStatus("Dashboard loaded · data.json is over 24h old", "bad");
+    else setStatus(`Dashboard loaded · ${freshness.label.toLowerCase()}`, freshness.kind);
   }
   async function loadData({quiet=false}={}) {
     if (requestInFlight) return;
