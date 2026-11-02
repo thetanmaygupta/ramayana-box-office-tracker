@@ -114,7 +114,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   </header>
 
   <div class="grid">
-    <!-- 01 / WORLDWIDE ALL-DATES ADVANCE BOOKINGS -->
     <section class="panel" id="worldwidePanel">
       <div class="section-head"><div><div class="eyebrow">01 / Worldwide observation</div><h2>Worldwide Advance Bookings — All Dates</h2></div></div>
       <p class="section-description">The latest available published snapshot explicitly covering all dates, with India and overseas figures shown separately.</p>
@@ -131,7 +130,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="callout">Advance bookings are not actual box-office collections. Snapshot figures may differ by source, timestamp, territory coverage, blocked-seat treatment and reporting definition.</div>
     </section>
 
-    <!-- 02 / AUTOMATED OBSERVATION -->
     <section class="panel" id="indiaPanel">
       <div class="section-head"><div><div class="eyebrow">02 / Automated observation</div><h2>India Day 1 advance-booking monitor</h2></div></div>
       <p class="section-description">Source-reported India Day 1 figures, with workflow verification shown separately.</p>
@@ -151,7 +149,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <p style="margin-top:18px" id="feedSourceLink"></p>
     </section>
 
-    <!-- 03 / BENCHMARK ANALYSIS -->
     <section class="panel" id="comparisonPanel">
       <div class="section-head"><div><div class="eyebrow">03 / Benchmark analysis</div><h2>Worldwide opening-day comparison</h2></div></div>
       <p class="section-description">Reported benchmark figures versus the central scenario from data.json. Ramayana's bar follows the current central scenario.</p>
@@ -161,7 +158,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="callout">Method note: reported Day 1 grosses may differ by source, territory coverage, currency conversion and gross/net accounting. Only compare like-for-like figures.</div>
     </section>
 
-    <!-- 04 / SCENARIO MODEL -->
     <section class="panel" id="scenarioPanel">
       <div class="section-head"><div><div class="eyebrow">04 / Scenario model</div><h2>Day 1 forecast range</h2></div></div>
       <p class="section-description">Worldwide gross · ₹ crore · values read from data.json.</p>
@@ -175,7 +171,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="callout"><strong style="color:var(--text)">Scenario-only mode</strong><br>No calibrated forecast model is enabled in data.json. These are planning scenarios and will not move simply because the booking figure changes.</div>
     </section>
 
-    <!-- 05 / SNAPSHOT HISTORY -->
     <section class="panel" id="snapshotPanel">
       <div class="section-head"><div><div class="eyebrow">05 / Snapshot history</div><h2>Published booking snapshots</h2></div></div>
       <p class="section-description">Snapshot records are preserved individually; the chart does not imply comparable growth unless reporting scope matches.</p>
@@ -184,14 +179,12 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="callout">The x-axis follows available snapshots. Missing values remain missing; this dashboard does not interpolate absent figures.</div>
     </section>
 
-    <!-- 06 / RISK PRIORITISATION -->
     <section class="panel" id="riskPanel">
       <div class="section-head"><div><div class="eyebrow">06 / Risk prioritisation</div><h2>Key forecast drivers</h2></div></div>
       <p class="section-description">Illustrative ranking, not measured statistical causality.</p>
       <div id="riskBars"></div>
     </section>
 
-    <!-- 07 / METHODOLOGY -->
     <section class="panel" id="methodologyPanel">
       <div class="section-head"><div><div class="eyebrow">07 / Methodology & controls</div><h2>How the tracker treats data</h2></div></div>
       <div class="steps">
@@ -204,14 +197,12 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="callout"><strong style="color:var(--text)">Data caveat:</strong> This dashboard displays the contents of data.json. An automated fetch can succeed while the source remains unchanged or while its update timestamp is unavailable. Scenario values are illustrative until calibrated against historical outcomes.</div>
     </section>
 
-    <!-- 08 / SOURCES -->
     <section class="panel" id="sourcesPanel">
       <div class="section-head"><div><div class="eyebrow">08 / Sources</div><h2>Source directory</h2></div></div>
       <p class="section-description">Use the original reporting page to verify values, publication timestamps and reporting scope.</p>
       <div class="sources" id="sourcesList"><div class="source muted">Loading sources…</div></div>
     </section>
 
-    <!-- 09 / SNAPSHOT REGISTER -->
     <section class="panel" id="snapshotRegisterPanel">
       <div class="section-head"><div><div class="eyebrow">09 / Audit trail</div><h2>Snapshot register</h2></div></div>
       <p class="section-description">Recorded snapshots, with their source names, timestamps and scopes.</p>
@@ -257,15 +248,37 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       .sort((a,b)=>new Date(b.timestamp||0)-new Date(a.timestamp||0))[0];
     const feed = data.automatedFeed || {};
     const fetched = feed.fetchedAt ? new Date(feed.fetchedAt) : null;
-    const age = fetched && !Number.isNaN(fetched.getTime()) ? Math.max(0,Date.now()-fetched.getTime()) : null;
+    const age = fetched && !Number.isNaN(fetched.getTime()) ? Date.now()-fetched.getTime() : null;
     const feedGood = String(feed.status||"").toLowerCase() === "success";
     const sourceTime = feed.sourceUpdatedText || "";
-    let status = "Fetch time unavailable";
-    if (!feedGood) status = "Latest fetch not confirmed successful";
-    else if (age !== null && age > FEED_STALE_MS) status = "Last successful fetch is stale";
-    else status = "Recent successful fetch · verify source timestamp";
-    set("statusBadge",`Dashboard loaded · ${status.toLowerCase()}`);
-    set("feedStatus",status);
+    let status;
+    let badgeText;
+
+    if (!feedGood) {
+      status = "Update failed · Check source";
+      badgeText = status;
+    } else if (
+      age === null ||
+      age < 0 ||
+      !sourceTime
+    ) {
+      status = "Source timestamp unverified";
+      badgeText = status;
+    } else if (age > FEED_STALE_MS) {
+      status = "Last successful fetch is stale";
+      badgeText = status;
+    } else {
+      status = "Fetch successful · Verify source timestamp";
+      badgeText = `Fetch successful · Source: ${sourceTime}`;
+    }
+
+    set("statusBadge", badgeText);
+    set("feedStatus", status);
+    $("feedStatus").style.color =
+      !feedGood || age === null || age < 0 ||
+      age > FEED_STALE_MS || !sourceTime
+        ? "var(--red)"
+        : "var(--green)";
     set("lastCheckedPill",`Browser check · ${new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})} IST`);
     set("worldwideTotal",allDates ? cr(allDates.worldwideCr) : "Unavailable");
     set("worldwideIndia",allDates ? cr(allDates.indiaCr) : "—");
