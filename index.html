@@ -46,17 +46,15 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     <div class="status-row">
       <span class="status-pill"><i class="status-dot"></i><span id="statusBadge" aria-live="polite">Loading data status…</span></span>
       <span class="meta-pill">Release date · 5 November 2026</span>
-      <span class="meta-pill">Currency · ₹ crore unless stated</span>
       <span class="meta-pill" id="lastCheckedPill">Browser check · waiting</span>
     </div>
   </div>
-  <div class="release-box"><div class="small-label">Tracking window</div><strong>Pre-release / Day 1</strong><div class="footnote" style="margin-top:5px">Refreshes from data.json</div></div>
 </header>
 <div class="notice"><span class="notice-icon">⚠</span><div><b>Data integrity rule.</b> A page refresh is not proof of a new source report. Automated values are accepted only when the scheduled fetch succeeds; published snapshots retain their original timestamp and scope. Forecasts are estimates, never actual collections.</div></div>
 
 <div class="grid">
 <section class="panel span-12">
-  <div class="section-head"><div><div class="eyebrow">01 / Executive snapshot</div><h2>Current reported position</h2><p>Selected published snapshot, with automated India feed shown separately below.</p></div><div class="controls"><label for="snapshotSelect">Published snapshot</label><select id="snapshotSelect"></select><button id="reloadBtn" type="button">Refresh data</button></div></div>
+  <div class="section-head"><div><div class="eyebrow">01 / Executive snapshot</div><h2>Current reported position</h2><p>Latest published snapshot, with automated India feed shown separately below.</p></div></div>
   <div class="kpi-grid">
     <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">Worldwide reported bookings</div><div class="kpi-value gold" id="worldwide">—</div><div class="kpi-sub">Selected snapshot · all reported markets</div></div>
     <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">India reported bookings</div><div class="kpi-value cyan" id="india">—</div><div class="kpi-sub">Scope depends on source report</div></div>
@@ -370,8 +368,6 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     }
   }
   document.addEventListener("DOMContentLoaded", async ()=>{
-    const btn=$("reloadBtn");if(btn)btn.addEventListener("click",()=>loadData());
-    const select=$("snapshotSelect");if(select)select.addEventListener("change",()=>{selectedSnapshotIndex=Number(select.value)||0;if(currentData)renderSnapshot(currentData);});
     await loadData();
     const configuredMinutes = Number(currentData?.methodology?.refreshIntervalMinutes);
     const interval = Number.isFinite(configuredMinutes) && configuredMinutes > 0
