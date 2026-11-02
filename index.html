@@ -54,18 +54,6 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
 
 <div class="grid">
 <section class="panel span-12">
-  <div class="section-head"><div><div class="eyebrow">01 / Executive snapshot</div><h2>Current reported position</h2><p>Latest published snapshot, with automated India feed shown separately below.</p></div></div>
-  <div class="kpi-grid">
-    <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">Worldwide reported bookings</div><div class="kpi-value gold" id="worldwide">—</div><div class="kpi-sub">Selected snapshot · all reported markets</div></div>
-    <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">India reported bookings</div><div class="kpi-value cyan" id="india">—</div><div class="kpi-sub">Scope depends on source report</div></div>
-    <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">Overseas reported bookings</div><div class="kpi-value purple" id="overseas">—</div><div class="kpi-sub">Do not assume same coverage window</div></div>
-    <div class="kpi" style="--accent:var(--green)"><div class="kpi-label">Day 1 central forecast</div><div class="kpi-value green" id="day1Forecast">—</div><div class="kpi-sub">Planning estimate · not a collection</div></div>
-  </div>
-  <div class="metric-strip"><div class="metric"><span>Selected report timestamp</span><strong id="snapshotTime">—</strong></div><div class="metric"><span>Snapshot coverage</span><strong id="snapshotScope">—</strong></div><div class="metric"><span>Source note</span><strong id="snapshotSource">—</strong></div></div>
-  <div class="callout" id="snapshotNotes">Snapshot notes will appear here.</div>
-</section>
-
-<section class="panel span-12">
   <div class="section-head"><div><div class="eyebrow">02 / Automated observation</div><h2>India Day 1 advance-booking monitor</h2><p>Source-reported India Day 1 figures, with workflow verification shown separately.</p></div><span id="feedStatusTag" class="tag warn">Status pending</span></div>
   <div class="kpi-grid">
     <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">India advance gross</div><div class="kpi-value gold" id="autoIndiaGross">—</div><div class="kpi-sub">Source-reported Day 1 gross</div></div>
@@ -220,22 +208,6 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     const result = calculateForecast(data);
     return {...data, forecastScenarios: result.rows.map(r => ({...r, valueCr: r.value}))};
   }
-  function renderSnapshot(data) {
-    const rows = Array.isArray(data.bookingSnapshots) ? data.bookingSnapshots : [];
-    if (!rows.length) {
-      ["worldwide","india","overseas","snapshotTime","snapshotScope","snapshotSource","snapshotNotes"].forEach(id => text(id,"No published snapshots in data.json"));
-      return;
-    }
-    const index = Math.min(Math.max(selectedSnapshotIndex,0),rows.length-1);
-    const s = rows[index] || {};
-    text("worldwide",cr(number(s.worldwideCr)));
-    text("india",cr(number(s.indiaCr)));
-    text("overseas",cr(number(s.overseasCr)));
-    text("snapshotTime",date(s.timestamp));
-    text("snapshotScope",snapshotScope(s));
-    text("snapshotSource",s.sourceName || "Source not specified");
-    text("snapshotNotes",s.notes || "No source notes supplied.");
-  }
   function renderFeed(feed) {
     const f = feed && typeof feed === "object" ? feed : {};
     const freshness = feedFreshness(f);
@@ -332,14 +304,15 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
   function renderAll(data) {
     currentData=data;
     saveObservation(data.automatedFeed);
-    renderSnapshot(data);renderFeed(data.automatedFeed);renderComparison(data);renderScenarios(data);renderHistory(data);renderRisks(data);renderSources(data);renderTable(data);
+    renderFeed(data.automatedFeed);renderComparison(data);renderScenarios(data);renderHistory(data);renderRisks(data);renderSources(data);renderTable(data);
     const central=getCentralForecast(effectiveForecastData(data));text("day1Forecast",cr(central));
     text("lastUpdatedNote",`Data file last updated: ${date(data.lastUpdated)} · Data status: ${data.dataStatus||"not specified"}. ${data.statusNote||""}`);
     const freshness = feedFreshness(data.automatedFeed);
     text("lastCheckedPill", "Browser check · " + new Date().toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", timeZone:"Asia/Kolkata"}) + " IST");
     const dataFileStamp = data.lastUpdated ? Date.parse(data.lastUpdated) : NaN;
     const dataFileStale = Number.isFinite(dataFileStamp) && Date.now() - dataFileStamp > 24 * 60 * 60 * 1000;
-    if (dataFileStale) setStatus("Dashboard loaded · data.json is over 24h old", "bad");
+    const feedIsRecent = safe(data.automatedFeed?.status).toLowerCase() === "success" && feedAgeMs(data.automatedFeed) !== null && feedAgeMs(data.automatedFeed) <= FEED_STALE_MS;
+    if (dataFileStale && !feedIsRecent) setStatus("Dashboard loaded · data.json is over 24h old", "bad");
     else setStatus(`Dashboard loaded · ${freshness.label.toLowerCase()}`, freshness.kind);
   }
   async function loadData({quiet=false}={}) {
@@ -358,7 +331,6 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     } catch(error) {
       console.error("Dashboard data load failed:",error);
       setStatus("Data load failed","bad");
-      text("snapshotNotes",`Unable to load data.json: ${error.message}. Confirm that index.html and data.json are in the same published folder and that the JSON is valid.`);
       text("autoFeedMessage","Dashboard data could not be loaded. The figures above are unavailable until data.json loads successfully.");
       const chartIds=["comparisonChart","scenarioChart","historyChart","riskChart"];
       chartIds.forEach(id=>{if($(id))$(id).innerHTML=empty("Data unavailable — check data.json and deployment path.");});
@@ -378,4 +350,4 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
 })();
 </script>
 </body>
-</html>
+</html>w
