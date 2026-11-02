@@ -250,18 +250,18 @@ def main():
             indent=2,
         ))
     except Exception as exc:
-    feed["status"] = "stale" if feed.get("fetchedAt") else "error"
-    feed["lastAttemptAt"] = fetched_at
-    feed["message"] = (
-        f"Automatic check failed ({type(exc).__name__}: {exc}). "
-        "Previous successful values were retained."
-    )
-    DATA_FILE.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    print(feed["message"], file=sys.stderr)
-    return
+        feed["status"] = "stale" if feed.get("fetchedAt") else "error"
+        feed["lastAttemptAt"] = fetched_at
+        feed["message"] = (
+            f"Automatic check failed ({type(exc).__name__}: {exc}). "
+            "Previous successful values were retained."
+        )
+        DATA_FILE.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(feed["message"], file=sys.stderr)
+        return
 
     DATA_FILE.write_text(
         json.dumps(data, ensure_ascii=False, indent=2) + "\n",
