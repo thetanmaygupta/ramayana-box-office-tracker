@@ -103,4 +103,151 @@ button,select{font:inherit;color:var(--text);background:#152239;border:1px solid
   function setStatus(message, kind="warn") {
     text("statusBadge", message);
     const pill = $("statusBadge")?.closest(".status-pill");
-    if (pill) { pill.style.borderColor = kind === "good" ? "#286553" : kind === "bad
+    if (pill) { pill.style.borderColor = kind === "good" ? "#286553" : kind === "bad" ? "#67363a" : "#66572f"; pill.style.color = kind === "good" ? "var(--green)" : kind === "bad" ? "var(--red)" : "#ffe1a0"; }
+  }
+  function snapshotScope(s) {
+    const scope = safe(s?.scope || "scope not stated").replaceAll("_"," ");
+    return scope.replace(/\b\w/g, c => c.toUpperCase());
+  }
+  function getCentralForecast(data) {
+    const rows = Array.isArray(data?.forecastScenarios) ? data.forecastScenarios : [];
+    const preferred = rows.find(x => /base case|moderate|central/i.test(safe(x?.name)));
+    return number(preferred?.valueCr);
+  }
+  function renderSnapshot(data) {
+    const rows = Array.isArray(data.bookingSnapshots) ? data.bookingSnapshots : [];
+    if (!rows.length) {
+      ["worldwide","india","overseas","snapshotTime","snapshotScope","snapshotSource","snapshotNotes"].forEach(id => text(id,"No published snapshots in data.json"));
+      return;
+    }
+    const index = Math.min(Math.max(selectedSnapshotIndex,0),rows.length-1);
+    const s = rows[index] || {};
+    text("worldwide",cr(number(s.worldwideCr)));
+    text("india",cr(number(s.indiaCr)));
+    text("overseas",cr(number(s.overseasCr)));
+    text("snapshotTime",date(s.timestamp));
+    text("snapshotScope",snapshotScope(s));
+    text("snapshotSource",s.sourceName || "Source not specified");
+    text("snapshotNotes",s.notes || "No source notes supplied.");
+  }
+  function renderFeed(feed) {
+    const f = feed && typeof feed === "object" ? feed : {};
+    const ok = safe(f.status).toLowerCase() === "success";
+    const tag = $("feedStatusTag");
+    if (tag) { tag.textContent = f.status ? safe(f.status).replaceAll("_"," ") : "status unavailable"; tag.className = "tag " + (ok ? "good" : f.status ? "bad" : "warn"); }
+    text("autoIndiaGross",cr(number(f.indiaGrossCr)));
+    const withBlocks = number(f.indiaGrossIncludingBlocksCr);
+    text("autoIndiaWithBlocks",cr(withBlocks));
+    text("autoTickets",integer(number(f.tickets)));
+    text("autoTicketsNote",number(f.ticketsExcludingBlocks) !== null ? integer(f.ticketsExcludingBlocks) + " excluding blocks" : "Source-reported ticket count");
+    text("autoShows",integer(number(f.shows)));
+    text("autoOccupancy",number(f.occupancyPct) !== null ? pct(number(f.occupancyPct)) + " reported occupancy" : "Occupancy not reported");
+    text("autoFetchedAt",date(f.fetchedAt));
+    text("autoSourceUpdated",f.sourceUpdatedText || "Not available");
+    text("autoFeedShort",ok ? "Latest fetch succeeded" : (f.status || "No successful feed status"));
+    text("autoFeedMessage",f.message || "No feed message supplied. Treat missing values as unavailable, not zero.");
+    const link = $("autoSourceLink");
+    if (link) { link.href = validUrl(f.sourceUrl || "https://www.boxofficeindia24.com/"); link.textContent = "Open " + (f.sourceName || "automated source") + " ↗"; }
+  }
+  function svgStart(w,h,label) { return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}" xmlns="http://www.w3.org/2000/svg">`; }
+  function renderComparison(data) {
+    const el = $("comparisonChart"), rows = Array.isArray(data.openingDayComparisons) ? data.openingDayComparisons : [];
+    if (!el) return;
+    if (!rows.length) { el.innerHTML = empty("No benchmark data available."); return; }
+    const vals = rows.map(x => number(x.worldwideCr)).filter(v => v !== null);
+    if (!vals.length) { el.innerHTML = empty("Benchmark values are missing or invalid."); return; }
+    const max = Math.max(...vals,1) * 1.12, w=640, rowH=54, h=28+rows.length*rowH;
+    let svg = svgStart(w,h,"Worldwide opening day comparisons");
+    rows.forEach((r,i) => {
+      const y=22+i*rowH, v=number(r.worldwideCr), width=v===null?0:Math.max(0,(v/max)*390);
+      const forecast = safe(r.type).toLowerCase().includes("forecast") || /ramayana/i.test(safe(r.title));
+      svg += `<text x="0" y="${y+12}" class="label">${esc(r.title || "Unnamed")}</text>`;
+      svg += `<rect x="0" y="${y+20}" width="390" height="14" rx="5" fill="#1c2a40"/>`;
+      if(v!==null) svg += `<rect x="0" y="${y+20}" width="${width}" height="14" rx="5" fill="${forecast?"var(--green)":"var(--gold)"}"/>`;
+      svg += `<text x="405" y="${y+31}" class="value">${v===null?"N/A":"₹"+v.toLocaleString("en-IN")+" Cr"}</text>`;
+    });
+    svg += "</svg>"; el.innerHTML=svg;
+  }
+  function renderScenarios(data) {
+    const el=$("scenarioChart"), rows=Array.isArray(data.forecastScenarios)?data.forecastScenarios:[];
+    if(!el)return;
+    const valid=rows.map(r=>({...r,v:number(r.valueCr)})).filter(r=>r.v!==null);
+    if(!valid.length){el.innerHTML=empty("No valid forecast scenarios.");["scenarioLow","scenarioCentral","scenarioHigh","scenarioRange"].forEach(id=>text(id,"Unavailable"));return;}
+    const vals=valid.map(r=>r.v), min=Math.min(...vals), max=Math.max(...vals), central=getCentralForecast(data);
+    const low=valid.find(r=>/worst|low/i.test(safe(r.name)))?.v ?? min;
+    const high=valid.find(r=>/best|high|optimistic/i.test(safe(r.name)))?.v ?? max;
+    text("scenarioLow",cr(low));text("scenarioCentral",cr(central));text("scenarioHigh",cr(high));
+    text("scenarioRange",`Illustrative range: ${cr(min)}–${cr(max)}. These are scenarios, not reported collections.`);
+    const w=360,rowH=37,h=20+valid.length*rowH;let svg=svgStart(w,h,"Day one forecast scenarios");
+    valid.forEach((r,i)=>{const y=13+i*rowH,width=max>0?(r.v/max)*205:0;const centralish=/base case|moderate|central/i.test(safe(r.name));svg+=`<text x="0" y="${y+11}">${esc(r.name)}</text><rect x="0" y="${y+17}" width="205" height="9" rx="4" fill="#1c2a40"/><rect x="0" y="${y+17}" width="${width}" height="9" rx="4" fill="${centralish?"var(--green)":"var(--gold)"}"/><text x="214" y="${y+25}" class="value">${Math.round(r.v)}</text>`;});
+    el.innerHTML=svg+"</svg>";
+  }
+  function renderHistory(data) {
+    const el=$("historyChart"), rows=Array.isArray(data.bookingSnapshots)?data.bookingSnapshots:[];
+    if(!el)return;
+    if(!rows.length){el.innerHTML=empty("No snapshot history available.");return;}
+    const w=660,rowH=72,h=25+rows.length*rowH;
+    const values=rows.flatMap(r=>[number(r.worldwideCr),number(r.indiaCr),number(r.overseasCr)]).filter(v=>v!==null);
+    if(!values.length){el.innerHTML=empty("Snapshot values are missing.");return;}
+    const max=Math.max(...values,1)*1.12;let svg=svgStart(w,h,"Published booking snapshot comparison");
+    rows.forEach((r,i)=>{const y=8+i*rowH;svg+=`<text x="0" y="${y+10}" class="label">${esc(r.sourceName||r.label||"Snapshot")}</text><text x="658" y="${y+10}" text-anchor="end">${esc(safe(r.scope).replaceAll("_"," "))}</text>`;
+      [["worldwideCr","var(--gold)",0],["indiaCr","var(--cyan)",18],["overseasCr","var(--purple)",36]].forEach(([key,color,offset])=>{const v=number(r[key]),width=v===null?0:(v/max)*400;svg+=`<rect x="0" y="${y+17+offset}" width="400" height="10" rx="4" fill="#1c2a40"/>`;if(v!==null)svg+=`<rect x="0" y="${y+17+offset}" width="${width}" height="10" rx="4" fill="${color}"/>`;svg+=`<text x="412" y="${y+26+offset}" class="value">${v===null?"—":v.toFixed(2)+" Cr"}</text>`;});
+    });
+    el.innerHTML=svg+"</svg>";
+  }
+  function renderRisks(data) {
+    const el=$("riskChart"), rows=Array.isArray(data.riskDrivers)?data.riskDrivers:[];
+    if(!el)return;
+    if(!rows.length){el.innerHTML=empty("No risk-driver data available.");return;}
+    el.innerHTML=rows.map(r=>{const v=number(r.sharePct);const clamped=v===null?0:Math.max(0,Math.min(100,v));return `<div class="risk-row"><div class="risk-name">${esc(r.name||"Unspecified")}</div><div class="risk-track" aria-label="${clamped}%"><div class="risk-bar" style="width:${clamped}%"></div></div><div class="risk-value">${v===null?"—":esc(v)+"%"}</div></div>`;}).join("");
+  }
+  function renderSources(data) {
+    const el=$("sourceList");if(!el)return;
+    const rows=Array.isArray(data.sources)?data.sources:[];
+    if(!rows.length){el.innerHTML=empty("No sources listed in data.json.");return;}
+    el.innerHTML=rows.map(s=>`<div class="source-card"><a href="${esc(validUrl(s.url))}" target="_blank" rel="noopener noreferrer">${esc(s.name||"Source")} ↗</a><p>Use the original report to verify publication time, market scope and gross/net definition.</p></div>`).join("");
+  }
+  function renderTable(data) {
+    const body=$("snapshotTable");if(!body)return;
+    const rows=Array.isArray(data.bookingSnapshots)?data.bookingSnapshots:[];
+    body.innerHTML=rows.length?rows.map(s=>`<tr><td><strong>${esc(s.sourceName||s.label||"Source")}</strong><br><span class="muted">${esc(date(s.timestamp))}</span></td><td>${esc(snapshotScope(s))}</td><td>${esc(cr(number(s.worldwideCr)))}</td><td>${esc(cr(number(s.indiaCr)))}</td><td>${esc(cr(number(s.overseasCr)))}</td><td>${esc(s.notes||"No notes supplied.")}</td></tr>`).join(""):`<tr><td colspan="6">No snapshot records found.</td></tr>`;
+  }
+  function renderAll(data) {
+    currentData=data;
+    renderSnapshot(data);renderFeed(data.automatedFeed);renderComparison(data);renderScenarios(data);renderHistory(data);renderRisks(data);renderSources(data);renderTable(data);
+    const central=getCentralForecast(data);text("day1Forecast",cr(central));
+    text("lastUpdatedNote",`Data file last updated: ${date(data.lastUpdated)} · Data status: ${data.dataStatus||"not specified"}. ${data.statusNote||""}`);
+    const feedOk=safe(data.automatedFeed?.status).toLowerCase()==="success";
+    setStatus(feedOk?"Data loaded · feed reports success":"Data loaded · feed status needs review",feedOk?"good":"warn");
+  }
+  async function loadData({quiet=false}={}) {
+    if(!quiet)setStatus("Loading data…","warn");
+    try {
+      const url = new URL("./data.json", location.href);
+      url.searchParams.set("_", Date.now().toString());
+      const response=await fetch(url.href,{cache:"no-store",headers:{"Accept":"application/json"}});
+      if(!response.ok)throw new Error(`data.json returned HTTP ${response.status}`);
+      const data=await response.json();
+      if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("data.json must contain a JSON object");
+      if(!Array.isArray(data.bookingSnapshots))throw new Error("data.json is missing the bookingSnapshots array");
+      renderAll(data);
+    } catch(error) {
+      console.error("Dashboard data load failed:",error);
+      setStatus("Data load failed","bad");
+      text("snapshotNotes",`Unable to load data.json: ${error.message}. Confirm that index.html and data.json are in the same published folder and that the JSON is valid.`);
+      text("autoFeedMessage","Dashboard data could not be loaded. The figures above are unavailable until data.json loads successfully.");
+      const chartIds=["comparisonChart","scenarioChart","historyChart","riskChart"];
+      chartIds.forEach(id=>{if($(id))$(id).innerHTML=empty("Data unavailable — check data.json and deployment path.");});
+      if(!quiet)text("lastUpdatedNote","Check the browser console and GitHub Pages deployment path.");
+    }
+  }
+  document.addEventListener("DOMContentLoaded",()=>{
+    const btn=$("reloadBtn");if(btn)btn.addEventListener("click",()=>loadData());
+    const select=$("snapshotSelect");if(select)select.addEventListener("change",()=>{selectedSnapshotIndex=Number(select.value)||0;if(currentData)renderSnapshot(currentData);});
+    loadData();
+    window.setInterval(()=>loadData({quiet:true}),REFRESH_MS);
+  });
+})();
+</script>
+</body>
+</html>
