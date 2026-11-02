@@ -134,45 +134,26 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     const stamp = feed?.fetchedAt ? Date.parse(feed.fetchedAt) : NaN;
     return Number.isFinite(stamp) ? Math.max(0, Date.now() - stamp) : null;
   }
-  function relativeAge(milliseconds) {
-    if (!Number.isFinite(milliseconds) || milliseconds < 0) return "age unavailable";
-    const minutes = Math.floor(milliseconds / 60000);
-    if (minutes < 1) return "just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 48) return `${hours}h ${minutes % 60}m ago`;
-    const days = Math.floor(hours / 24);
-    return `${days}d ${hours % 24}h ago`;
-  }
   function feedFreshness(feed) {
     const status = safe(feed?.status).toLowerCase();
     const age = feedAgeMs(feed);
-    const sourceStamp = Date.parse(feed?.sourceUpdatedAt || "");
-    const sourceAge = Number.isFinite(sourceStamp) ? Math.max(0, Date.now() - sourceStamp) : null;
     if (status !== "success") {
       if (status === "snapshot_only" || (feed?.sourceUpdatedAt && !feed?.fetchedAt)) {
-        if (sourceAge !== null && sourceAge > FEED_STALE_MS) {
-          return { label: `Manual snapshot · source report ${relativeAge(sourceAge)}`, kind: "bad" };
+        const sourceStamp = Date.parse(feed.sourceUpdatedAt || "");
+        if (Number.isFinite(sourceStamp) && Date.now() - sourceStamp > FEED_STALE_MS) {
+          return { label: "Manual snapshot · source timestamp is stale", kind: "bad" };
         }
-        return { label: "Manual snapshot · fetch unverified", kind: "warn" };
+        return { label: "Manual snapshot · workflow fetch unverified", kind: "warn" };
       }
       return { label: "No verified successful fetch", kind: "warn" };
     }
     if (age === null) return { label: "Fetch time unavailable", kind: "warn" };
-    if (age > FEED_STALE_MS) {
-      return { label: `Fetch ${relativeAge(age)} · last successful fetch is stale`, kind: "bad" };
+    if (age > FEED_STALE_MS) return { label: "Last successful fetch is stale", kind: "bad" };
+    const sourceStamp = Date.parse(feed?.sourceUpdatedAt || "");
+    if (Number.isFinite(sourceStamp) && Date.now() - sourceStamp > FEED_STALE_MS) {
+      return { label: "Fetch succeeded; source report is stale", kind: "warn" };
     }
-    if (sourceAge === null) {
-      const sourceLabel = safe(feed?.sourceUpdatedText).trim();
-      if (sourceLabel) {
-        return { label: `Fetch ${relativeAge(age)} · source update label ${sourceLabel} (unverified)`, kind: "warn" };
-      }
-      return { label: `Fetch ${relativeAge(age)} · source timestamp not provided`, kind: "warn" };
-    }
-    if (sourceAge > FEED_STALE_MS) {
-      return { label: `Fetch ${relativeAge(age)} · source report ${relativeAge(sourceAge)}`, kind: "warn" };
-    }
-    return { label: `Fetch ${relativeAge(age)} · source updated ${relativeAge(sourceAge)}`, kind: "good" };
+    return { label: "Recent successful fetch · verify source timestamp", kind: "good" };
   }
   function effectiveComparisonRows(data) {
     const rows = Array.isArray(data?.openingDayComparisons) ? data.openingDayComparisons.map(r => ({...r})) : [];
@@ -328,7 +309,11 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
     text("lastUpdatedNote",`Data file last updated: ${date(data.lastUpdated)} · Data status: ${data.dataStatus||"not specified"}. ${data.statusNote||""}`);
     const freshness = feedFreshness(data.automatedFeed);
     text("lastCheckedPill", "Browser check · " + new Date().toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", timeZone:"Asia/Kolkata"}) + " IST");
-    setStatus(`Dashboard loaded · ${freshness.label.toLowerCase()}`, freshness.kind);
+    const dataFileStamp = data.lastUpdated ? Date.parse(data.lastUpdated) : NaN;
+    const dataFileStale = Number.isFinite(dataFileStamp) && Date.now() - dataFileStamp > 24 * 60 * 60 * 1000;
+    const feedIsRecent = safe(data.automatedFeed?.status).toLowerCase() === "success" && feedAgeMs(data.automatedFeed) !== null && feedAgeMs(data.automatedFeed) <= FEED_STALE_MS;
+    if (dataFileStale && !feedIsRecent) setStatus("Dashboard loaded · data.json is over 24h old", "bad");
+    else setStatus(`Dashboard loaded · ${freshness.label.toLowerCase()}`, freshness.kind);
   }
   async function loadData({quiet=false}={}) {
     if (requestInFlight) return;
