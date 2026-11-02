@@ -163,7 +163,11 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(
       return { label: `Fetch ${relativeAge(age)} · last successful fetch is stale`, kind: "bad" };
     }
     if (sourceAge === null) {
-      return { label: `Fetch ${relativeAge(age)} · source timestamp unavailable`, kind: "warn" };
+      const sourceLabel = safe(feed?.sourceUpdatedText).trim();
+      if (sourceLabel) {
+        return { label: `Fetch ${relativeAge(age)} · source update label ${sourceLabel} (unverified)`, kind: "warn" };
+      }
+      return { label: `Fetch ${relativeAge(age)} · source timestamp not provided`, kind: "warn" };
     }
     if (sourceAge > FEED_STALE_MS) {
       return { label: `Fetch ${relativeAge(age)} · source report ${relativeAge(sourceAge)}`, kind: "warn" };
