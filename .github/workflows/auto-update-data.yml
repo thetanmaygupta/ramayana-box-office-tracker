@@ -16,7 +16,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: box-office-data
   cancel-in-progress: false
 
 jobs:
@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -40,10 +42,37 @@ jobs:
       - name: Fetch latest booking data
         run: python scripts/update_data.py
 
-      - name: Commit updated data
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: 'Update automated box-office data'
+      - name: Commit and push updated data safely
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- data.json; then
+            echo "data.json has no changes; no data commit is needed."
+          else
+            git add data.json
+            git commit -m "Update automated box-office data"
+
+            # Rebase the data update onto the newest main before each push.
+            # If another commit arrives during the push, fetch and retry.
+            pushed=false
+            for attempt in 1 2 3; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                pushed=true
+                echo "Data update pushed successfully."
+                break
+              fi
+              echo "Push attempt $attempt failed; retrying."
+              sleep 2
+            done
+
+            if [ "$pushed" != "true" ]; then
+              echo "Could not push data update after 3 attempts." >&2
+              exit 1
+            fi
+          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
