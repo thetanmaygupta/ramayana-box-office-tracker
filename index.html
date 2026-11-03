@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,10 +26,16 @@
 html{scroll-behavior:smooth}
 body{
   margin:0;
-  background:
-    radial-gradient(ellipse at 12% 0%,rgba(76,120,190,.23),transparent 36%),
-    radial-gradient(ellipse at 92% 12%,rgba(34,153,176,.13),transparent 36%),
-    var(--bg);
+  background-image:
+    radial-gradient(ellipse at 12% 0%,rgba(76,120,190,.16),transparent 36%),
+    radial-gradient(ellipse at 92% 12%,rgba(34,153,176,.10),transparent 36%),
+    linear-gradient(rgba(8,13,24,.82),rgba(8,13,24,.90)),
+    url("assets/filters_quality(80)_format(webp).webp");
+  background-size:auto,auto,auto,cover;
+  background-position:center,center,center,center;
+  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;
+  background-attachment:fixed,fixed,fixed,fixed;
+  background-color:var(--bg);
   color:var(--text);
   font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   line-height:1.6
@@ -301,14 +306,6 @@ th{
   background:rgba(9,20,36,.5)
 }
 .step b{display:block;color:var(--gold);margin-bottom:5px}
-.sources{display:grid;gap:12px;margin-top:18px}
-.source{
-  padding:14px 16px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:rgba(9,20,36,.4)
-}
-.source a{font-weight:700}
 footer{
   display:flex;
   justify-content:space-between;
@@ -781,28 +778,11 @@ footer{
   </div>
 </section>
 
-<section class="panel" id="sourcesPanel">
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">10 / Sources</div>
-      <h2>Source directory</h2>
-    </div>
-  </div>
-
-  <p class="section-description">
-    Use the original reporting page to verify values, publication timestamps
-    and reporting scope.
-  </p>
-
-  <div class="sources" id="sourcesList">
-    <div class="source muted">Loading sources…</div>
-  </div>
-</section>
 
 <section class="panel" id="snapshotRegisterPanel">
   <div class="section-head">
     <div>
-      <div class="eyebrow">11 / Audit trail</div>
+      <div class="eyebrow">10 / Audit trail</div>
       <h2>Snapshot register</h2>
     </div>
   </div>
@@ -885,15 +865,6 @@ footer{
     '"':"&quot;",
     "'":"&#39;"
   }[c]));
-
-  const safeUrl = v => {
-    try {
-      const u = new URL(v);
-      return ["https:","http:"].includes(u.protocol) ? u.href : "";
-    } catch {
-      return "";
-    }
-  };
 
   const set = (id,v) => {
     if ($(id)) $(id).textContent = v;
@@ -1375,25 +1346,6 @@ footer{
         ? `The largest configured driver is ${topRisk.name} (${num(topRisk.sharePct)}%). The supplied weights total ${riskTotal.toFixed(1)}%. Treat these as analyst-assigned prioritisation weights only—not measured causal contributions, probabilities, or Six Sigma process capability.`
         : "Risk-driver interpretation is unavailable."
     );
-
-    const sources=Array.isArray(data.sources)
-      ? data.sources.filter(s=>s&&typeof s==="object")
-      : [];
-
-    $("sourcesList").innerHTML=sources.map(s=>{
-      const url=safeUrl(s.url);
-
-      return `
-        <div class="source">
-          ${url
-            ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(s.name||url)} ↗</a>`
-            : `<span>${esc(s.name||"Source")}</span>`
-          }
-          <div class="muted" style="font-size:.85rem;overflow-wrap:anywhere">
-            ${esc(s.url||"URL unavailable")}
-          </div>
-        </div>`;
-    }).join("") || `<div class="source muted">No sources listed.</div>`;
 
     $("snapshotTable").innerHTML=ordered.length
       ? ordered.map(s=>`
