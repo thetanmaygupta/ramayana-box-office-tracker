@@ -54,19 +54,52 @@
     }
   ],
   "forecastScenarios": [
-    {"name": "Worst case", "valueCr": 100},
-    {"name": "Pessimistic", "valueCr": 135},
-    {"name": "Moderate", "valueCr": 155},
-    {"name": "Base case", "valueCr": 180},
-    {"name": "Optimistic", "valueCr": 200},
-    {"name": "Best case", "valueCr": 230}
+    {
+      "name": "Worst case",
+      "valueCr": 100
+    },
+    {
+      "name": "Pessimistic",
+      "valueCr": 135
+    },
+    {
+      "name": "Moderate",
+      "valueCr": 155
+    },
+    {
+      "name": "Base case",
+      "valueCr": 180
+    },
+    {
+      "name": "Optimistic",
+      "valueCr": 200
+    },
+    {
+      "name": "Best case",
+      "valueCr": 230
+    }
   ],
   "riskDrivers": [
-    {"name": "Advance-booking conversion", "sharePct": 30},
-    {"name": "Overseas performance", "sharePct": 25},
-    {"name": "Walk-ins and occupancy", "sharePct": 20},
-    {"name": "Show count and screen reach", "sharePct": 15},
-    {"name": "Ticket pricing and other factors", "sharePct": 10}
+    {
+      "name": "Advance-booking conversion",
+      "sharePct": 30
+    },
+    {
+      "name": "Overseas performance",
+      "sharePct": 25
+    },
+    {
+      "name": "Walk-ins and occupancy",
+      "sharePct": 20
+    },
+    {
+      "name": "Show count and screen reach",
+      "sharePct": 15
+    },
+    {
+      "name": "Ticket pricing and other factors",
+      "sharePct": 10
+    }
   ],
   "methodology": {
     "forecastLabel": "Illustrative scenario model",
@@ -74,14 +107,23 @@
     "refreshIntervalMinutes": 15
   },
   "sources": [
-    {"name": "The Week", "url": "https://www.theweek.in/"},
-    {"name": "BoxOfficeIndia24", "url": "https://boxofficeindia24.com/"},
-    {"name": "Sacnilk", "url": "https://www.sacnilk.com/"}
+    {
+      "name": "The Week",
+      "url": "https://www.theweek.in/"
+    },
+    {
+      "name": "BoxOfficeIndia24",
+      "url": "https://boxofficeindia24.com/"
+    },
+    {
+      "name": "Sacnilk",
+      "url": "https://www.sacnilk.com/"
+    }
   ],
   "automatedFeed": {
     "sourceName": "BoxOfficeIndia24 — Ramayana Day 1 advance booking",
     "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
-    "status": "success",
+    "status": "stale",
     "fetchedAt": "2026-11-03T13:43:12+05:30",
     "sourceUpdatedText": "2026-11-03 13:42 IST",
     "indiaGrossCr": 28.64,
@@ -90,8 +132,9 @@
     "ticketsExcludingBlocks": null,
     "shows": 19625,
     "occupancyPct": 16.5,
-    "message": "Source-reported figures parsed from BoxOfficeIndia24; not producer-confirmed. Missing metrics were not inferred.",
+    "message": "Automatic check failed (HTTPError: HTTP Error 403: Forbidden). Previous successful values were retained.",
     "indiaGrossIncludingBlocksCr": 31.38,
-    "overseasCr": 24.55
+    "overseasCr": 24.55,
+    "lastAttemptAt": "2026-11-03T17:20:26+05:30"
   }
 }
