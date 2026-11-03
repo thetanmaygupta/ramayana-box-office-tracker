@@ -451,18 +451,28 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   }
   async function loadData() {
     try {
-      const response=await fetch(`data.json?cacheBust=${Date.now()}`,{cache:"no-store"});
+      const response=await fetch(`./data.json?cacheBust=${Date.now()}`,{cache:"no-store"});
       if(!response.ok)throw new Error(`data.json request failed (${response.status})`);
       const data=await response.json();
       if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("data.json must contain a JSON object.");
       render(data);
     } catch(error) {
-      set("statusBadge","Dashboard loaded · data.json unavailable");
+      const message = error && error.message ? error.message : "Unknown dashboard error";
+      set("statusBadge","Dashboard data unavailable");
       set("worldwideTotal","Unavailable");
-      set("feedStatus","Could not load data.json");
-      set("feedMessage",error.message||"Unable to load dashboard data.");
-      $("feedStatus").style.color="var(--red)";
-      console.error(error);
+      set("feedStatus","Dashboard data load failed");
+      set("feedMessage",message);
+      if ($("feedStatus")) $("feedStatus").style.color="var(--red)";
+
+      // Surface the real failure in the Pulse panel rather than leaving placeholders.
+      set("readingState","Data load error");
+      set("readingSignal","Feed unavailable");
+      set("readingForecast","—");
+      set("readingConfidence","Low");
+      set("readingHeadline","The dashboard could not complete its data-loading or rendering process.");
+      set("readingDetail",`${message}. The published JSON may be reachable directly, but the dashboard request or a JavaScript rendering step failed. Check the browser console for the full error.`);
+      set("readingRisks","Troubleshooting: verify that index.html and data.json are published in the same GitHub Pages folder, then reload with a cache-busting query. No booking interpretation has been generated.");
+      console.error("Ramayana dashboard load/render error:", error);
     }
   }
   loadData();
