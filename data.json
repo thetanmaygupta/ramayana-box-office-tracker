@@ -124,8 +124,8 @@
     "sourceName": "BoxOfficeIndia24 — Ramayana Day 1 advance booking",
     "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
     "status": "success",
-    "fetchedAt": "2026-11-04T03:04:10+05:30",
-    "sourceUpdatedText": "2026-11-04 02:52 IST",
+    "fetchedAt": "2026-11-04T03:22:22+05:30",
+    "sourceUpdatedText": "2026-11-04 03:12 IST",
     "indiaGrossCr": 32.38,
     "indiaGrossExcludingBlocksCr": null,
     "tickets": 796935,
@@ -134,6 +134,6 @@
     "occupancyPct": 17.5,
     "message": "Source-reported figures parsed from BoxOfficeIndia24; not producer-confirmed. Missing metrics were not inferred.",
     "indiaGrossIncludingBlocksCr": 36.06,
-    "overseasCr": 25.12
+    "overseasCr": 26.27
   }
 }
