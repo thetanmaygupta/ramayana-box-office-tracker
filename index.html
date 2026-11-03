@@ -317,73 +317,109 @@ footer{
 }
 .error{color:var(--red)}
 
-/* REELMETRICS AUDIENCE PULSE */
-.audience-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
-  margin-top:18px
-}
-.audience-card{
-  min-width:0;
+/* REELMETRICS AUDIENCE PULSE — three-part evidence view */
+.pulse-overview{
+  margin-top:18px;
   border:1px solid rgba(155,181,219,.18);
-  border-radius:20px;
-  padding:18px;
-  background:rgba(9,20,36,.52);
-  transition:border-color .2s ease,transform .2s ease
+  border-radius:22px;
+  padding:0 20px;
+  background:rgba(9,20,36,.30);
+  overflow:hidden
 }
-.audience-card:hover{
-  border-color:rgba(242,198,109,.35);
-  transform:translateY(-2px)
+.pulse-block{
+  padding:22px 0;
+  min-width:0
 }
-.audience-card h3{
-  font-size:1rem;
-  margin:0 0 8px;
+.pulse-block + .pulse-block{
+  border-top:1px solid rgba(155,181,219,.15)
+}
+.pulse-label{
   color:var(--gold);
-  letter-spacing:-.01em
+  font-size:.82rem;
+  font-weight:750;
+  letter-spacing:.035em;
+  text-transform:uppercase;
+  margin-bottom:8px
 }
-.audience-card p{
-  margin:0;
-  color:#dbe5f8;
+.pulse-score-line{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px
+}
+.pulse-number{
+  display:block;
+  color:var(--text);
+  font-size:clamp(1.8rem,6vw,2.55rem);
+  line-height:1.15;
+  letter-spacing:-.045em;
+  font-weight:780
+}
+.pulse-review-count{margin-top:12px}
+.pulse-block h3{
+  margin:0 0 8px;
+  font-size:1.2rem;
+  font-weight:650;
+  letter-spacing:-.025em
+}
+.pulse-description{
+  margin:8px 0 0;
+  color:var(--muted);
   font-size:.94rem;
-  line-height:1.65
+  line-height:1.6
 }
-.audience-tag{
+.pulse-chip{
   display:inline-flex;
   align-items:center;
-  margin-bottom:11px;
-  padding:4px 9px;
-  border:1px solid var(--line);
   border-radius:999px;
-  color:var(--muted);
-  font-size:.74rem;
-  font-weight:750;
-  letter-spacing:.04em
-}
-.audience-tag.positive{
-  color:var(--green);
-  border-color:rgba(123,220,187,.25);
-  background:rgba(123,220,187,.06)
-}
-.audience-tag.mixed{
+  padding:5px 11px;
+  font-size:.78rem;
+  line-height:1.3;
   color:var(--gold);
-  border-color:rgba(242,198,109,.25);
-  background:rgba(242,198,109,.06)
+  background:rgba(242,198,109,.09);
+  border:1px solid rgba(242,198,109,.18)
 }
-.audience-tag.critical{
-  color:var(--red);
-  border-color:rgba(255,157,157,.25);
-  background:rgba(255,157,157,.06)
+.pulse-chip.pending{
+  color:#ff986b;
+  background:rgba(255,120,70,.09);
+  border-color:rgba(255,120,70,.18)
 }
-.audience-empty{
-  grid-column:1/-1;
-  padding:22px;
-  border:1px dashed rgba(155,181,219,.22);
-  border-radius:18px;
+.pulse-highlights{
+  display:grid;
+  gap:10px;
+  margin-top:16px
+}
+.pulse-highlight{
+  padding:13px 14px;
+  border:1px solid rgba(155,181,219,.15);
+  border-radius:14px;
+  background:rgba(9,20,36,.24)
+}
+.pulse-highlight p{margin:6px 0 0;color:#dbe5f8;font-size:.9rem;line-height:1.55}
+.pulse-highlight .audience-tag{margin:0}
+.pulse-sentiment-breakdown{
+  margin-top:14px;
+  display:grid;
+  gap:9px
+}
+.pulse-sentiment-row{
+  display:grid;
+  grid-template-columns:82px minmax(0,1fr) 42px;
+  align-items:center;
+  gap:10px;
   color:var(--muted);
-  background:rgba(9,20,36,.3);
-  text-align:center
+  font-size:.82rem
 }
+.pulse-sentiment-track{
+  height:7px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(155,181,219,.12)
+}
+.pulse-sentiment-fill{height:100%;border-radius:999px}
+.pulse-sentiment-fill.positive{background:var(--green)}
+.pulse-sentiment-fill.mixed{background:var(--gold)}
+.pulse-sentiment-fill.critical{background:var(--red)}
 .audience-status{
   color:var(--muted);
   font-size:.78rem;
@@ -678,14 +714,38 @@ footer{
   </div>
 
   <p class="section-description">
-    A concise editorial reading of audience reactions, highlighting
-    recurring appreciation and constructive observations.
+    A concise, evidence-led view of the platform-reported audience score,
+    written-review coverage and audience sentiment.
   </p>
 
-  <div class="audience-grid" id="audiencePulseCards" aria-live="polite">
-    <div class="audience-empty">
-      Audience Pulse is awaiting its first verified update.
-    </div>
+  <div class="pulse-overview" id="audiencePulseCards" aria-live="polite">
+    <article class="pulse-block pulse-score">
+      <div class="pulse-label">Audience Score · TMDB</div>
+      <div class="pulse-score-line">
+        <strong class="pulse-number" id="pulseScore">57%</strong>
+        <span class="pulse-chip pending" id="pulseVoteCount">Vote count pending</span>
+      </div>
+      <p class="pulse-description">
+        Platform-reported audience score, displayed independently of written reviews.
+      </p>
+    </article>
+
+    <article class="pulse-block">
+      <h3>Written Review Insights</h3>
+      <strong class="pulse-number pulse-review-count" id="pulseReviewCount">0 verified reviews</strong>
+      <p class="pulse-description" id="pulseReviewDescription">
+        Editorial highlights will appear when sufficient genuine review text is available.
+      </p>
+      <div class="pulse-highlights" id="pulseHighlights"></div>
+    </article>
+
+    <article class="pulse-block">
+      <h3>Audience Sentiment</h3>
+      <p class="pulse-description" id="pulseSentiment">
+        Insufficient evidence to establish a reliable sentiment trend.
+      </p>
+      <div class="pulse-sentiment-breakdown" id="pulseSentimentBreakdown" hidden></div>
+    </article>
   </div>
 
   <div class="audience-status" id="audiencePulseStatus">
@@ -1386,89 +1446,81 @@ footer{
 
   /* AUDIENCE PULSE DATA LOADER */
   async function loadAudiencePulse() {
-    const target=$("audiencePulseCards");
     const status=$("audiencePulseStatus");
-
-    if(!target) return;
+    const scoreEl=$("pulseScore");
+    const votesEl=$("pulseVoteCount");
+    const reviewCountEl=$("pulseReviewCount");
+    const reviewDescription=$("pulseReviewDescription");
+    const sentimentEl=$("pulseSentiment");
+    const highlightsEl=$("pulseHighlights");
+    const breakdownEl=$("pulseSentimentBreakdown");
 
     try {
-      const response=await fetch(
-        `./reviews.json?cacheBust=${Date.now()}`,
-        {cache:"no-store"}
-      );
-
-      if(!response.ok) {
-        throw new Error(`reviews.json request failed (${response.status})`);
-      }
-
+      const response=await fetch(`./reviews.json?cacheBust=${Date.now()}`,{cache:"no-store"});
+      if(!response.ok) throw new Error(`reviews.json request failed (${response.status})`);
       const data=await response.json();
+      if(!data || typeof data!=="object" || Array.isArray(data)) throw new Error("Invalid reviews.json format.");
 
-      if(!data || typeof data!=="object" || Array.isArray(data)) {
-        throw new Error("Invalid reviews.json format.");
+      const rawScore=data.tmdbScore ?? data.audienceScore ?? data.tmdb?.score;
+      const score=rawScore===undefined || rawScore===null ? 57 : Number(rawScore);
+      if(Number.isFinite(score) && score>=0 && score<=100) scoreEl.textContent=`${score}%`;
+
+      const rawVotes=data.voteCount ?? data.tmdbVoteCount ?? data.tmdb?.voteCount;
+      if(rawVotes!==undefined && rawVotes!==null && rawVotes!=="" && Number.isInteger(Number(rawVotes)) && Number(rawVotes)>=0) {
+        votesEl.textContent=`${Number(rawVotes).toLocaleString("en-IN")} votes`;
+        votesEl.classList.remove("pending");
+      } else {
+        votesEl.textContent="Vote count pending";
+        votesEl.classList.add("pending");
       }
 
-      const highlights=Array.isArray(data.highlights)
-        ? data.highlights
-        : [];
+      const highlights=Array.isArray(data.highlights) ? data.highlights : [];
+      const valid=highlights.filter(item=>item && typeof item==="object" &&
+        typeof item.text==="string" && item.text.trim() &&
+        ["Positive","Mixed","Critical"].includes(item.sentiment)).slice(0,4);
+      const rawCount=data.verifiedReviewCount ?? data.reviewCount ?? data.verifiedReviews?.length;
+      const count=rawCount!==undefined && rawCount!==null && rawCount!=="" && Number.isInteger(Number(rawCount))
+        ? Math.max(0,Number(rawCount)) : valid.length;
+      reviewCountEl.textContent=`${count.toLocaleString("en-IN")} verified ${count===1?"review":"reviews"}`;
 
-      /*
-       * Do not fabricate missing cards.
-       * The dashboard displays four only when four valid summaries exist.
-       */
-      const valid=highlights.filter(item=>
-        item &&
-        typeof item==="object" &&
-        typeof item.text==="string" &&
-        item.text.trim() &&
-        ["Positive","Mixed","Critical"].includes(item.sentiment)
-      ).slice(0,4);
-
-      if(valid.length!==4) {
-        target.innerHTML=`
-          <div class="audience-empty">
-            Four verified editorial highlights will appear when sufficient
-            audience-review evidence is available.
-          </div>
-        `;
-
-        if(status) {
-          status.textContent="Awaiting sufficient verified review evidence.";
-        }
-        return;
-      }
-
-      target.innerHTML=valid.map(item=>{
-        const sentiment=item.sentiment;
-        const category=item.category || "Audience discussion";
-
-        return `
-          <article class="audience-card">
-            <span class="audience-tag ${sentiment.toLowerCase()}">
-              ${esc(sentiment)}
-            </span>
-            <h3>${esc(category)}</h3>
+      if(valid.length) {
+        reviewDescription.textContent="Editorial highlights based on available verified review evidence.";
+        highlightsEl.innerHTML=valid.map(item=>`
+          <article class="pulse-highlight">
+            <span class="audience-tag ${item.sentiment.toLowerCase()}">${esc(item.sentiment)}</span>
             <p>${esc(item.text)}</p>
-          </article>
-        `;
-      }).join("");
-
-      if(status) {
-        status.textContent="Editorial highlights loaded.";
+          </article>`).join("");
+      } else {
+        reviewDescription.textContent="Editorial highlights will appear when sufficient genuine review text is available.";
+        highlightsEl.innerHTML="";
       }
 
+      const sentiment=data.sentiment && typeof data.sentiment==="object" ? data.sentiment : null;
+      const values=sentiment ? ["positive","mixed","critical"].map(key=>Number(sentiment[key])) : [];
+      const validSentiment=values.length===3 && values.every(v=>Number.isFinite(v)&&v>=0) &&
+        Math.abs(values.reduce((a,b)=>a+b,0)-100)<0.1;
+      if(validSentiment) {
+        sentimentEl.textContent="Distribution across the classified, verified review sample.";
+        breakdownEl.hidden=false;
+        breakdownEl.innerHTML=["positive","mixed","critical"].map((key,i)=>`
+          <div class="pulse-sentiment-row">
+            <span>${key[0].toUpperCase()+key.slice(1)}</span>
+            <div class="pulse-sentiment-track"><div class="pulse-sentiment-fill ${key}" style="width:${values[i]}%"></div></div>
+            <strong>${values[i]}%</strong>
+          </div>`).join("");
+      } else {
+        sentimentEl.textContent="Insufficient evidence to establish a reliable sentiment trend.";
+        breakdownEl.hidden=true;
+        breakdownEl.innerHTML="";
+      }
+      if(status) status.textContent=`Audience data checked · ${data.lastUpdated || "latest available review feed"}. Scores and review evidence are shown separately.`;
     } catch(error) {
       console.error("Audience Pulse loading error:",error);
-
-      target.innerHTML=`
-        <div class="audience-empty">
-          Audience Pulse is temporarily unavailable.
-          The box-office dashboard continues to operate independently.
-        </div>
-      `;
-
-      if(status) {
-        status.textContent="Audience review feed unavailable.";
-      }
+      if(status) status.textContent="Audience review feed unavailable; the box-office dashboard continues independently.";
+      reviewDescription.textContent="Review evidence could not be loaded. No audience conclusions have been generated.";
+      sentimentEl.textContent="Insufficient evidence to establish a reliable sentiment trend.";
+      highlightsEl.innerHTML="";
+      breakdownEl.hidden=true;
     }
   }
 
