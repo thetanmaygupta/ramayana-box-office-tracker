@@ -231,8 +231,8 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   const validDate = v => { const d = v ? new Date(v) : null; return d && !Number.isNaN(d.getTime()) ? d : null; };
   const parseSourceTimestamp = value => {
     if (!value) return null;
-    const raw = String(value).trim().replace(/\\s+IST$/i, "");
-    const match = raw.match(/^(\\d{4}-\\d{2}-\\d{2})\\s+(\\d{2}:\\d{2})(?::(\\d{2}))?$/);
+    const raw = String(value).trim().replace(/\s+IST$/i, "");
+    const match = raw.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})(?::(\d{2}))?$/);
     if (match) return validDate(`${match[1]}T${match[2]}:${match[3] || "00"}+05:30`);
     return validDate(raw);
   };
@@ -402,4 +402,4 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 })();
 </script>
 </body>
-</html>w
+</html>
