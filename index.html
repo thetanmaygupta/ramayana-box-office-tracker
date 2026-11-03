@@ -150,7 +150,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <div class="summary-box"><span>Feed status</span><strong id="feedState">—</strong></div>
       </div>
       <div class="callout" id="feedMessage">Automated source details will appear here.</div>
-      <p style="margin-top:18px" id="feedSourceLink"></p>
     </section>
 
     <section class="panel" id="comparisonPanel">
@@ -326,8 +325,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     set("fetchedAt",dateText(feed.fetchedAt));
     set("sourceUpdated",safe(sourceLabel));
     set("feedMessage",safe(feed.message||"Source-reported values are not producer-confirmed. Missing metrics were not inferred."));
-    const link=safeUrl(feed.sourceUrl);
-    $("feedSourceLink").innerHTML=link?`<a href="${esc(link)}" target="_blank" rel="noopener noreferrer">Open source report ↗</a>`:"";
     return {fetchOk,fetchFresh,sourceFresh,sourceDate,fetched};
   }
   function renderLiveReading(data, feedStatus, scenarios) {
