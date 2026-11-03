@@ -1,249 +1,864 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d18">
-<meta name="description" content="Source-aware Ramayana box-office intelligence dashboard for advance bookings, worldwide snapshots, opening-day benchmarks and scenario analysis.">
-<title>Ramayana | Box Office Intelligence</title>
+<meta name="description" content="ReelMetrics — Cinema intelligence, box-office tracking, audience sentiment and film analytics.">
+<title>ReelMetrics | Cinema Intelligence</title>
+
 <style>
 :root{
-  --bg:#080d18;--panel:#101a2b;--line:#263650;--text:#edf3ff;--muted:#98a8c2;
-  --gold:#f2c66d;--cyan:#69d7e8;--purple:#b99aff;--green:#7bdcbb;--red:#ff9d9d;
-  --glass:rgba(20,34,55,.72);--glass-border:rgba(190,220,255,.16);
+  --bg:#080d18;
+  --panel:#101a2b;
+  --line:#263650;
+  --text:#edf3ff;
+  --muted:#98a8c2;
+  --gold:#f2c66d;
+  --cyan:#69d7e8;
+  --purple:#b99aff;
+  --green:#7bdcbb;
+  --red:#ff9d9d;
+  --glass:rgba(20,34,55,.72);
+  --glass-border:rgba(190,220,255,.16);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at 12% 0%,rgba(76,120,190,.23),transparent 36%),radial-gradient(ellipse at 92% 12%,rgba(34,153,176,.13),transparent 36%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6}
+body{
+  margin:0;
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(76,120,190,.23),transparent 36%),
+    radial-gradient(ellipse at 92% 12%,rgba(34,153,176,.13),transparent 36%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  line-height:1.6
+}
 button,select{font:inherit}
 a{color:var(--cyan);text-decoration:none}
 a:hover{text-decoration:underline}
 .wrap{width:min(1120px,100% - 32px);margin:auto}
 .masthead{padding:44px 0 24px}
-.kicker,.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.kicker,.eyebrow{
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold)
+}
 .kicker{display:flex;gap:14px;align-items:center}
-.kicker:before{content:"";display:inline-block;width:38px;height:4px;background:var(--gold)}
-h1{font-size:clamp(2.7rem,9vw,5.2rem);line-height:.98;letter-spacing:-.065em;margin:28px 0 20px;font-weight:850}
+.kicker:before{
+  content:"";
+  display:inline-block;
+  width:38px;
+  height:4px;
+  background:var(--gold)
+}
+h1{
+  font-size:clamp(2.7rem,9vw,5.2rem);
+  line-height:.98;
+  letter-spacing:-.065em;
+  margin:28px 0 20px;
+  font-weight:850
+}
 h1 span{display:block;color:var(--gold)}
-.subtitle{font-size:clamp(1.05rem,3vw,1.35rem);color:var(--muted);max-width:850px;margin:0 0 22px}
+.subtitle{
+  font-size:clamp(1.05rem,3vw,1.35rem);
+  color:var(--muted);
+  max-width:850px;
+  margin:0 0 22px
+}
 .status-row{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
-.status-pill,.meta-pill{display:inline-flex;align-items:center;gap:9px;padding:10px 15px;border:1px solid var(--line);border-radius:999px;background:rgba(12,22,39,.7);color:var(--muted);font-size:.9rem}
-.status-pill{border-color:rgba(242,198,109,.4);background:rgba(61,46,20,.48);color:#f8d98e;font-weight:700;max-width:100%}
-.status-dot{width:9px;height:9px;flex:0 0 auto;border-radius:50%;background:var(--gold);box-shadow:0 0 0 6px rgba(242,198,109,.1)}
-.notice,.callout,.disclaimer{border:1px solid rgba(242,198,109,.34);border-radius:22px;background:linear-gradient(120deg,rgba(66,49,22,.48),rgba(15,28,46,.78));padding:20px 22px;color:#e8d7a5;margin:24px 0}
+.status-pill,.meta-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:10px 15px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(12,22,39,.7);
+  color:var(--muted);
+  font-size:.9rem
+}
+.status-pill{
+  border-color:rgba(242,198,109,.4);
+  background:rgba(61,46,20,.48);
+  color:#f8d98e;
+  font-weight:700;
+  max-width:100%
+}
+.status-dot{
+  width:9px;
+  height:9px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 0 6px rgba(242,198,109,.1)
+}
+.notice,.callout,.disclaimer{
+  border:1px solid rgba(242,198,109,.34);
+  border-radius:22px;
+  background:linear-gradient(120deg,rgba(66,49,22,.48),rgba(15,28,46,.78));
+  padding:20px 22px;
+  color:#e8d7a5;
+  margin:24px 0
+}
 /* Keep commentary only in Box Office Pulse */
 .notice,.disclaimer,.callout{display:none!important}
 #liveReadingPanel .callout{display:block!important}
 .notice b{color:#ffe4a0}
-.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:20px;padding:8px 0 44px}
-.panel{grid-column:span 12;min-width:0;border:1px solid var(--glass-border);border-radius:28px;padding:clamp(20px,4vw,30px);background:linear-gradient(145deg,rgba(28,43,66,.78),rgba(10,19,34,.86));box-shadow:0 18px 55px rgba(0,0,0,.12);backdrop-filter:blur(14px)}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:20px;
+  padding:8px 0 44px
+}
+.panel{
+  grid-column:span 12;
+  min-width:0;
+  border:1px solid var(--glass-border);
+  border-radius:28px;
+  padding:clamp(20px,4vw,30px);
+  background:linear-gradient(145deg,rgba(28,43,66,.78),rgba(10,19,34,.86));
+  box-shadow:0 18px 55px rgba(0,0,0,.12);
+  backdrop-filter:blur(14px)
+}
 .panel.span-6{grid-column:span 6}
-.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px}
-.section-head h2{font-size:clamp(1.45rem,4.5vw,2rem);line-height:1.2;letter-spacing:-.035em;margin:8px 0 0}
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:12px
+}
+.section-head h2{
+  font-size:clamp(1.45rem,4.5vw,2rem);
+  line-height:1.2;
+  letter-spacing:-.035em;
+  margin:8px 0 0
+}
 .muted,.section-description{color:var(--muted)}
-.section-description{margin:8px 0 20px;font-size:1.04rem}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
-.kpi{position:relative;min-width:0;overflow:hidden;border:1px solid rgba(155,181,219,.18);border-radius:22px;padding:20px;background:rgba(16,31,52,.74)}
-.kpi:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,var(--gold))}
+.section-description{
+  margin:8px 0 20px;
+  font-size:1.04rem
+}
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin-top:20px
+}
+.kpi{
+  position:relative;
+  min-width:0;
+  overflow:hidden;
+  border:1px solid rgba(155,181,219,.18);
+  border-radius:22px;
+  padding:20px;
+  background:rgba(16,31,52,.74)
+}
+.kpi:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:4px;
+  background:var(--accent,var(--gold))
+}
 .kpi-label{font-size:.94rem;color:var(--muted);line-height:1.5}
-.kpi-value{font-size:clamp(1.55rem,4vw,2.2rem);font-weight:850;letter-spacing:-.04em;line-height:1.25;margin:12px 0;color:var(--accent,var(--gold));overflow-wrap:anywhere}
+.kpi-value{
+  font-size:clamp(1.55rem,4vw,2.2rem);
+  font-weight:850;
+  letter-spacing:-.04em;
+  line-height:1.25;
+  margin:12px 0;
+  color:var(--accent,var(--gold));
+  overflow-wrap:anywhere
+}
 .kpi small{color:var(--muted);font-size:.88rem}
-.worldwide-hero{border:1px solid rgba(242,198,109,.4);border-radius:24px;padding:24px;background:linear-gradient(135deg,rgba(242,198,109,.13),rgba(17,31,51,.7));margin-top:20px}
-.worldwide-hero .kpi-value{font-size:clamp(2.6rem,9vw,4rem);color:var(--gold)}
-.worldwide-breakdown{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.worldwide-hero{
+  border:1px solid rgba(242,198,109,.4);
+  border-radius:24px;
+  padding:24px;
+  background:linear-gradient(135deg,rgba(242,198,109,.13),rgba(17,31,51,.7));
+  margin-top:20px
+}
+.worldwide-hero .kpi-value{
+  font-size:clamp(2.6rem,9vw,4rem);
+  color:var(--gold)
+}
+.worldwide-breakdown{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:14px
+}
 .snapshot-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.tag{display:inline-flex;padding:5px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.8rem}
+.tag{
+  display:inline-flex;
+  padding:5px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  font-size:.8rem
+}
 .bar-list{display:grid;gap:17px;margin:22px 0}
-.bar-row{display:grid;grid-template-columns:minmax(95px,1fr) minmax(90px,2.6fr) auto;align-items:center;gap:12px}
+.bar-row{
+  display:grid;
+  grid-template-columns:minmax(95px,1fr) minmax(90px,2.6fr) auto;
+  align-items:center;
+  gap:12px
+}
 .bar-label{font-size:.92rem;color:#dbe5f8}
-.bar-track{height:14px;background:#1e2d46;border-radius:999px;overflow:hidden}
-.bar-fill{height:100%;width:0;border-radius:999px;background:var(--gold);transition:width .4s ease}
-.bar-fill.green{background:var(--green)}.bar-fill.cyan{background:var(--cyan)}.bar-fill.purple{background:var(--purple)}
+.bar-track{
+  height:14px;
+  background:#1e2d46;
+  border-radius:999px;
+  overflow:hidden
+}
+.bar-fill{
+  height:100%;
+  width:0;
+  border-radius:999px;
+  background:var(--gold);
+  transition:width .4s ease
+}
+.bar-fill.green{background:var(--green)}
+.bar-fill.cyan{background:var(--cyan)}
+.bar-fill.purple{background:var(--purple)}
 .bar-value{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
-.legend{display:flex;flex-wrap:wrap;gap:16px;color:var(--muted);margin-top:18px}
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  color:var(--muted);
+  margin-top:18px
+}
 .legend span{display:inline-flex;align-items:center;gap:8px}
-.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;background:var(--gold)}
-.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.callout{border-color:rgba(155,181,219,.2);background:rgba(8,19,35,.5);color:var(--muted);margin:18px 0 0}
-.scenario-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+.legend i{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  display:inline-block;
+  background:var(--gold)
+}
+.two-col{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px
+}
+.callout{
+  border-color:rgba(155,181,219,.2);
+  background:rgba(8,19,35,.5);
+  color:var(--muted);
+  margin:18px 0 0
+}
+.scenario-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-top:24px
+}
 .summary-box{border-top:1px solid var(--line);padding-top:12px}
 .summary-box span{display:block;color:var(--muted);margin-bottom:8px}
 .summary-box strong{font-size:clamp(1.3rem,4vw,1.8rem)}
 .table-wrap{overflow-x:auto;margin-top:18px}
 table{border-collapse:collapse;width:100%;min-width:500px}
-th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--muted);font-size:.84rem;text-transform:uppercase;letter-spacing:.08em}
-.risk-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(90px,1.4fr) 48px;gap:12px;align-items:center;margin:18px 0}
+th,td{
+  text-align:left;
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top
+}
+th{
+  color:var(--muted);
+  font-size:.84rem;
+  text-transform:uppercase;
+  letter-spacing:.08em
+}
+.risk-row{
+  display:grid;
+  grid-template-columns:minmax(120px,1fr) minmax(90px,1.4fr) 48px;
+  gap:12px;
+  align-items:center;
+  margin:18px 0
+}
 .risk-row .bar-track{height:12px}
 .risk-row strong{text-align:right;color:var(--gold)}
-.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:20px}
-.step{padding:15px;border:1px solid var(--line);border-radius:16px;background:rgba(9,20,36,.5)}
+.steps{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+  margin-top:20px
+}
+.step{
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(9,20,36,.5)
+}
 .step b{display:block;color:var(--gold);margin-bottom:5px}
 .sources{display:grid;gap:12px;margin-top:18px}
-.source{padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:rgba(9,20,36,.4)}
+.source{
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(9,20,36,.4)
+}
 .source a{font-weight:700}
-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 0 35px;color:var(--muted);font-size:.88rem}
+footer{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:0 0 35px;
+  color:var(--muted);
+  font-size:.88rem
+}
 .error{color:var(--red)}
+
+/* REELMETRICS AUDIENCE PULSE */
+.audience-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:18px
+}
+.audience-card{
+  min-width:0;
+  border:1px solid rgba(155,181,219,.18);
+  border-radius:20px;
+  padding:18px;
+  background:rgba(9,20,36,.52);
+  transition:border-color .2s ease,transform .2s ease
+}
+.audience-card:hover{
+  border-color:rgba(242,198,109,.35);
+  transform:translateY(-2px)
+}
+.audience-card h3{
+  font-size:1rem;
+  margin:0 0 8px;
+  color:var(--gold);
+  letter-spacing:-.01em
+}
+.audience-card p{
+  margin:0;
+  color:#dbe5f8;
+  font-size:.94rem;
+  line-height:1.65
+}
+.audience-tag{
+  display:inline-flex;
+  align-items:center;
+  margin-bottom:11px;
+  padding:4px 9px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  font-size:.74rem;
+  font-weight:750;
+  letter-spacing:.04em
+}
+.audience-tag.positive{
+  color:var(--green);
+  border-color:rgba(123,220,187,.25);
+  background:rgba(123,220,187,.06)
+}
+.audience-tag.mixed{
+  color:var(--gold);
+  border-color:rgba(242,198,109,.25);
+  background:rgba(242,198,109,.06)
+}
+.audience-tag.critical{
+  color:var(--red);
+  border-color:rgba(255,157,157,.25);
+  background:rgba(255,157,157,.06)
+}
+.audience-empty{
+  grid-column:1/-1;
+  padding:22px;
+  border:1px dashed rgba(155,181,219,.22);
+  border-radius:18px;
+  color:var(--muted);
+  background:rgba(9,20,36,.3);
+  text-align:center
+}
+.audience-status{
+  color:var(--muted);
+  font-size:.78rem;
+  margin-top:14px
+}
+
 @media(max-width:760px){
- .wrap{width:calc(100% - 28px)}.masthead{padding-top:30px}
- .panel.span-6{grid-column:span 12}
- .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
- .bar-row{grid-template-columns:minmax(90px,1fr) minmax(70px,1.5fr) auto;gap:8px}
- .bar-value{font-size:.88rem}
+  .wrap{width:calc(100% - 28px)}
+  .masthead{padding-top:30px}
+  .panel.span-6{grid-column:span 12}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bar-row{
+    grid-template-columns:minmax(90px,1fr) minmax(70px,1.5fr) auto;
+    gap:8px
+  }
+  .bar-value{font-size:.88rem}
+  .audience-grid{grid-template-columns:1fr}
 }
 @media(max-width:390px){
- .kpi-grid,.worldwide-breakdown,.two-col{grid-template-columns:1fr}
- .scenario-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
- .bar-row{grid-template-columns:1fr auto}
- .bar-track{grid-column:1/-1;grid-row:2}
- .risk-row{grid-template-columns:1fr 42px}.risk-row .bar-track{grid-column:1/-1;grid-row:2}
+  .kpi-grid,.worldwide-breakdown,.two-col{grid-template-columns:1fr}
+  .scenario-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bar-row{grid-template-columns:1fr auto}
+  .bar-track{grid-column:1/-1;grid-row:2}
+  .risk-row{grid-template-columns:1fr 42px}
+  .risk-row .bar-track{grid-column:1/-1;grid-row:2}
 }
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important}
+}
 </style>
 </head>
+
 <body>
 <main class="wrap">
-  <header class="masthead">
-    <div class="kicker">Cinema intelligence / India + worldwide · Liquid Glass</div>
-    <h1>RAMAYANA <span>BOX OFFICE<br>INTELLIGENCE</span></h1>
-    <p class="subtitle">A source-aware analytical dashboard for advance bookings, worldwide snapshots, opening-day benchmarks, scenario modelling and data quality. Published figures, automated observations and forecasts are kept distinct.</p>
-    <div class="status-row">
-      <div class="status-pill"><span class="status-dot"></span><span id="statusBadge">Loading dashboard data…</span></div>
-      <span class="meta-pill">Release date · 5 November 2026</span>
-      <span class="meta-pill" id="lastCheckedPill">Browser check · —</span>
+
+<header class="masthead">
+  <div class="kicker">ReelMetrics / Cinema Intelligence · Liquid Glass</div>
+  <h1>REEL<span>METRICS</span></h1>
+  <p class="subtitle">
+    A source-aware cinema intelligence platform for box-office tracking,
+    advance bookings, audience sentiment, historical comparisons and
+    analytical forecasting.
+  </p>
+
+  <div class="status-row">
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      <span id="statusBadge">Loading dashboard data…</span>
     </div>
-    <div class="notice"><b>⚠ Data integrity rule.</b> A page refresh is not proof of a new source report. Automated values are accepted only when the scheduled fetch succeeds; published snapshots retain their original timestamp and scope. Forecasts are estimates, never actual collections.</div>
-  </header>
-
-  <div class="grid">
-    <section class="panel" id="worldwidePanel">
-      <div class="section-head"><div><div class="eyebrow">01 / Worldwide observation</div><h2>Worldwide Advance Bookings — All Dates</h2></div></div>
-      <p class="section-description">The latest available published snapshot explicitly covering all dates, with India and overseas figures shown separately.</p>
-      <div class="worldwide-hero">
-        <div class="kpi-label">Worldwide advance gross</div>
-        <div class="kpi-value" id="worldwideTotal">—</div>
-        <div class="muted">All-dates snapshot · not actual box-office collection</div>
-      </div>
-      <div class="worldwide-breakdown">
-        <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">India gross</div><div class="kpi-value" id="worldwideIndia">—</div></div>
-        <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">Overseas gross</div><div class="kpi-value" id="worldwideOverseas">—</div></div>
-      </div>
-      <div class="snapshot-meta"><span class="tag" id="worldwideSource">Source: —</span><span class="tag" id="worldwideTimestamp">Snapshot: —</span><span class="tag" id="worldwideScope">Scope: all dates</span></div>
-      <div class="callout" id="snapshotChange">Snapshot movement will appear when two comparable records are available.</div>
-      <div class="callout">Advance bookings are not actual box-office collections. Snapshot figures may differ by source, timestamp, territory coverage, blocked-seat treatment and reporting definition.</div>
-    </section>
-
-    <section class="panel" id="indiaPanel">
-      <div class="section-head"><div><div class="eyebrow">02 / Automated observation</div><h2>India Day 1 advance-booking monitor</h2></div></div>
-      <p class="section-description">Source-reported India Day 1 figures, with workflow verification shown separately.</p>
-      <div class="status-pill" id="feedStatus"><span class="status-dot"></span>Checking feed status…</div>
-      <div class="kpi-grid">
-        <div class="kpi" style="--accent:var(--gold)"><div class="kpi-label">India advance gross</div><div class="kpi-value" id="indiaGross">—</div><small>Source-reported Day 1 gross</small></div>
-        <div class="kpi" style="--accent:var(--cyan)"><div class="kpi-label">Gross including blocked seats</div><div class="kpi-value" id="indiaGrossBlocks">—</div><small>If reported by source</small></div>
-        <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">Tickets booked</div><div class="kpi-value" id="tickets">—</div><small>Source-reported ticket count</small></div>
-        <div class="kpi" style="--accent:var(--green)"><div class="kpi-label">Shows / occupancy</div><div class="kpi-value" id="shows">—</div><small id="occupancy">Occupancy unavailable</small></div>
-      </div>
-      <div class="two-col" style="margin-top:22px">
-        <div class="summary-box"><span>Fetch timestamp</span><strong id="fetchedAt">—</strong></div>
-        <div class="summary-box"><span>Source update label</span><strong id="sourceUpdated">—</strong></div>
-        <div class="summary-box"><span>Feed status</span><strong id="feedState">—</strong></div>
-      </div>
-      <div class="callout" id="feedMessage">Automated source details will appear here.</div>
-    </section>
-
-    <section class="panel" id="comparisonPanel">
-      <div class="section-head"><div><div class="eyebrow">03 / Benchmark analysis</div><h2>Worldwide opening-day comparison</h2></div></div>
-      <p class="section-description">Reported benchmark figures versus the central scenario from data.json. Ramayana's bar follows the current central scenario.</p>
-      <div class="bar-list" id="comparisonBars"></div>
-      <div class="callout" id="comparisonNote">Confirm that each source uses worldwide Day 1 gross and a comparable reporting definition before drawing conclusions.</div>
-      <div class="legend"><span><i></i> Reported benchmark</span><span><i style="background:var(--green)"></i> Forecast scenario</span></div>
-      <div class="callout">Method note: reported Day 1 grosses may differ by source, territory coverage, currency conversion and gross/net accounting. Only compare like-for-like figures.</div>
-    </section>
-
-    <section class="panel" id="scenarioPanel">
-      <div class="section-head"><div><div class="eyebrow">04 / Scenario model</div><h2>Day 1 forecast range</h2></div></div>
-      <p class="section-description">Worldwide gross · ₹ crore · values read from data.json.</p>
-      <div class="bar-list" id="scenarioBars"></div>
-      <div class="scenario-summary">
-        <div class="summary-box"><span>Low case</span><strong id="lowCase">—</strong></div>
-        <div class="summary-box"><span>Central case</span><strong id="centralCase" style="color:var(--green)">—</strong></div>
-        <div class="summary-box"><span>High case</span><strong id="highCase">—</strong></div>
-      </div>
-      <p class="muted" id="scenarioRange" style="margin-top:20px"></p>
-      <div class="callout" id="scenarioInterpretation">Scenario interpretation will appear here.</div>
-      <div class="callout"><strong style="color:var(--text)">Scenario-only mode</strong><br>No calibrated forecast model is enabled in data.json. These are planning scenarios and will not move simply because the booking figure changes.</div>
-    </section>
-
-    <section class="panel" id="liveReadingPanel">
-      <div class="section-head"><div><div class="eyebrow">05 / Live analysis</div><h2>Box Office Pulse</h2></div><span class="pill" id="readingState">Waiting for data</span></div>
-      <p class="section-description">A live interpretation of the latest reported advance-booking data. The analysis refreshes with data.json; it distinguishes observed demand from unverified momentum.</p>
-      <div class="scenario-summary">
-        <div class="summary-box"><span>Demand signal</span><strong id="readingSignal">Awaiting data</strong></div>
-        <div class="summary-box"><span>Day 1 scenario</span><strong id="readingForecast">—</strong></div>
-        <div class="summary-box"><span>Data confidence</span><strong id="readingConfidence">—</strong></div>
-      </div>
-      <div class="callout" id="readingHeadline" style="margin-top:18px">The booking signal will appear when valid feed data is available.</div>
-      <div class="callout" id="readingDetail" style="margin-top:12px">Booking metrics, comparable movement and source freshness will be assessed here.</div>
-      <div class="callout" id="readingRisks" style="margin-top:12px">Key risks will be derived from the available fields.</div>
-    </section>
-
-    <section class="panel" id="snapshotPanel">
-      <div class="section-head"><div><div class="eyebrow">06 / Snapshot history</div><h2>Published booking snapshots</h2></div></div>
-      <p class="section-description">Snapshot records are preserved individually; the chart does not imply comparable growth unless reporting scope matches.</p>
-      <div id="snapshotBars"></div>
-      <div class="legend"><span><i></i> Worldwide reported</span><span><i style="background:var(--cyan)"></i> India reported</span><span><i style="background:var(--purple)"></i> Overseas reported</span></div>
-      <div class="callout">The x-axis follows available snapshots. Missing values remain missing; this dashboard does not interpolate absent figures.</div>
-    </section>
-
-    <section class="panel" id="riskPanel">
-      <div class="section-head"><div><div class="eyebrow">07 / Risk prioritisation</div><h2>Key forecast drivers</h2></div></div>
-      <p class="section-description">Illustrative ranking, not measured statistical causality.</p>
-      <div id="riskBars"></div>
-      <div class="callout" id="riskInterpretation">Risk-driver interpretation will appear here.</div>
-    </section>
-
-    <section class="panel" id="methodologyPanel">
-      <div class="section-head"><div><div class="eyebrow">07 / Methodology & controls</div><h2>How the tracker treats data</h2></div></div>
-      <div class="steps">
-        <div class="step"><b>DEFINE</b><span class="muted">Identify metric, territory and date scope.</span></div>
-        <div class="step"><b>MEASURE</b><span class="muted">Capture source value, publication label and fetch time.</span></div>
-        <div class="step"><b>ANALYSE</b><span class="muted">Compare only compatible reporting definitions.</span></div>
-        <div class="step"><b>IMPROVE</b><span class="muted">Correct parsing only after validating source changes.</span></div>
-        <div class="step"><b>CONTROL</b><span class="muted">Preserve last successful data and flag stale observations.</span></div>
-      </div>
-      <div class="callout" id="methodologyNote"><strong style="color:var(--text)">Data caveat:</strong> This dashboard displays the contents of data.json. An automated fetch can succeed while the source remains unchanged or while its update timestamp is unavailable. Scenario values are illustrative until calibrated against historical outcomes.</div>
-    </section>
-
-    <section class="panel" id="sourcesPanel">
-      <div class="section-head"><div><div class="eyebrow">09 / Sources</div><h2>Source directory</h2></div></div>
-      <p class="section-description">Use the original reporting page to verify values, publication timestamps and reporting scope.</p>
-      <div class="sources" id="sourcesList"><div class="source muted">Loading sources…</div></div>
-    </section>
-
-    <section class="panel" id="snapshotRegisterPanel">
-      <div class="section-head"><div><div class="eyebrow">10 / Audit trail</div><h2>Snapshot register</h2></div></div>
-      <p class="section-description">Recorded snapshots, with their source names, timestamps and scopes.</p>
-      <div class="table-wrap"><table><thead><tr><th>Source</th><th>Timestamp</th><th>Scope</th><th>Worldwide</th><th>India</th><th>Overseas</th></tr></thead><tbody id="snapshotTable"><tr><td colspan="6">Loading snapshots…</td></tr></tbody></table></div>
-    </section>
+    <span class="meta-pill">Currently Tracking: Ramayana: Rise of a Legend</span>
+    <span class="meta-pill" id="lastCheckedPill">Browser check · —</span>
   </div>
 
-  <footer><span>Ramayana | Box Office Intelligence</span><span>Made by a cinephile · @thetanmaygupta ♥️</span></footer>
+  <div class="notice">
+    <b>Data integrity rule.</b>
+    A page refresh is not proof of a new source report.
+    Published observations, automated fetches and forecasts are kept distinct.
+  </div>
+</header>
+
+<div class="grid">
+
+<section class="panel" id="worldwidePanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">01 / Worldwide observation</div>
+      <h2>Worldwide Advance Bookings — All Dates</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    The latest available published snapshot explicitly covering all dates,
+    with India and overseas figures shown separately.
+  </p>
+
+  <div class="worldwide-hero">
+    <div class="kpi-label">Worldwide advance gross</div>
+    <div class="kpi-value" id="worldwideTotal">—</div>
+    <div class="muted">All-dates snapshot · not actual box-office collection</div>
+  </div>
+
+  <div class="worldwide-breakdown">
+    <div class="kpi" style="--accent:var(--cyan)">
+      <div class="kpi-label">India gross</div>
+      <div class="kpi-value" id="worldwideIndia">—</div>
+    </div>
+    <div class="kpi" style="--accent:var(--purple)">
+      <div class="kpi-label">Overseas gross</div>
+      <div class="kpi-value" id="worldwideOverseas">—</div>
+    </div>
+  </div>
+
+  <div class="snapshot-meta">
+    <span class="tag" id="worldwideSource">Source: —</span>
+    <span class="tag" id="worldwideTimestamp">Snapshot: —</span>
+    <span class="tag" id="worldwideScope">Scope: all dates</span>
+  </div>
+
+  <div class="callout" id="snapshotChange">
+    Snapshot movement will appear when two comparable records are available.
+  </div>
+  <div class="callout">
+    Advance bookings are not actual box-office collections.
+    Snapshot figures may differ by source, timestamp, territory coverage,
+    blocked-seat treatment and reporting definition.
+  </div>
+</section>
+
+<section class="panel" id="indiaPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">02 / Automated observation</div>
+      <h2>India Day 1 advance-booking monitor</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    Source-reported India Day 1 figures, with workflow verification shown separately.
+  </p>
+
+  <div class="status-pill" id="feedStatus">
+    <span class="status-dot"></span>Checking feed status…
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi" style="--accent:var(--gold)">
+      <div class="kpi-label">India advance gross</div>
+      <div class="kpi-value" id="indiaGross">—</div>
+      <small>Source-reported Day 1 gross</small>
+    </div>
+    <div class="kpi" style="--accent:var(--cyan)">
+      <div class="kpi-label">Gross including blocked seats</div>
+      <div class="kpi-value" id="indiaGrossBlocks">—</div>
+      <small>If reported by source</small>
+    </div>
+    <div class="kpi" style="--accent:var(--purple)">
+      <div class="kpi-label">Tickets booked</div>
+      <div class="kpi-value" id="tickets">—</div>
+      <small>Source-reported ticket count</small>
+    </div>
+    <div class="kpi" style="--accent:var(--green)">
+      <div class="kpi-label">Shows / occupancy</div>
+      <div class="kpi-value" id="shows">—</div>
+      <small id="occupancy">Occupancy unavailable</small>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:22px">
+    <div class="summary-box">
+      <span>Fetch timestamp</span>
+      <strong id="fetchedAt">—</strong>
+    </div>
+    <div class="summary-box">
+      <span>Source update label</span>
+      <strong id="sourceUpdated">—</strong>
+    </div>
+    <div class="summary-box">
+      <span>Feed status</span>
+      <strong id="feedState">—</strong>
+    </div>
+  </div>
+
+  <div class="callout" id="feedMessage">
+    Automated source details will appear here.
+  </div>
+</section>
+
+<section class="panel" id="comparisonPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">03 / Benchmark analysis</div>
+      <h2>Worldwide opening-day comparison</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    Reported benchmark figures versus the central scenario from data.json.
+    Ramayana's bar follows the current central scenario.
+  </p>
+
+  <div class="bar-list" id="comparisonBars"></div>
+  <div class="callout" id="comparisonNote">
+    Confirm that each source uses worldwide Day 1 gross and a comparable
+    reporting definition before drawing conclusions.
+  </div>
+
+  <div class="legend">
+    <span><i></i> Reported benchmark</span>
+    <span><i style="background:var(--green)"></i> Forecast scenario</span>
+  </div>
+
+  <div class="callout">
+    Reported Day 1 grosses may differ by source, territory coverage,
+    currency conversion and gross/net accounting.
+    Only compare like-for-like figures.
+  </div>
+</section>
+
+<section class="panel" id="scenarioPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">04 / Scenario model</div>
+      <h2>Day 1 forecast range</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    Worldwide gross · ₹ crore · values read from data.json.
+  </p>
+
+  <div class="bar-list" id="scenarioBars"></div>
+
+  <div class="scenario-summary">
+    <div class="summary-box">
+      <span>Low case</span>
+      <strong id="lowCase">—</strong>
+    </div>
+    <div class="summary-box">
+      <span>Central case</span>
+      <strong id="centralCase" style="color:var(--green)">—</strong>
+    </div>
+    <div class="summary-box">
+      <span>High case</span>
+      <strong id="highCase">—</strong>
+    </div>
+  </div>
+
+  <p class="muted" id="scenarioRange" style="margin-top:20px"></p>
+
+  <div class="callout" id="scenarioInterpretation">
+    Scenario interpretation will appear here.
+  </div>
+
+  <div class="callout">
+    <strong style="color:var(--text)">Scenario-only mode</strong><br>
+    No calibrated forecast model is enabled in data.json.
+    These are planning scenarios and will not move simply because
+    the booking figure changes.
+  </div>
+</section>
+
+<section class="panel" id="liveReadingPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">05 / Live analysis</div>
+      <h2>Box Office Pulse</h2>
+    </div>
+    <span class="pill" id="readingState">Waiting for data</span>
+  </div>
+
+  <p class="section-description">
+    A live interpretation of the latest reported advance-booking data.
+    The analysis refreshes with data.json; it distinguishes observed demand
+    from unverified momentum.
+  </p>
+
+  <div class="scenario-summary">
+    <div class="summary-box">
+      <span>Demand signal</span>
+      <strong id="readingSignal">Awaiting data</strong>
+    </div>
+    <div class="summary-box">
+      <span>Day 1 scenario</span>
+      <strong id="readingForecast">—</strong>
+    </div>
+    <div class="summary-box">
+      <span>Data confidence</span>
+      <strong id="readingConfidence">—</strong>
+    </div>
+  </div>
+
+  <div class="callout" id="readingHeadline" style="margin-top:18px">
+    The booking signal will appear when valid feed data is available.
+  </div>
+  <div class="callout" id="readingDetail" style="margin-top:12px">
+    Booking metrics, comparable movement and source freshness will be assessed here.
+  </div>
+  <div class="callout" id="readingRisks" style="margin-top:12px">
+    Key risks will be derived from the available fields.
+  </div>
+</section>
+
+<!-- AUDIENCE PULSE -->
+<section class="panel" id="audiencePulsePanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">06 / Audience intelligence</div>
+      <h2>Audience Pulse</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    A concise editorial reading of audience reactions, highlighting
+    recurring appreciation and constructive observations.
+  </p>
+
+  <div class="audience-grid" id="audiencePulseCards" aria-live="polite">
+    <div class="audience-empty">
+      Audience Pulse is awaiting its first verified update.
+    </div>
+  </div>
+
+  <div class="audience-status" id="audiencePulseStatus">
+    Waiting for audience review data.
+  </div>
+</section>
+
+<section class="panel" id="snapshotPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">07 / Snapshot history</div>
+      <h2>Published booking snapshots</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    Snapshot records are preserved individually; the chart does not imply
+    comparable growth unless reporting scope matches.
+  </p>
+
+  <div id="snapshotBars"></div>
+
+  <div class="legend">
+    <span><i></i> Worldwide reported</span>
+    <span><i style="background:var(--cyan)"></i> India reported</span>
+    <span><i style="background:var(--purple)"></i> Overseas reported</span>
+  </div>
+
+  <div class="callout">
+    The x-axis follows available snapshots. Missing values remain missing;
+    this dashboard does not interpolate absent figures.
+  </div>
+</section>
+
+<section class="panel" id="riskPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">08 / Risk prioritisation</div>
+      <h2>Key forecast drivers</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    Illustrative ranking, not measured statistical causality.
+  </p>
+
+  <div id="riskBars"></div>
+  <div class="callout" id="riskInterpretation">
+    Risk-driver interpretation will appear here.
+  </div>
+</section>
+
+<section class="panel" id="methodologyPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">09 / Methodology & controls</div>
+      <h2>How the tracker treats data</h2>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <b>DEFINE</b>
+      <span class="muted">Identify metric, territory and date scope.</span>
+    </div>
+    <div class="step">
+      <b>MEASURE</b>
+      <span class="muted">Capture source value, publication label and fetch time.</span>
+    </div>
+    <div class="step">
+      <b>ANALYSE</b>
+      <span class="muted">Compare only compatible reporting definitions.</span>
+    </div>
+    <div class="step">
+      <b>IMPROVE</b>
+      <span class="muted">Correct parsing only after validating source changes.</span>
+    </div>
+    <div class="step">
+      <b>CONTROL</b>
+      <span class="muted">Preserve last successful data and flag stale observations.</span>
+    </div>
+  </div>
+
+  <div class="callout" id="methodologyNote">
+    <strong style="color:var(--text)">Data caveat:</strong>
+    This dashboard displays the contents of data.json.
+    An automated fetch can succeed while the source remains unchanged
+    or while its update timestamp is unavailable.
+    Scenario values are illustrative until calibrated against historical outcomes.
+  </div>
+</section>
+
+<section class="panel" id="sourcesPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">10 / Sources</div>
+      <h2>Source directory</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    Use the original reporting page to verify values, publication timestamps
+    and reporting scope.
+  </p>
+
+  <div class="sources" id="sourcesList">
+    <div class="source muted">Loading sources…</div>
+  </div>
+</section>
+
+<section class="panel" id="snapshotRegisterPanel">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">11 / Audit trail</div>
+      <h2>Snapshot register</h2>
+    </div>
+  </div>
+
+  <p class="section-description">
+    Recorded snapshots, with their source names, timestamps and scopes.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Timestamp</th>
+          <th>Scope</th>
+          <th>Worldwide</th>
+          <th>India</th>
+          <th>Overseas</th>
+        </tr>
+      </thead>
+      <tbody id="snapshotTable">
+        <tr><td colspan="6">Loading snapshots…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <span>ReelMetrics · Cinema Intelligence</span>
+  <span>Made by a cinephile · @thetanmaygupta ♥️</span>
+</footer>
+
 </main>
 
 <script>
 (() => {
   "use strict";
+
   const REFRESH_MS = 15 * 60 * 1000;
   const FEED_STALE_MS = 6 * 60 * 60 * 1000;
   const SOURCE_STALE_MS = 6 * 60 * 60 * 1000;
+
   const $ = id => document.getElementById(id);
   const safe = v => v === null || v === undefined || v === "" ? "—" : String(v);
   const num = v => v === null || v === undefined || v === "" || !Number.isFinite(Number(v)) ? null : Number(v);
   const cr = v => num(v) === null ? "—" : `₹${num(v).toFixed(2)} Cr`;
   const integer = v => num(v) === null ? "—" : Math.round(num(v)).toLocaleString("en-IN");
   const pct = v => num(v) === null ? "—" : `${num(v).toFixed(1)}%`;
-  const validDate = v => { const d = v ? new Date(v) : null; return d && !Number.isNaN(d.getTime()) ? d : null; };
+
+  const validDate = v => {
+    const d = v ? new Date(v) : null;
+    return d && !Number.isNaN(d.getTime()) ? d : null;
+  };
+
   const parseSourceTimestamp = value => {
     if (!value) return null;
     const raw = String(value).trim().replace(/\s+IST$/i, "");
@@ -251,72 +866,188 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     if (match) return validDate(`${match[1]}T${match[2]}:${match[3] || "00"}+05:30`);
     return validDate(raw);
   };
+
   const dateText = v => {
     const d = validDate(v);
-    return d ? d.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}) + " IST" : (v ? String(v) : "Timestamp unavailable");
+    return d
+      ? d.toLocaleString("en-IN", {
+          dateStyle:"medium",
+          timeStyle:"short",
+          timeZone:"Asia/Kolkata"
+        }) + " IST"
+      : (v ? String(v) : "Timestamp unavailable");
   };
-  const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const safeUrl = v => { try { const u = new URL(v); return ["https:","http:"].includes(u.protocol) ? u.href : ""; } catch { return ""; } };
-  const set = (id,v) => { if ($(id)) $(id).textContent = v; };
-  const scopeKey = s => String(s?.scope || "scope not stated").toLowerCase().replaceAll("_"," ").trim();
+
+  const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+
+  const safeUrl = v => {
+    try {
+      const u = new URL(v);
+      return ["https:","http:"].includes(u.protocol) ? u.href : "";
+    } catch {
+      return "";
+    }
+  };
+
+  const set = (id,v) => {
+    if ($(id)) $(id).textContent = v;
+  };
+
+  const scopeKey = s => String(s?.scope || "scope not stated")
+    .toLowerCase().replaceAll("_"," ").trim();
+
   const scopeOf = s => scopeKey(s).replace(/\b\w/g,c=>c.toUpperCase());
   const snapshotDate = s => validDate(s?.timestamp);
+
   const findCentral = scenarios => {
-    const row = (scenarios || []).find(s => /base case|moderate|central/i.test(s.name || ""));
+    const row = (scenarios || []).find(s =>
+      /base case|moderate|central/i.test(s.name || "")
+    );
     return num(row?.valueCr);
   };
+
   const bar = (label,value,max,options={}) => {
-    const n = num(value), width = n === null || max <= 0 ? 0 : Math.max(0,Math.min(100,n/max*100));
-    return `<div class="bar-row"><div class="bar-label">${esc(label)}</div><div class="bar-track"><div class="bar-fill ${options.color||""}" style="width:${width}%"></div></div><div class="bar-value">${n===null?"—":esc(options.format ? options.format(n) : n.toFixed(2))}</div></div>`;
+    const n = num(value);
+    const width = n === null || max <= 0
+      ? 0
+      : Math.max(0,Math.min(100,n/max*100));
+
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${esc(label)}</div>
+        <div class="bar-track">
+          <div class="bar-fill ${options.color||""}" style="width:${width}%"></div>
+        </div>
+        <div class="bar-value">
+          ${n===null?"—":esc(options.format ? options.format(n) : n.toFixed(2))}
+        </div>
+      </div>`;
   };
-  const sortedSnapshots = snaps => [...snaps].sort((a,b)=>(snapshotDate(b)?.getTime()||0)-(snapshotDate(a)?.getTime()||0));
+
+  const sortedSnapshots = snaps => [...snaps].sort((a,b)=>
+    (snapshotDate(b)?.getTime()||0)-(snapshotDate(a)?.getTime()||0)
+  );
+
   const comparablePair = snaps => {
     const groups = new Map();
+
     snaps.forEach(s => {
-      const key = `${String(s.sourceName||"").trim().toLowerCase()}|${scopeKey(s)}`;
+      const key =
+        `${String(s.sourceName||"").trim().toLowerCase()}|${scopeKey(s)}`;
+
       if (!s.sourceName || !snapshotDate(s)) return;
       if (!groups.has(key)) groups.set(key,[]);
       groups.get(key).push(s);
     });
-    const pairs = [...groups.values()].map(g=>g.sort((a,b)=>snapshotDate(b)-snapshotDate(a))).filter(g=>g.length>=2);
+
+    const pairs = [...groups.values()]
+      .map(g=>g.sort((a,b)=>snapshotDate(b)-snapshotDate(a)))
+      .filter(g=>g.length>=2);
+
     pairs.sort((a,b)=>snapshotDate(b[0])-snapshotDate(a[0]));
+
     return pairs[0] ? [pairs[0][1],pairs[0][0]] : null;
   };
+
   function renderSnapshotMovement(snaps) {
     const pair = comparablePair(snaps);
+
     if (!pair) {
-      set("snapshotChange","No like-for-like movement calculated: at least two timestamped snapshots from the same source and scope are required. Different sources or date scopes are not treated as a trend.");
+      set(
+        "snapshotChange",
+        "No like-for-like movement calculated: at least two timestamped snapshots from the same source and scope are required. Different sources or date scopes are not treated as a trend."
+      );
       return;
     }
+
     const [older,newer] = pair;
-    const metrics = [["Worldwide","worldwideCr"],["India","indiaCr"],["Overseas","overseasCr"]];
+    const metrics = [
+      ["Worldwide","worldwideCr"],
+      ["India","indiaCr"],
+      ["Overseas","overseasCr"]
+    ];
+
     const changes = metrics.map(([label,key])=>{
       const a=num(older[key]),b=num(newer[key]);
-      if(a===null||b===null)return `${label}: insufficient data`;
-      const delta=b-a, rate=a!==0?(delta/a)*100:null;
-      return `${label}: ${delta>=0?"+":""}₹${delta.toFixed(2)} Cr${rate===null?"":` (${rate>=0?"+":""}${rate.toFixed(1)}%)`}`;
+
+      if(a===null||b===null) return `${label}: insufficient data`;
+
+      const delta=b-a;
+      const rate=a!==0?(delta/a)*100:null;
+
+      return `${label}: ${delta>=0?"+":""}₹${delta.toFixed(2)} Cr${
+        rate===null?"":` (${rate>=0?"+":""}${rate.toFixed(1)}%)`
+      }`;
     });
-    set("snapshotChange",`Like-for-like movement · ${esc(newer.sourceName)} · ${scopeOf(newer)}. Older: ${dateText(older.timestamp)}; newer: ${dateText(newer.timestamp)}. ${changes.join(" · ")}. These are source-record changes, not verified market-wide growth.`);
+
+    set(
+      "snapshotChange",
+      `Like-for-like movement · ${esc(newer.sourceName)} · ${scopeOf(newer)}. Older: ${dateText(older.timestamp)}; newer: ${dateText(newer.timestamp)}. ${changes.join(" · ")}. These are source-record changes, not verified market-wide growth.`
+    );
   }
+
   function renderFeed(feed) {
-    const fetched=validDate(feed.fetchedAt), now=Date.now();
+    const fetched=validDate(feed.fetchedAt);
+    const now=Date.now();
     const fetchAge=fetched ? now-fetched.getTime() : null;
     const sourceLabel=String(feed.sourceUpdatedText||"").trim();
     const sourceDate=parseSourceTimestamp(sourceLabel);
     const fetchOk=String(feed.status||"").toLowerCase()==="success";
     const fetchFresh=fetchAge!==null && fetchAge>=0 && fetchAge<=FEED_STALE_MS;
-    const sourceFresh=sourceDate ? now-sourceDate.getTime()>=0 && now-sourceDate.getTime()<=SOURCE_STALE_MS : false;
-    let status="Fetch not verified", badge="Feed status unavailable", color="var(--red)";
-    if(!fetchOk){status="Fetch failed";badge="Latest fetch failed"; }
-    else if(!fetched){status="Fetch timestamp missing";badge="Fetch timestamp missing";}
-    else if(fetchAge<0){status="Fetch timestamp is in the future";badge=status;}
-    else if(!fetchFresh){status="Last successful fetch is stale";badge=status;}
-    else if(!sourceLabel){status="Source update timestamp unavailable";badge="Fetch succeeded · source time missing";}
-    else if(!sourceDate){status="Source timestamp could not be parsed";badge="Fetch succeeded · source time unverified";}
-    else if(!sourceFresh){status="Fetch succeeded · source report is stale";badge="Fetch succeeded · source report stale";}
-    else {status="Fetch and source timestamps are recent";badge=`Fetch successful · Source: ${sourceLabel}`;color="var(--green)";}
-    set("feedStatus",status);set("statusBadge",badge);set("feedState",fetchOk?"Fetch succeeded":safe(feed.status||"Not verified"));
+    const sourceFresh=sourceDate
+      ? now-sourceDate.getTime()>=0 && now-sourceDate.getTime()<=SOURCE_STALE_MS
+      : false;
+
+    let status="Fetch not verified";
+    let badge="Feed status unavailable";
+    let color="var(--red)";
+
+    if(!fetchOk){
+      status="Fetch failed";
+      badge="Latest fetch failed";
+    }
+    else if(!fetched){
+      status="Fetch timestamp missing";
+      badge="Fetch timestamp missing";
+    }
+    else if(fetchAge<0){
+      status="Fetch timestamp is in the future";
+      badge=status;
+    }
+    else if(!fetchFresh){
+      status="Last successful fetch is stale";
+      badge=status;
+    }
+    else if(!sourceLabel){
+      status="Source update timestamp unavailable";
+      badge="Fetch succeeded · source time missing";
+    }
+    else if(!sourceDate){
+      status="Source timestamp could not be parsed";
+      badge="Fetch succeeded · source time unverified";
+    }
+    else if(!sourceFresh){
+      status="Fetch succeeded · source report is stale";
+      badge="Fetch succeeded · source report stale";
+    }
+    else {
+      status="Fetch and source timestamps are recent";
+      badge=`Fetch successful · Source: ${sourceLabel}`;
+      color="var(--green)";
+    }
+
+    set("feedStatus",status);
+    set("statusBadge",badge);
+    set("feedState",fetchOk?"Fetch succeeded":safe(feed.status||"Not verified"));
+
     $("feedStatus").style.color=color;
+
     set("indiaGross",cr(feed.indiaGrossCr));
     set("indiaGrossBlocks",cr(feed.indiaGrossIncludingBlocksCr));
     set("tickets",integer(feed.tickets));
@@ -324,159 +1055,538 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     set("occupancy",`${pct(feed.occupancyPct)} reported occupancy`);
     set("fetchedAt",dateText(feed.fetchedAt));
     set("sourceUpdated",safe(sourceLabel));
-    set("feedMessage",safe(feed.message||"Source-reported values are not producer-confirmed. Missing metrics were not inferred."));
+    set(
+      "feedMessage",
+      safe(feed.message||"Source-reported values are not producer-confirmed. Missing metrics were not inferred.")
+    );
+
     return {fetchOk,fetchFresh,sourceFresh,sourceDate,fetched};
   }
+
   function renderLiveReading(data, feedStatus, scenarios) {
-    const feed = data.automatedFeed && typeof data.automatedFeed === "object" ? data.automatedFeed : {};
-    const gross = num(feed.indiaGrossCr), tickets = num(feed.tickets);
-    const shows = num(feed.shows), occupancy = num(feed.occupancyPct), overseas = num(feed.overseasCr);
-    const sourceOk = !!(feedStatus && feedStatus.fetchOk && feedStatus.fetchFresh && feedStatus.sourceFresh);
+    const feed = data.automatedFeed && typeof data.automatedFeed === "object"
+      ? data.automatedFeed : {};
+
+    const gross = num(feed.indiaGrossCr);
+    const tickets = num(feed.tickets);
+    const shows = num(feed.shows);
+    const occupancy = num(feed.occupancyPct);
+    const overseas = num(feed.overseasCr);
+
+    const sourceOk = !!(
+      feedStatus &&
+      feedStatus.fetchOk &&
+      feedStatus.fetchFresh &&
+      feedStatus.sourceFresh
+    );
+
     const central = findCentral(scenarios);
-    const values = scenarios.map(s => num(s.valueCr)).filter(v => v !== null).sort((a,b)=>a-b);
-    const low = values.length ? values[0] : null, high = values.length ? values[values.length-1] : null;
-    const fmt = v => v === null || v === undefined ? "unavailable" : `₹${v.toFixed(2)} Cr`;
+    const values = scenarios.map(s=>num(s.valueCr))
+      .filter(v=>v!==null).sort((a,b)=>a-b);
+
+    const low = values.length ? values[0] : null;
+    const high = values.length ? values[values.length-1] : null;
+
+    const fmt = v => v === null || v === undefined
+      ? "unavailable"
+      : `₹${v.toFixed(2)} Cr`;
+
     if (gross === null && tickets === null && shows === null) {
-      set("readingState","Insufficient data"); set("readingSignal","Awaiting feed");
-      set("readingForecast",central===null?"—":fmt(central)); set("readingConfidence","Low");
-      set("readingHeadline","No usable India Day 1 feed metrics are available, so the dashboard will not infer booking strength.");
-      set("readingDetail","Check data.json, the last fetch result and source timestamp. The forecast remains a configured scenario, not a live model output.");
-      set("readingRisks","Risk watch: resolve missing metrics and source freshness before interpreting momentum."); return;
+      set("readingState","Insufficient data");
+      set("readingSignal","Awaiting feed");
+      set("readingForecast",central===null?"—":fmt(central));
+      set("readingConfidence","Low");
+      set(
+        "readingHeadline",
+        "No usable India Day 1 feed metrics are available, so the dashboard will not infer booking strength."
+      );
+      set(
+        "readingDetail",
+        "Check data.json, the last fetch result and source timestamp. The forecast remains a configured scenario, not a live model output."
+      );
+      set(
+        "readingRisks",
+        "Risk watch: resolve missing metrics and source freshness before interpreting momentum."
+      );
+      return;
     }
+
     let signal = "Mixed";
-    let headline = "Bookings are available, but this snapshot alone does not establish a reliable acceleration trend.";
+    let headline =
+      "Bookings are available, but this snapshot alone does not establish a reliable acceleration trend.";
+
     if (occupancy !== null && occupancy >= 25 && gross !== null && gross >= 30) {
       signal = "Strong demand";
-      headline = "Tracked Day 1 gross and occupancy are both elevated. If source definitions remain consistent, this supports the upper half of the configured scenario range.";
-    } else if (occupancy !== null && occupancy >= 16 && gross !== null && gross >= 25) {
-      signal = "Positive, conversion-dependent";
-      headline = "Advance bookings show a substantial base, but occupancy indicates remaining capacity. Final opening performance depends on late booking conversion, walk-ins and show utilisation.";
-    } else if (occupancy !== null && occupancy < 12) {
-      signal = "Cautious — conversion risk";
-      headline = "Occupancy is relatively low in the tracked shows. A large gross headline alone is not enough to confirm opening-day demand; watch open-sale tickets and occupancy together.";
+      headline =
+        "Tracked Day 1 gross and occupancy are both elevated. If source definitions remain consistent, this supports the upper half of the configured scenario range.";
     }
+    else if (occupancy !== null && occupancy >= 16 && gross !== null && gross >= 25) {
+      signal = "Positive, conversion-dependent";
+      headline =
+        "Advance bookings show a substantial base, but occupancy indicates remaining capacity. Final opening performance depends on late booking conversion, walk-ins and show utilisation.";
+    }
+    else if (occupancy !== null && occupancy < 12) {
+      signal = "Cautious — conversion risk";
+      headline =
+        "Occupancy is relatively low in the tracked shows. A large gross headline alone is not enough to confirm opening-day demand; watch open-sale tickets and occupancy together.";
+    }
+
     set("readingState",sourceOk ? "Fresh source snapshot" : "Source time unverified/stale");
-    set("readingSignal",signal); set("readingForecast",central===null?"Not configured":fmt(central));
-    set("readingConfidence",sourceOk ? "Moderate" : "Low"); set("readingHeadline",headline);
+    set("readingSignal",signal);
+    set("readingForecast",central===null?"Not configured":fmt(central));
+    set("readingConfidence",sourceOk ? "Moderate" : "Low");
+    set("readingHeadline",headline);
+
     const parts = [];
+
     if (gross !== null) parts.push(`India Day 1 gross excluding blocks: ${fmt(gross)}`);
-    if (num(feed.indiaGrossIncludingBlocksCr) !== null) parts.push(`including blocks: ${fmt(num(feed.indiaGrossIncludingBlocksCr))}`);
+    if (num(feed.indiaGrossIncludingBlocksCr) !== null) {
+      parts.push(`including blocks: ${fmt(num(feed.indiaGrossIncludingBlocksCr))}`);
+    }
     if (tickets !== null) parts.push(`${Math.round(tickets).toLocaleString("en-IN")} tickets`);
     if (shows !== null) parts.push(`${Math.round(shows).toLocaleString("en-IN")} shows`);
     if (occupancy !== null) parts.push(`${occupancy.toFixed(1)}% reported occupancy`);
     if (overseas !== null) parts.push(`overseas figure: ${fmt(overseas)} (confirm date window)`);
+
     const sourceDate = parseSourceTimestamp(feed.sourceUpdatedText);
-    const ageMinutes = sourceDate ? Math.round((Date.now()-sourceDate.getTime())/60000) : null;
-    const timeNote = ageMinutes === null ? "Source timestamp could not be validated." :
-      ageMinutes < 0 ? "Source timestamp is in the future; verify timezone." :
-      `Source timestamp age: approximately ${ageMinutes} minutes.`;
-    set("readingDetail",`${parts.join(" · ")}. ${timeNote} Configured scenario envelope: ${low===null?"not configured":fmt(low)}–${high===null?"not configured":fmt(high)}; central scenario ${central===null?"not configured":fmt(central)}. Booking momentum: not yet measurable from a like-for-like prior feed snapshot. This is not a calibrated statistical forecast.`);
+    const ageMinutes = sourceDate
+      ? Math.round((Date.now()-sourceDate.getTime())/60000)
+      : null;
+
+    const timeNote = ageMinutes === null
+      ? "Source timestamp could not be validated."
+      : ageMinutes < 0
+        ? "Source timestamp is in the future; verify timezone."
+        : `Source timestamp age: approximately ${ageMinutes} minutes.`;
+
+    set(
+      "readingDetail",
+      `${parts.join(" · ")}. ${timeNote} Configured scenario envelope: ${low===null?"not configured":fmt(low)}–${high===null?"not configured":fmt(high)}; central scenario ${central===null?"not configured":fmt(central)}. Booking momentum: not yet measurable from a like-for-like prior feed snapshot. This is not a calibrated statistical forecast.`
+    );
+
     const riskParts = [];
-    if (occupancy !== null && occupancy < 20) riskParts.push("capacity conversion remains a key uncertainty");
-    if (feed.indiaGrossExcludingBlocksCr === null || feed.ticketsExcludingBlocks === null) riskParts.push("some ex-block metrics are unavailable");
-    if (overseas !== null) riskParts.push("confirm whether overseas sales include paid previews");
-    if (!sourceOk) riskParts.push("source freshness is not fully verified");
-    const top = Array.isArray(data.riskDrivers) ? data.riskDrivers.filter(r=>r&&num(r.sharePct)!==null).sort((a,b)=>num(b.sharePct)-num(a.sharePct))[0] : null;
-    if (top) riskParts.push(`largest configured risk weight: ${top.name} (${num(top.sharePct)}%; analyst-assigned)`);
-    set("readingRisks",`Risk watch: ${riskParts.length ? riskParts.join("; ") : "no additional rule-based flags from available fields"}. Forecasts are estimates, not official results.`);
+
+    if (occupancy !== null && occupancy < 20) {
+      riskParts.push("capacity conversion remains a key uncertainty");
+    }
+    if (feed.indiaGrossExcludingBlocksCr === null || feed.ticketsExcludingBlocks === null) {
+      riskParts.push("some ex-block metrics are unavailable");
+    }
+    if (overseas !== null) {
+      riskParts.push("confirm whether overseas sales include paid previews");
+    }
+    if (!sourceOk) {
+      riskParts.push("source freshness is not fully verified");
+    }
+
+    const top = Array.isArray(data.riskDrivers)
+      ? data.riskDrivers
+          .filter(r=>r&&num(r.sharePct)!==null)
+          .sort((a,b)=>num(b.sharePct)-num(a.sharePct))[0]
+      : null;
+
+    if (top) {
+      riskParts.push(
+        `largest configured risk weight: ${top.name} (${num(top.sharePct)}%; analyst-assigned)`
+      );
+    }
+
+    set(
+      "readingRisks",
+      `Risk watch: ${riskParts.length ? riskParts.join("; ") : "no additional rule-based flags from available fields"}. Forecasts are estimates, not official results.`
+    );
   }
 
   function render(data) {
-    const snaps=Array.isArray(data.bookingSnapshots)?data.bookingSnapshots.filter(s=>s&&typeof s==="object"):[];
+    const snaps=Array.isArray(data.bookingSnapshots)
+      ? data.bookingSnapshots.filter(s=>s&&typeof s==="object")
+      : [];
+
     const ordered=sortedSnapshots(snaps);
-    const allDates=snaps.filter(s=>scopeKey(s)==="all dates" && snapshotDate(s))
+
+    const allDates=snaps
+      .filter(s=>scopeKey(s)==="all dates" && snapshotDate(s))
       .sort((a,b)=>snapshotDate(b)-snapshotDate(a))[0];
-    const feed=data.automatedFeed&&typeof data.automatedFeed==="object"?data.automatedFeed:{};
+
+    const feed=data.automatedFeed&&typeof data.automatedFeed==="object"
+      ? data.automatedFeed : {};
+
     const feedStatus = renderFeed(feed);
-    set("lastCheckedPill",`Browser check · ${new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})} IST`);
+
+    set(
+      "lastCheckedPill",
+      `Browser check · ${new Date().toLocaleTimeString("en-IN",{
+        hour:"2-digit",
+        minute:"2-digit",
+        hour12:true,
+        timeZone:"Asia/Kolkata"
+      })} IST`
+    );
+
     set("worldwideTotal",allDates?cr(allDates.worldwideCr):"Unavailable");
     set("worldwideIndia",allDates?cr(allDates.indiaCr):"—");
     set("worldwideOverseas",allDates?cr(allDates.overseasCr):"—");
     set("worldwideSource",`Source: ${allDates?.sourceName||"Not available"}`);
     set("worldwideTimestamp",`Snapshot: ${allDates?dateText(allDates.timestamp):"Unavailable"}`);
     set("worldwideScope",`Scope: ${allDates?scopeOf(allDates):"all dates snapshot unavailable"}`);
+
     renderSnapshotMovement(snaps);
 
-    const scenarios=Array.isArray(data.forecastScenarios)?data.forecastScenarios.filter(x=>x&&typeof x==="object"&&num(x.valueCr)!==null):[];
+    const scenarios=Array.isArray(data.forecastScenarios)
+      ? data.forecastScenarios.filter(x=>x&&typeof x==="object"&&num(x.valueCr)!==null)
+      : [];
+
     const central=findCentral(scenarios);
+
     renderLiveReading(data, feedStatus, scenarios);
-    const comparisons=Array.isArray(data.openingDayComparisons)?data.openingDayComparisons.filter(x=>x&&typeof x==="object"&&num(x.worldwideCr)!==null):[];
-    const allValues=[...comparisons.map(x=>num(x.worldwideCr)),...scenarios.map(x=>num(x.valueCr))].filter(x=>x!==null);
+
+    const comparisons=Array.isArray(data.openingDayComparisons)
+      ? data.openingDayComparisons.filter(x=>x&&typeof x==="object"&&num(x.worldwideCr)!==null)
+      : [];
+
+    const allValues=[
+      ...comparisons.map(x=>num(x.worldwideCr)),
+      ...scenarios.map(x=>num(x.valueCr))
+    ].filter(x=>x!==null);
+
     const maxComp=Math.max(1,...allValues);
+
     $("comparisonBars").innerHTML=comparisons.map(x=>{
       const isForecast=String(x.type||"").toLowerCase()==="forecast";
-      return bar(x.title,x.worldwideCr,maxComp,{color:isForecast?"green":"",format:n=>`₹${n.toFixed(0)} Cr`});
-    }).join("")||`<div class="callout">No valid comparison records are available.</div>`;
-    const reportedCount=comparisons.filter(x=>String(x.type||"").toLowerCase()!=="forecast").length;
-    const forecastCount=comparisons.filter(x=>String(x.type||"").toLowerCase()==="forecast").length;
-    set("comparisonNote",`${reportedCount} reported benchmark(s) and ${forecastCount} forecast comparison(s) supplied. These are not necessarily like-for-like: validate source, territory coverage, currency conversion and Day 1 definition before interpreting the gap.`);
+      return bar(x.title,x.worldwideCr,maxComp,{
+        color:isForecast?"green":"",
+        format:n=>`₹${n.toFixed(0)} Cr`
+      });
+    }).join("") || `<div class="callout">No valid comparison records are available.</div>`;
+
+    const reportedCount=comparisons.filter(
+      x=>String(x.type||"").toLowerCase()!=="forecast"
+    ).length;
+
+    const forecastCount=comparisons.filter(
+      x=>String(x.type||"").toLowerCase()==="forecast"
+    ).length;
+
+    set(
+      "comparisonNote",
+      `${reportedCount} reported benchmark(s) and ${forecastCount} forecast comparison(s) supplied. These are not necessarily like-for-like: validate source, territory coverage, currency conversion and Day 1 definition before interpreting the gap.`
+    );
+
     const maxScenario=Math.max(1,...scenarios.map(x=>num(x.valueCr)||0));
-    $("scenarioBars").innerHTML=scenarios.map(x=>bar(x.name,x.valueCr,maxScenario,{color:/moderate|base|central/i.test(x.name)?"green":"",format:n=>`₹${n.toFixed(0)} Cr`})).join("")||`<div class="callout">No valid forecast scenarios are available.</div>`;
+
+    $("scenarioBars").innerHTML=scenarios.map(x=>bar(x.name,x.valueCr,maxScenario,{
+      color:/moderate|base|central/i.test(x.name)?"green":"",
+      format:n=>`₹${n.toFixed(0)} Cr`
+    })).join("") || `<div class="callout">No valid forecast scenarios are available.</div>`;
+
     const values=scenarios.map(x=>num(x.valueCr)).filter(x=>x!==null);
+
     set("lowCase",values.length?cr(Math.min(...values)):"—");
     set("centralCase",central!==null?cr(central):"—");
     set("highCase",values.length?cr(Math.max(...values)):"—");
-    set("scenarioRange",values.length?`Illustrative scenario envelope: ${cr(Math.min(...values))}–${cr(Math.max(...values))}. This is a set of assumptions, not a statistical confidence interval.`:"No forecast scenarios are available.");
+
+    set(
+      "scenarioRange",
+      values.length
+        ? `Illustrative scenario envelope: ${cr(Math.min(...values))}–${cr(Math.max(...values))}. This is a set of assumptions, not a statistical confidence interval.`
+        : "No forecast scenarios are available."
+    );
+
     if(values.length){
-      const lower=Math.min(...values),upper=Math.max(...values);
-      set("scenarioInterpretation",`Interpretation: the configured outcomes span ${cr(lower)} to ${cr(upper)}. The central planning point is ${central===null?"not configured":cr(central)}. The labels describe alternative assumptions; they do not represent assigned probabilities or a calibrated prediction interval.`);
-    } else set("scenarioInterpretation","No scenario interpretation is possible until valid forecast values are supplied.");
+      const lower=Math.min(...values);
+      const upper=Math.max(...values);
 
-    const chartMax=Math.max(1,...ordered.flatMap(x=>[num(x.worldwideCr),num(x.indiaCr),num(x.overseasCr)]).filter(x=>x!==null));
-    $("snapshotBars").innerHTML=ordered.length?ordered.map((s,i)=>{
-      const label=s.sourceName||s.label||`Snapshot ${i+1}`;
-      return `<div style="margin:18px 0 24px"><div class="muted" style="font-size:.85rem;margin-bottom:8px">${esc(label)} <span style="float:right">${esc(scopeOf(s))}</span></div>${bar("Worldwide",s.worldwideCr,chartMax,{format:n=>`₹${n.toFixed(2)} Cr`})}${bar("India",s.indiaCr,chartMax,{color:"cyan",format:n=>`₹${n.toFixed(2)} Cr`})}${bar("Overseas",s.overseasCr,chartMax,{color:"purple",format:n=>`₹${n.toFixed(2)} Cr`})}<div class="muted" style="font-size:.82rem">${esc(dateText(s.timestamp))}</div></div>`;
-    }).join(""):`<div class="callout">No booking snapshots are available in data.json.</div>`;
+      set(
+        "scenarioInterpretation",
+        `Interpretation: the configured outcomes span ${cr(lower)} to ${cr(upper)}. The central planning point is ${central===null?"not configured":cr(central)}. The labels describe alternative assumptions; they do not represent assigned probabilities or a calibrated prediction interval.`
+      );
+    } else {
+      set(
+        "scenarioInterpretation",
+        "No scenario interpretation is possible until valid forecast values are supplied."
+      );
+    }
 
-    const risks=Array.isArray(data.riskDrivers)?data.riskDrivers.filter(r=>r&&typeof r==="object"&&num(r.sharePct)!==null):[];
-    const riskTotal=risks.reduce((sum,r)=>sum+Math.max(0,num(r.sharePct)||0),0);
-    $("riskBars").innerHTML=risks.length?risks.slice().sort((a,b)=>num(b.sharePct)-num(a.sharePct)).map(r=>`<div class="risk-row"><div>${esc(r.name)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(0,Math.min(100,num(r.sharePct)||0))}%"></div></div><strong>${esc(num(r.sharePct))}%</strong></div>`).join(""):`<div class="callout">No valid risk-driver assumptions are configured.</div>`;
-    const topRisk=risks.slice().sort((a,b)=>num(b.sharePct)-num(a.sharePct))[0];
-    set("riskInterpretation",risks.length?`The largest configured driver is ${topRisk.name} (${num(topRisk.sharePct)}%). The supplied weights total ${riskTotal.toFixed(1)}%. Treat these as analyst-assigned prioritisation weights only—not measured causal contributions, probabilities, or Six Sigma process capability.`:"Risk-driver interpretation is unavailable.");
-    const sources=Array.isArray(data.sources)?data.sources.filter(s=>s&&typeof s==="object"):[];
+    const chartMax=Math.max(
+      1,
+      ...ordered.flatMap(x=>[
+        num(x.worldwideCr),
+        num(x.indiaCr),
+        num(x.overseasCr)
+      ]).filter(x=>x!==null)
+    );
+
+    $("snapshotBars").innerHTML=ordered.length
+      ? ordered.map((s,i)=>{
+          const label=s.sourceName||s.label||`Snapshot ${i+1}`;
+
+          return `
+            <div style="margin:18px 0 24px">
+              <div class="muted" style="font-size:.85rem;margin-bottom:8px">
+                ${esc(label)}
+                <span style="float:right">${esc(scopeOf(s))}</span>
+              </div>
+              ${bar("Worldwide",s.worldwideCr,chartMax,{
+                format:n=>`₹${n.toFixed(2)} Cr`
+              })}
+              ${bar("India",s.indiaCr,chartMax,{
+                color:"cyan",
+                format:n=>`₹${n.toFixed(2)} Cr`
+              })}
+              ${bar("Overseas",s.overseasCr,chartMax,{
+                color:"purple",
+                format:n=>`₹${n.toFixed(2)} Cr`
+              })}
+              <div class="muted" style="font-size:.82rem">
+                ${esc(dateText(s.timestamp))}
+              </div>
+            </div>`;
+        }).join("")
+      : `<div class="callout">No booking snapshots are available in data.json.</div>`;
+
+    const risks=Array.isArray(data.riskDrivers)
+      ? data.riskDrivers.filter(r=>r&&typeof r==="object"&&num(r.sharePct)!==null)
+      : [];
+
+    const riskTotal=risks.reduce(
+      (sum,r)=>sum+Math.max(0,num(r.sharePct)||0),
+      0
+    );
+
+    $("riskBars").innerHTML=risks.length
+      ? risks.slice().sort((a,b)=>num(b.sharePct)-num(a.sharePct)).map(r=>`
+          <div class="risk-row">
+            <div>${esc(r.name)}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${Math.max(0,Math.min(100,num(r.sharePct)||0))}%"></div>
+            </div>
+            <strong>${esc(num(r.sharePct))}%</strong>
+          </div>
+        `).join("")
+      : `<div class="callout">No valid risk-driver assumptions are configured.</div>`;
+
+    const topRisk=risks.slice().sort(
+      (a,b)=>num(b.sharePct)-num(a.sharePct)
+    )[0];
+
+    set(
+      "riskInterpretation",
+      risks.length
+        ? `The largest configured driver is ${topRisk.name} (${num(topRisk.sharePct)}%). The supplied weights total ${riskTotal.toFixed(1)}%. Treat these as analyst-assigned prioritisation weights only—not measured causal contributions, probabilities, or Six Sigma process capability.`
+        : "Risk-driver interpretation is unavailable."
+    );
+
+    const sources=Array.isArray(data.sources)
+      ? data.sources.filter(s=>s&&typeof s==="object")
+      : [];
+
     $("sourcesList").innerHTML=sources.map(s=>{
       const url=safeUrl(s.url);
-      return `<div class="source">${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(s.name||url)} ↗</a>`:`<span>${esc(s.name||"Source")}</span>`}<div class="muted" style="font-size:.85rem;overflow-wrap:anywhere">${esc(s.url||"URL unavailable")}</div></div>`;
-    }).join("")||`<div class="source muted">No sources listed.</div>`;
-    $("snapshotTable").innerHTML=ordered.length?ordered.map(s=>`<tr><td>${esc(s.sourceName||s.label||"—")}</td><td>${esc(dateText(s.timestamp))}</td><td>${esc(scopeOf(s))}</td><td>${esc(cr(s.worldwideCr))}</td><td>${esc(cr(s.indiaCr))}</td><td>${esc(cr(s.overseasCr))}</td></tr>`).join(""):`<tr><td colspan="6">No snapshots available.</td></tr>`;
 
-    const invalidSnapshots=snaps.filter(s=>!snapshotDate(s)||!s.sourceName||!s.scope).length;
+      return `
+        <div class="source">
+          ${url
+            ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(s.name||url)} ↗</a>`
+            : `<span>${esc(s.name||"Source")}</span>`
+          }
+          <div class="muted" style="font-size:.85rem;overflow-wrap:anywhere">
+            ${esc(s.url||"URL unavailable")}
+          </div>
+        </div>`;
+    }).join("") || `<div class="source muted">No sources listed.</div>`;
+
+    $("snapshotTable").innerHTML=ordered.length
+      ? ordered.map(s=>`
+          <tr>
+            <td>${esc(s.sourceName||s.label||"—")}</td>
+            <td>${esc(dateText(s.timestamp))}</td>
+            <td>${esc(scopeOf(s))}</td>
+            <td>${esc(cr(s.worldwideCr))}</td>
+            <td>${esc(cr(s.indiaCr))}</td>
+            <td>${esc(cr(s.overseasCr))}</td>
+          </tr>
+        `).join("")
+      : `<tr><td colspan="6">No snapshots available.</td></tr>`;
+
+    const invalidSnapshots=snaps.filter(
+      s=>!snapshotDate(s)||!s.sourceName||!s.scope
+    ).length;
+
     const warnings=[];
-    if(invalidSnapshots)warnings.push(`${invalidSnapshots} snapshot record(s) have a missing/invalid timestamp, source name or scope`);
-    if(!allDates)warnings.push("no valid all-dates snapshot is available");
-    if(risks.length&&Math.abs(riskTotal-100)>0.01)warnings.push(`risk weights total ${riskTotal.toFixed(1)}%, not 100%`);
-    if(!feed.sourceUpdatedText)warnings.push("automated feed has no source-update label");
-    const methodologyText=warnings.length?`Data-quality checks: ${warnings.join("; ")}. These warnings do not alter the source values.`:"Basic data checks passed for the supplied snapshot metadata and configured risk weights. Source claims and reporting definitions still require manual verification.";
+
+    if(invalidSnapshots) {
+      warnings.push(
+        `${invalidSnapshots} snapshot record(s) have a missing/invalid timestamp, source name or scope`
+      );
+    }
+    if(!allDates) warnings.push("no valid all-dates snapshot is available");
+    if(risks.length&&Math.abs(riskTotal-100)>0.01) {
+      warnings.push(`risk weights total ${riskTotal.toFixed(1)}%, not 100%`);
+    }
+    if(!feed.sourceUpdatedText) warnings.push("automated feed has no source-update label");
+
+    const methodologyText=warnings.length
+      ? `Data-quality checks: ${warnings.join("; ")}. These warnings do not alter the source values.`
+      : "Basic data checks passed for the supplied snapshot metadata and configured risk weights. Source claims and reporting definitions still require manual verification.";
+
     set("methodologyNote",methodologyText);
   }
+
+  /* AUDIENCE PULSE DATA LOADER */
+  async function loadAudiencePulse() {
+    const target=$("audiencePulseCards");
+    const status=$("audiencePulseStatus");
+
+    if(!target) return;
+
+    try {
+      const response=await fetch(
+        `./reviews.json?cacheBust=${Date.now()}`,
+        {cache:"no-store"}
+      );
+
+      if(!response.ok) {
+        throw new Error(`reviews.json request failed (${response.status})`);
+      }
+
+      const data=await response.json();
+
+      if(!data || typeof data!=="object" || Array.isArray(data)) {
+        throw new Error("Invalid reviews.json format.");
+      }
+
+      const highlights=Array.isArray(data.highlights)
+        ? data.highlights
+        : [];
+
+      /*
+       * Do not fabricate missing cards.
+       * The dashboard displays four only when four valid summaries exist.
+       */
+      const valid=highlights.filter(item=>
+        item &&
+        typeof item==="object" &&
+        typeof item.text==="string" &&
+        item.text.trim() &&
+        ["Positive","Mixed","Critical"].includes(item.sentiment)
+      ).slice(0,4);
+
+      if(valid.length!==4) {
+        target.innerHTML=`
+          <div class="audience-empty">
+            Four verified editorial highlights will appear when sufficient
+            audience-review evidence is available.
+          </div>
+        `;
+
+        if(status) {
+          status.textContent="Awaiting sufficient verified review evidence.";
+        }
+        return;
+      }
+
+      target.innerHTML=valid.map(item=>{
+        const sentiment=item.sentiment;
+        const category=item.category || "Audience discussion";
+
+        return `
+          <article class="audience-card">
+            <span class="audience-tag ${sentiment.toLowerCase()}">
+              ${esc(sentiment)}
+            </span>
+            <h3>${esc(category)}</h3>
+            <p>${esc(item.text)}</p>
+          </article>
+        `;
+      }).join("");
+
+      if(status) {
+        status.textContent="Editorial highlights loaded.";
+      }
+
+    } catch(error) {
+      console.error("Audience Pulse loading error:",error);
+
+      target.innerHTML=`
+        <div class="audience-empty">
+          Audience Pulse is temporarily unavailable.
+          The box-office dashboard continues to operate independently.
+        </div>
+      `;
+
+      if(status) {
+        status.textContent="Audience review feed unavailable.";
+      }
+    }
+  }
+
   async function loadData() {
     try {
-      const response=await fetch(`./data.json?cacheBust=${Date.now()}`,{cache:"no-store"});
-      if(!response.ok)throw new Error(`data.json request failed (${response.status})`);
+      const response=await fetch(
+        `./data.json?cacheBust=${Date.now()}`,
+        {cache:"no-store"}
+      );
+
+      if(!response.ok) {
+        throw new Error(`data.json request failed (${response.status})`);
+      }
+
       const data=await response.json();
-      if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("data.json must contain a JSON object.");
+
+      if(!data || typeof data!=="object" || Array.isArray(data)) {
+        throw new Error("data.json must contain a JSON object.");
+      }
+
       render(data);
+
     } catch(error) {
-      const message = error && error.message ? error.message : "Unknown dashboard error";
+      const message=error && error.message
+        ? error.message
+        : "Unknown dashboard error";
+
       set("statusBadge","Dashboard data unavailable");
       set("worldwideTotal","Unavailable");
       set("feedStatus","Dashboard data load failed");
       set("feedMessage",message);
-      if ($("feedStatus")) $("feedStatus").style.color="var(--red)";
 
-      // Surface the real failure in the Pulse panel rather than leaving placeholders.
+      if($("feedStatus")) {
+        $("feedStatus").style.color="var(--red)";
+      }
+
       set("readingState","Data load error");
       set("readingSignal","Feed unavailable");
       set("readingForecast","—");
       set("readingConfidence","Low");
-      set("readingHeadline","The dashboard could not complete its data-loading or rendering process.");
-      set("readingDetail",`${message}. The published JSON may be reachable directly, but the dashboard request or a JavaScript rendering step failed. Check the browser console for the full error.`);
-      set("readingRisks","Troubleshooting: verify that index.html and data.json are published in the same GitHub Pages folder, then reload with a cache-busting query. No booking interpretation has been generated.");
-      console.error("Ramayana dashboard load/render error:", error);
+
+      set(
+        "readingHeadline",
+        "The dashboard could not complete its data-loading or rendering process."
+      );
+
+      set(
+        "readingDetail",
+        `${message}. Check the browser console for the full error.`
+      );
+
+      set(
+        "readingRisks",
+        "Verify that index.html and data.json are published in the same GitHub Pages folder. No booking interpretation has been generated."
+      );
+
+      console.error("ReelMetrics dashboard load/render error:",error);
     }
   }
+
+  /* INITIAL LOAD */
   loadData();
+  loadAudiencePulse();
+
+  /* EXISTING BOX OFFICE DATA REFRESH */
   setInterval(loadData,REFRESH_MS);
+
+  /* AUDIENCE PULSE REFRESH */
+  setInterval(loadAudiencePulse,REFRESH_MS);
+
 })();
 </script>
 </body>
