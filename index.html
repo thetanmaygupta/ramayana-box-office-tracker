@@ -387,7 +387,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     const allDates=snaps.filter(s=>scopeKey(s)==="all dates" && snapshotDate(s))
       .sort((a,b)=>snapshotDate(b)-snapshotDate(a))[0];
     const feed=data.automatedFeed&&typeof data.automatedFeed==="object"?data.automatedFeed:{};
-    renderFeed(feed);
+    const feedStatus = renderFeed(feed);
     set("lastCheckedPill",`Browser check · ${new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})} IST`);
     set("worldwideTotal",allDates?cr(allDates.worldwideCr):"Unavailable");
     set("worldwideIndia",allDates?cr(allDates.indiaCr):"—");
@@ -399,6 +399,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 
     const scenarios=Array.isArray(data.forecastScenarios)?data.forecastScenarios.filter(x=>x&&typeof x==="object"&&num(x.valueCr)!==null):[];
     const central=findCentral(scenarios);
+    renderLiveReading(data, feedStatus, scenarios);
     const comparisons=Array.isArray(data.openingDayComparisons)?data.openingDayComparisons.filter(x=>x&&typeof x==="object"&&num(x.worldwideCr)!==null):[];
     const allValues=[...comparisons.map(x=>num(x.worldwideCr)),...scenarios.map(x=>num(x.valueCr))].filter(x=>x!==null);
     const maxComp=Math.max(1,...allValues);
