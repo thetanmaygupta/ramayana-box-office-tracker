@@ -173,8 +173,21 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="callout"><strong style="color:var(--text)">Scenario-only mode</strong><br>No calibrated forecast model is enabled in data.json. These are planning scenarios and will not move simply because the booking figure changes.</div>
     </section>
 
+    <section class="panel" id="liveReadingPanel">
+      <div class="section-head"><div><div class="eyebrow">05 / Live analysis</div><h2>Box Office Pulse</h2></div><span class="pill" id="readingState">Waiting for data</span></div>
+      <p class="section-description">A live interpretation of the latest reported advance-booking data. The analysis refreshes with data.json; it distinguishes observed demand from unverified momentum.</p>
+      <div class="scenario-summary">
+        <div class="summary-box"><span>Demand signal</span><strong id="readingSignal">Awaiting data</strong></div>
+        <div class="summary-box"><span>Day 1 scenario</span><strong id="readingForecast">—</strong></div>
+        <div class="summary-box"><span>Data confidence</span><strong id="readingConfidence">—</strong></div>
+      </div>
+      <div class="callout" id="readingHeadline" style="margin-top:18px">The booking signal will appear when valid feed data is available.</div>
+      <div class="callout" id="readingDetail" style="margin-top:12px">Booking metrics, comparable movement and source freshness will be assessed here.</div>
+      <div class="callout" id="readingRisks" style="margin-top:12px">Key risks will be derived from the available fields.</div>
+    </section>
+
     <section class="panel" id="snapshotPanel">
-      <div class="section-head"><div><div class="eyebrow">05 / Snapshot history</div><h2>Published booking snapshots</h2></div></div>
+      <div class="section-head"><div><div class="eyebrow">06 / Snapshot history</div><h2>Published booking snapshots</h2></div></div>
       <p class="section-description">Snapshot records are preserved individually; the chart does not imply comparable growth unless reporting scope matches.</p>
       <div id="snapshotBars"></div>
       <div class="legend"><span><i></i> Worldwide reported</span><span><i style="background:var(--cyan)"></i> India reported</span><span><i style="background:var(--purple)"></i> Overseas reported</span></div>
@@ -182,7 +195,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     </section>
 
     <section class="panel" id="riskPanel">
-      <div class="section-head"><div><div class="eyebrow">06 / Risk prioritisation</div><h2>Key forecast drivers</h2></div></div>
+      <div class="section-head"><div><div class="eyebrow">07 / Risk prioritisation</div><h2>Key forecast drivers</h2></div></div>
       <p class="section-description">Illustrative ranking, not measured statistical causality.</p>
       <div id="riskBars"></div>
       <div class="callout" id="riskInterpretation">Risk-driver interpretation will appear here.</div>
@@ -201,13 +214,13 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     </section>
 
     <section class="panel" id="sourcesPanel">
-      <div class="section-head"><div><div class="eyebrow">08 / Sources</div><h2>Source directory</h2></div></div>
+      <div class="section-head"><div><div class="eyebrow">09 / Sources</div><h2>Source directory</h2></div></div>
       <p class="section-description">Use the original reporting page to verify values, publication timestamps and reporting scope.</p>
       <div class="sources" id="sourcesList"><div class="source muted">Loading sources…</div></div>
     </section>
 
     <section class="panel" id="snapshotRegisterPanel">
-      <div class="section-head"><div><div class="eyebrow">09 / Audit trail</div><h2>Snapshot register</h2></div></div>
+      <div class="section-head"><div><div class="eyebrow">10 / Audit trail</div><h2>Snapshot register</h2></div></div>
       <p class="section-description">Recorded snapshots, with their source names, timestamps and scopes.</p>
       <div class="table-wrap"><table><thead><tr><th>Source</th><th>Timestamp</th><th>Scope</th><th>Worldwide</th><th>India</th><th>Overseas</th></tr></thead><tbody id="snapshotTable"><tr><td colspan="6">Loading snapshots…</td></tr></tbody></table></div>
     </section>
@@ -314,6 +327,60 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     $("feedSourceLink").innerHTML=link?`<a href="${esc(link)}" target="_blank" rel="noopener noreferrer">Open source report ↗</a>`:"";
     return {fetchOk,fetchFresh,sourceFresh,sourceDate,fetched};
   }
+  function renderLiveReading(data, feedStatus, scenarios) {
+    const feed = data.automatedFeed && typeof data.automatedFeed === "object" ? data.automatedFeed : {};
+    const gross = num(feed.indiaGrossCr), tickets = num(feed.tickets);
+    const shows = num(feed.shows), occupancy = num(feed.occupancyPct), overseas = num(feed.overseasCr);
+    const sourceOk = !!(feedStatus && feedStatus.fetchOk && feedStatus.fetchFresh && feedStatus.sourceFresh);
+    const central = findCentral(scenarios);
+    const values = scenarios.map(s => num(s.valueCr)).filter(v => v !== null).sort((a,b)=>a-b);
+    const low = values.length ? values[0] : null, high = values.length ? values[values.length-1] : null;
+    const fmt = v => v === null || v === undefined ? "unavailable" : `₹${v.toFixed(2)} Cr`;
+    if (gross === null && tickets === null && shows === null) {
+      set("readingState","Insufficient data"); set("readingSignal","Awaiting feed");
+      set("readingForecast",central===null?"—":fmt(central)); set("readingConfidence","Low");
+      set("readingHeadline","No usable India Day 1 feed metrics are available, so the dashboard will not infer booking strength.");
+      set("readingDetail","Check data.json, the last fetch result and source timestamp. The forecast remains a configured scenario, not a live model output.");
+      set("readingRisks","Risk watch: resolve missing metrics and source freshness before interpreting momentum."); return;
+    }
+    let signal = "Mixed";
+    let headline = "Bookings are available, but this snapshot alone does not establish a reliable acceleration trend.";
+    if (occupancy !== null && occupancy >= 25 && gross !== null && gross >= 30) {
+      signal = "Strong demand";
+      headline = "Tracked Day 1 gross and occupancy are both elevated. If source definitions remain consistent, this supports the upper half of the configured scenario range.";
+    } else if (occupancy !== null && occupancy >= 16 && gross !== null && gross >= 25) {
+      signal = "Positive, conversion-dependent";
+      headline = "Advance bookings show a substantial base, but occupancy indicates remaining capacity. Final opening performance depends on late booking conversion, walk-ins and show utilisation.";
+    } else if (occupancy !== null && occupancy < 12) {
+      signal = "Cautious — conversion risk";
+      headline = "Occupancy is relatively low in the tracked shows. A large gross headline alone is not enough to confirm opening-day demand; watch open-sale tickets and occupancy together.";
+    }
+    set("readingState",sourceOk ? "Fresh source snapshot" : "Source time unverified/stale");
+    set("readingSignal",signal); set("readingForecast",central===null?"Not configured":fmt(central));
+    set("readingConfidence",sourceOk ? "Moderate" : "Low"); set("readingHeadline",headline);
+    const parts = [];
+    if (gross !== null) parts.push(`India Day 1 gross excluding blocks: ${fmt(gross)}`);
+    if (num(feed.indiaGrossIncludingBlocksCr) !== null) parts.push(`including blocks: ${fmt(num(feed.indiaGrossIncludingBlocksCr))}`);
+    if (tickets !== null) parts.push(`${Math.round(tickets).toLocaleString("en-IN")} tickets`);
+    if (shows !== null) parts.push(`${Math.round(shows).toLocaleString("en-IN")} shows`);
+    if (occupancy !== null) parts.push(`${occupancy.toFixed(1)}% reported occupancy`);
+    if (overseas !== null) parts.push(`overseas figure: ${fmt(overseas)} (confirm date window)`);
+    const sourceDate = parseSourceTimestamp(feed.sourceUpdatedText);
+    const ageMinutes = sourceDate ? Math.round((Date.now()-sourceDate.getTime())/60000) : null;
+    const timeNote = ageMinutes === null ? "Source timestamp could not be validated." :
+      ageMinutes < 0 ? "Source timestamp is in the future; verify timezone." :
+      `Source timestamp age: approximately ${ageMinutes} minutes.`;
+    set("readingDetail",`${parts.join(" · ")}. ${timeNote} Configured scenario envelope: ${low===null?"not configured":fmt(low)}–${high===null?"not configured":fmt(high)}; central scenario ${central===null?"not configured":fmt(central)}. Booking momentum: not yet measurable from a like-for-like prior feed snapshot. This is not a calibrated statistical forecast.`);
+    const riskParts = [];
+    if (occupancy !== null && occupancy < 20) riskParts.push("capacity conversion remains a key uncertainty");
+    if (feed.indiaGrossExcludingBlocksCr === null || feed.ticketsExcludingBlocks === null) riskParts.push("some ex-block metrics are unavailable");
+    if (overseas !== null) riskParts.push("confirm whether overseas sales include paid previews");
+    if (!sourceOk) riskParts.push("source freshness is not fully verified");
+    const top = Array.isArray(data.riskDrivers) ? data.riskDrivers.filter(r=>r&&num(r.sharePct)!==null).sort((a,b)=>num(b.sharePct)-num(a.sharePct))[0] : null;
+    if (top) riskParts.push(`largest configured risk weight: ${top.name} (${num(top.sharePct)}%; analyst-assigned)`);
+    set("readingRisks",`Risk watch: ${riskParts.length ? riskParts.join("; ") : "no additional rule-based flags from available fields"}. Forecasts are estimates, not official results.`);
+  }
+
   function render(data) {
     const snaps=Array.isArray(data.bookingSnapshots)?data.bookingSnapshots.filter(s=>s&&typeof s==="object"):[];
     const ordered=sortedSnapshots(snaps);
