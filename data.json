@@ -103,7 +103,7 @@
   ],
   "methodology": {
     "forecastLabel": "Illustrative scenario model",
-    "warning": "India advance-booking figures in the automated panel are parsed from Sacnilk's public tracker when a scheduled check succeeds. Worldwide and overseas figures remain separately reported snapshots. Source coverage and definitions can differ; forecasts are illustrative, not official results.",
+    "warning": "India Day 1 advance-booking figures in the automated panel are parsed from BoxOfficeIndia24. Worldwide and overseas figures may come from separately reported snapshots. Source coverage, timestamps and definitions can differ; forecasts are illustrative, not official results.",
     "refreshIntervalMinutes": 15
   },
   "sources": [
