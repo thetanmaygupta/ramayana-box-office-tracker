@@ -127,6 +127,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <div class="kpi" style="--accent:var(--purple)"><div class="kpi-label">Overseas gross</div><div class="kpi-value" id="worldwideOverseas">—</div></div>
       </div>
       <div class="snapshot-meta"><span class="tag" id="worldwideSource">Source: —</span><span class="tag" id="worldwideTimestamp">Snapshot: —</span><span class="tag" id="worldwideScope">Scope: all dates</span></div>
+      <div class="callout" id="snapshotChange">Snapshot movement will appear when two comparable records are available.</div>
       <div class="callout">Advance bookings are not actual box-office collections. Snapshot figures may differ by source, timestamp, territory coverage, blocked-seat treatment and reporting definition.</div>
     </section>
 
@@ -168,6 +169,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <div class="summary-box"><span>High case</span><strong id="highCase">—</strong></div>
       </div>
       <p class="muted" id="scenarioRange" style="margin-top:20px"></p>
+      <div class="callout" id="scenarioInterpretation">Scenario interpretation will appear here.</div>
       <div class="callout"><strong style="color:var(--text)">Scenario-only mode</strong><br>No calibrated forecast model is enabled in data.json. These are planning scenarios and will not move simply because the booking figure changes.</div>
     </section>
 
@@ -183,6 +185,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="section-head"><div><div class="eyebrow">06 / Risk prioritisation</div><h2>Key forecast drivers</h2></div></div>
       <p class="section-description">Illustrative ranking, not measured statistical causality.</p>
       <div id="riskBars"></div>
+      <div class="callout" id="riskInterpretation">Risk-driver interpretation will appear here.</div>
     </section>
 
     <section class="panel" id="methodologyPanel">
@@ -194,7 +197,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <div class="step"><b>IMPROVE</b><span class="muted">Correct parsing only after validating source changes.</span></div>
         <div class="step"><b>CONTROL</b><span class="muted">Preserve last successful data and flag stale observations.</span></div>
       </div>
-      <div class="callout"><strong style="color:var(--text)">Data caveat:</strong> This dashboard displays the contents of data.json. An automated fetch can succeed while the source remains unchanged or while its update timestamp is unavailable. Scenario values are illustrative until calibrated against historical outcomes.</div>
+      <div class="callout" id="methodologyNote"><strong style="color:var(--text)">Data caveat:</strong> This dashboard displays the contents of data.json. An automated fetch can succeed while the source remains unchanged or while its update timestamp is unavailable. Scenario values are illustrative until calibrated against historical outcomes.</div>
     </section>
 
     <section class="panel" id="sourcesPanel">
@@ -218,126 +221,179 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   "use strict";
   const REFRESH_MS = 15 * 60 * 1000;
   const FEED_STALE_MS = 6 * 60 * 60 * 1000;
+  const SOURCE_STALE_MS = 6 * 60 * 60 * 1000;
   const $ = id => document.getElementById(id);
   const safe = v => v === null || v === undefined || v === "" ? "—" : String(v);
   const num = v => v === null || v === undefined || v === "" || !Number.isFinite(Number(v)) ? null : Number(v);
   const cr = v => num(v) === null ? "—" : `₹${num(v).toFixed(2)} Cr`;
-  const crShort = v => num(v) === null ? "—" : `₹${num(v).toFixed(2)} Cr`;
   const integer = v => num(v) === null ? "—" : Math.round(num(v)).toLocaleString("en-IN");
   const pct = v => num(v) === null ? "—" : `${num(v).toFixed(1)}%`;
+  const validDate = v => { const d = v ? new Date(v) : null; return d && !Number.isNaN(d.getTime()) ? d : null; };
+  const parseSourceTimestamp = value => {
+    if (!value) return null;
+    const raw = String(value).trim().replace(/\\s+IST$/i, "");
+    const match = raw.match(/^(\\d{4}-\\d{2}-\\d{2})\\s+(\\d{2}:\\d{2})(?::(\\d{2}))?$/);
+    if (match) return validDate(`${match[1]}T${match[2]}:${match[3] || "00"}+05:30`);
+    return validDate(raw);
+  };
   const dateText = v => {
-    if (!v) return "Timestamp unavailable";
-    const d = new Date(v);
-    return Number.isNaN(d.getTime()) ? String(v) : d.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}) + " IST";
+    const d = validDate(v);
+    return d ? d.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}) + " IST" : (v ? String(v) : "Timestamp unavailable");
   };
   const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const safeUrl = v => { try { const u = new URL(v); return ["https:","http:"].includes(u.protocol) ? u.href : "#"; } catch { return "#"; } };
+  const safeUrl = v => { try { const u = new URL(v); return ["https:","http:"].includes(u.protocol) ? u.href : ""; } catch { return ""; } };
   const set = (id,v) => { if ($(id)) $(id).textContent = v; };
-  const scopeOf = s => String(s?.scope || "scope not stated").replaceAll("_"," ").replace(/\b\w/g,c=>c.toUpperCase());
+  const scopeKey = s => String(s?.scope || "scope not stated").toLowerCase().replaceAll("_"," ").trim();
+  const scopeOf = s => scopeKey(s).replace(/\b\w/g,c=>c.toUpperCase());
+  const snapshotDate = s => validDate(s?.timestamp);
   const findCentral = scenarios => {
     const row = (scenarios || []).find(s => /base case|moderate|central/i.test(s.name || ""));
     return num(row?.valueCr);
   };
-  function bar(label,value,max,options={}) {
+  const bar = (label,value,max,options={}) => {
     const n = num(value), width = n === null || max <= 0 ? 0 : Math.max(0,Math.min(100,n/max*100));
-    return `<div class="bar-row"><div class="bar-label">${esc(label)}</div><div class="bar-track"><div class="bar-fill ${options.color||""}" style="width:${width}%"></div></div><div class="bar-value">${options.prefix||""}${n===null?"—":esc(options.format ? options.format(n) : n.toFixed(2))}${options.suffix||""}</div></div>`;
-  }
-  function render(data) {
-    const snaps = Array.isArray(data.bookingSnapshots) ? data.bookingSnapshots : [];
-    const allDates = snaps.filter(s => String(s.scope||"").toLowerCase().replaceAll("_"," ") === "all dates")
-      .sort((a,b)=>new Date(b.timestamp||0)-new Date(a.timestamp||0))[0];
-    const feed = data.automatedFeed || {};
-    const fetched = feed.fetchedAt ? new Date(feed.fetchedAt) : null;
-    const age = fetched && !Number.isNaN(fetched.getTime()) ? Date.now()-fetched.getTime() : null;
-    const feedGood = String(feed.status||"").toLowerCase() === "success";
-    const sourceTime = feed.sourceUpdatedText || "";
-    let status;
-    let badgeText;
-
-    if (!feedGood) {
-      status = "Update failed · Check source";
-      badgeText = status;
-    } else if (
-      age === null ||
-      age < 0 ||
-      !sourceTime
-    ) {
-      status = "Source timestamp unverified";
-      badgeText = status;
-    } else if (age > FEED_STALE_MS) {
-      status = "Last successful fetch is stale";
-      badgeText = status;
-    } else {
-      status = "Fetch successful · Verify source timestamp";
-      badgeText = `Fetch successful · Source: ${sourceTime}`;
+    return `<div class="bar-row"><div class="bar-label">${esc(label)}</div><div class="bar-track"><div class="bar-fill ${options.color||""}" style="width:${width}%"></div></div><div class="bar-value">${n===null?"—":esc(options.format ? options.format(n) : n.toFixed(2))}</div></div>`;
+  };
+  const sortedSnapshots = snaps => [...snaps].sort((a,b)=>(snapshotDate(b)?.getTime()||0)-(snapshotDate(a)?.getTime()||0));
+  const comparablePair = snaps => {
+    const groups = new Map();
+    snaps.forEach(s => {
+      const key = `${String(s.sourceName||"").trim().toLowerCase()}|${scopeKey(s)}`;
+      if (!s.sourceName || !snapshotDate(s)) return;
+      if (!groups.has(key)) groups.set(key,[]);
+      groups.get(key).push(s);
+    });
+    const pairs = [...groups.values()].map(g=>g.sort((a,b)=>snapshotDate(b)-snapshotDate(a))).filter(g=>g.length>=2);
+    pairs.sort((a,b)=>snapshotDate(b[0])-snapshotDate(a[0]));
+    return pairs[0] ? [pairs[0][1],pairs[0][0]] : null;
+  };
+  function renderSnapshotMovement(snaps) {
+    const pair = comparablePair(snaps);
+    if (!pair) {
+      set("snapshotChange","No like-for-like movement calculated: at least two timestamped snapshots from the same source and scope are required. Different sources or date scopes are not treated as a trend.");
+      return;
     }
-
-    set("statusBadge", badgeText);
-    set("feedStatus", status);
-    $("feedStatus").style.color =
-      !feedGood || age === null || age < 0 ||
-      age > FEED_STALE_MS || !sourceTime
-        ? "var(--red)"
-        : "var(--green)";
-    set("lastCheckedPill",`Browser check · ${new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})} IST`);
-    set("worldwideTotal",allDates ? cr(allDates.worldwideCr) : "Unavailable");
-    set("worldwideIndia",allDates ? cr(allDates.indiaCr) : "—");
-    set("worldwideOverseas",allDates ? cr(allDates.overseasCr) : "—");
-    set("worldwideSource",`Source: ${allDates?.sourceName || "Not available"}`);
-    set("worldwideTimestamp",`Snapshot: ${allDates ? dateText(allDates.timestamp) : "Unavailable"}`);
-    set("worldwideScope",`Scope: ${allDates ? scopeOf(allDates) : "all dates snapshot unavailable"}`);
+    const [older,newer] = pair;
+    const metrics = [["Worldwide","worldwideCr"],["India","indiaCr"],["Overseas","overseasCr"]];
+    const changes = metrics.map(([label,key])=>{
+      const a=num(older[key]),b=num(newer[key]);
+      if(a===null||b===null)return `${label}: insufficient data`;
+      const delta=b-a, rate=a!==0?(delta/a)*100:null;
+      return `${label}: ${delta>=0?"+":""}₹${delta.toFixed(2)} Cr${rate===null?"":` (${rate>=0?"+":""}${rate.toFixed(1)}%)`}`;
+    });
+    set("snapshotChange",`Like-for-like movement · ${esc(newer.sourceName)} · ${scopeOf(newer)}. Older: ${dateText(older.timestamp)}; newer: ${dateText(newer.timestamp)}. ${changes.join(" · ")}. These are source-record changes, not verified market-wide growth.`);
+  }
+  function renderFeed(feed) {
+    const fetched=validDate(feed.fetchedAt), now=Date.now();
+    const fetchAge=fetched ? now-fetched.getTime() : null;
+    const sourceLabel=String(feed.sourceUpdatedText||"").trim();
+    const sourceDate=parseSourceTimestamp(sourceLabel);
+    const fetchOk=String(feed.status||"").toLowerCase()==="success";
+    const fetchFresh=fetchAge!==null && fetchAge>=0 && fetchAge<=FEED_STALE_MS;
+    const sourceFresh=sourceDate ? now-sourceDate.getTime()>=0 && now-sourceDate.getTime()<=SOURCE_STALE_MS : false;
+    let status="Fetch not verified", badge="Feed status unavailable", color="var(--red)";
+    if(!fetchOk){status="Fetch failed";badge="Latest fetch failed"; }
+    else if(!fetched){status="Fetch timestamp missing";badge="Fetch timestamp missing";}
+    else if(fetchAge<0){status="Fetch timestamp is in the future";badge=status;}
+    else if(!fetchFresh){status="Last successful fetch is stale";badge=status;}
+    else if(!sourceLabel){status="Source update timestamp unavailable";badge="Fetch succeeded · source time missing";}
+    else if(!sourceDate){status="Source timestamp could not be parsed";badge="Fetch succeeded · source time unverified";}
+    else if(!sourceFresh){status="Fetch succeeded · source report is stale";badge="Fetch succeeded · source report stale";}
+    else {status="Fetch and source timestamps are recent";badge=`Fetch successful · Source: ${sourceLabel}`;color="var(--green)";}
+    set("feedStatus",status);set("statusBadge",badge);set("feedState",fetchOk?"Fetch succeeded":safe(feed.status||"Not verified"));
+    $("feedStatus").style.color=color;
     set("indiaGross",cr(feed.indiaGrossCr));
     set("indiaGrossBlocks",cr(feed.indiaGrossIncludingBlocksCr));
     set("tickets",integer(feed.tickets));
     set("shows",integer(feed.shows));
     set("occupancy",`${pct(feed.occupancyPct)} reported occupancy`);
     set("fetchedAt",dateText(feed.fetchedAt));
-    set("sourceUpdated",safe(sourceTime));
-    set("feedState",feedGood ? "Latest fetch succeeded" : safe(feed.status || "Not verified"));
-    set("feedMessage",safe(feed.message || feed.statusNote || "Source-reported values are not producer-confirmed. Missing metrics were not inferred."));
-    const feedLink = safeUrl(feed.sourceUrl);
-    $("feedSourceLink").innerHTML = feed.sourceUrl && feedLink !== "#" ? `<a href="${esc(feedLink)}" target="_blank" rel="noopener noreferrer">Open source report ↗</a>` : "";
-    if (!feedGood) $("feedStatus").style.color = "var(--red)";
+    set("sourceUpdated",safe(sourceLabel));
+    set("feedMessage",safe(feed.message||"Source-reported values are not producer-confirmed. Missing metrics were not inferred."));
+    const link=safeUrl(feed.sourceUrl);
+    $("feedSourceLink").innerHTML=link?`<a href="${esc(link)}" target="_blank" rel="noopener noreferrer">Open source report ↗</a>`:"";
+    return {fetchOk,fetchFresh,sourceFresh,sourceDate,fetched};
+  }
+  function render(data) {
+    const snaps=Array.isArray(data.bookingSnapshots)?data.bookingSnapshots.filter(s=>s&&typeof s==="object"):[];
+    const ordered=sortedSnapshots(snaps);
+    const allDates=snaps.filter(s=>scopeKey(s)==="all dates" && snapshotDate(s))
+      .sort((a,b)=>snapshotDate(b)-snapshotDate(a))[0];
+    const feed=data.automatedFeed&&typeof data.automatedFeed==="object"?data.automatedFeed:{};
+    renderFeed(feed);
+    set("lastCheckedPill",`Browser check · ${new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})} IST`);
+    set("worldwideTotal",allDates?cr(allDates.worldwideCr):"Unavailable");
+    set("worldwideIndia",allDates?cr(allDates.indiaCr):"—");
+    set("worldwideOverseas",allDates?cr(allDates.overseasCr):"—");
+    set("worldwideSource",`Source: ${allDates?.sourceName||"Not available"}`);
+    set("worldwideTimestamp",`Snapshot: ${allDates?dateText(allDates.timestamp):"Unavailable"}`);
+    set("worldwideScope",`Scope: ${allDates?scopeOf(allDates):"all dates snapshot unavailable"}`);
+    renderSnapshotMovement(snaps);
 
-    const scenarios = Array.isArray(data.forecastScenarios) ? data.forecastScenarios : [];
-    const central = findCentral(scenarios);
-    const comparisons = Array.isArray(data.openingDayComparisons) ? data.openingDayComparisons : [];
-    const allValues = [...comparisons.map(x=>num(x.worldwideCr)),...scenarios.map(x=>num(x.valueCr))].filter(x=>x!==null);
-    const maxComp = Math.max(1,...allValues);
-    $("comparisonBars").innerHTML = comparisons.map(x=>bar(x.title,x.worldwideCr,maxComp,{color:/ramayana/i.test(x.title)?"green":"",format:n=>`₹${n.toFixed(0)} Cr`})).join("");
-    if (!comparisons.some(x=>/ramayana/i.test(x.title)) && central !== null) $("comparisonBars").insertAdjacentHTML("beforeend",bar("Ramayana · central scenario",central,maxComp,{color:"green",format:n=>`₹${n.toFixed(0)} Cr`}));
-    set("comparisonNote",`${comparisons.filter(x=>!/ramayana/i.test(x.title)).length} reported comparator(s) supplied. Confirm each source uses worldwide Day 1 gross and a comparable reporting definition before drawing conclusions.`);
-    const maxScenario = Math.max(1,...scenarios.map(x=>num(x.valueCr)||0));
-    $("scenarioBars").innerHTML = scenarios.map(x=>bar(x.name,x.valueCr,maxScenario,{color:/moderate|base|central/i.test(x.name)?"green":"",format:n=>n.toFixed(0)})).join("");
-    const values = scenarios.map(x=>num(x.valueCr)).filter(x=>x!==null);
+    const scenarios=Array.isArray(data.forecastScenarios)?data.forecastScenarios.filter(x=>x&&typeof x==="object"&&num(x.valueCr)!==null):[];
+    const central=findCentral(scenarios);
+    const comparisons=Array.isArray(data.openingDayComparisons)?data.openingDayComparisons.filter(x=>x&&typeof x==="object"&&num(x.worldwideCr)!==null):[];
+    const allValues=[...comparisons.map(x=>num(x.worldwideCr)),...scenarios.map(x=>num(x.valueCr))].filter(x=>x!==null);
+    const maxComp=Math.max(1,...allValues);
+    $("comparisonBars").innerHTML=comparisons.map(x=>{
+      const isForecast=String(x.type||"").toLowerCase()==="forecast";
+      return bar(x.title,x.worldwideCr,maxComp,{color:isForecast?"green":"",format:n=>`₹${n.toFixed(0)} Cr`});
+    }).join("")||`<div class="callout">No valid comparison records are available.</div>`;
+    const reportedCount=comparisons.filter(x=>String(x.type||"").toLowerCase()!=="forecast").length;
+    const forecastCount=comparisons.filter(x=>String(x.type||"").toLowerCase()==="forecast").length;
+    set("comparisonNote",`${reportedCount} reported benchmark(s) and ${forecastCount} forecast comparison(s) supplied. These are not necessarily like-for-like: validate source, territory coverage, currency conversion and Day 1 definition before interpreting the gap.`);
+    const maxScenario=Math.max(1,...scenarios.map(x=>num(x.valueCr)||0));
+    $("scenarioBars").innerHTML=scenarios.map(x=>bar(x.name,x.valueCr,maxScenario,{color:/moderate|base|central/i.test(x.name)?"green":"",format:n=>`₹${n.toFixed(0)} Cr`})).join("")||`<div class="callout">No valid forecast scenarios are available.</div>`;
+    const values=scenarios.map(x=>num(x.valueCr)).filter(x=>x!==null);
     set("lowCase",values.length?cr(Math.min(...values)):"—");
     set("centralCase",central!==null?cr(central):"—");
     set("highCase",values.length?cr(Math.max(...values)):"—");
-    set("scenarioRange",values.length?`Illustrative range: ${cr(Math.min(...values))}–${cr(Math.max(...values))}. Values are the scenarios published in data.json.`:"No forecast scenarios are available.");
+    set("scenarioRange",values.length?`Illustrative scenario envelope: ${cr(Math.min(...values))}–${cr(Math.max(...values))}. This is a set of assumptions, not a statistical confidence interval.`:"No forecast scenarios are available.");
+    if(values.length){
+      const lower=Math.min(...values),upper=Math.max(...values);
+      set("scenarioInterpretation",`Interpretation: the configured outcomes span ${cr(lower)} to ${cr(upper)}. The central planning point is ${central===null?"not configured":cr(central)}. The labels describe alternative assumptions; they do not represent assigned probabilities or a calibrated prediction interval.`);
+    } else set("scenarioInterpretation","No scenario interpretation is possible until valid forecast values are supplied.");
 
-    $("snapshotBars").innerHTML = snaps.length ? snaps.map((s,i)=>{
-      const max = Math.max(1,...snaps.flatMap(x=>[num(x.worldwideCr),num(x.indiaCr),num(x.overseasCr)]).filter(x=>x!==null));
-      return `<div style="margin:18px 0 24px"><div class="muted" style="font-size:.85rem;margin-bottom:8px">${esc(s.sourceName||s.label||`Snapshot ${i+1}`)} <span style="float:right">${esc(scopeOf(s))}</span></div>${bar("Worldwide",s.worldwideCr,max,{format:n=>`${n.toFixed(2)} Cr`})}${bar("India",s.indiaCr,max,{color:"cyan",format:n=>`${n.toFixed(2)} Cr`})}${bar("Overseas",s.overseasCr,max,{color:"purple",format:n=>`${n.toFixed(2)} Cr`})}<div class="muted" style="font-size:.82rem">${esc(dateText(s.timestamp))}</div></div>`;
-    }).join("") : `<div class="callout">No booking snapshots are available in data.json.</div>`;
+    const chartMax=Math.max(1,...ordered.flatMap(x=>[num(x.worldwideCr),num(x.indiaCr),num(x.overseasCr)]).filter(x=>x!==null));
+    $("snapshotBars").innerHTML=ordered.length?ordered.map((s,i)=>{
+      const label=s.sourceName||s.label||`Snapshot ${i+1}`;
+      return `<div style="margin:18px 0 24px"><div class="muted" style="font-size:.85rem;margin-bottom:8px">${esc(label)} <span style="float:right">${esc(scopeOf(s))}</span></div>${bar("Worldwide",s.worldwideCr,chartMax,{format:n=>`₹${n.toFixed(2)} Cr`})}${bar("India",s.indiaCr,chartMax,{color:"cyan",format:n=>`₹${n.toFixed(2)} Cr`})}${bar("Overseas",s.overseasCr,chartMax,{color:"purple",format:n=>`₹${n.toFixed(2)} Cr`})}<div class="muted" style="font-size:.82rem">${esc(dateText(s.timestamp))}</div></div>`;
+    }).join(""):`<div class="callout">No booking snapshots are available in data.json.</div>`;
 
-    const risks = Array.isArray(data.riskDrivers) ? data.riskDrivers : [];
-    $("riskBars").innerHTML = risks.map(r=>`<div class="risk-row"><div>${esc(r.name)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(0,Math.min(100,num(r.sharePct)||0))}%"></div></div><strong>${esc(num(r.sharePct)===null?"—":num(r.sharePct)+"%")}</strong></div>`).join("") || `<div class="callout">No risk-driver assumptions are configured.</div>`;
-    const sources = Array.isArray(data.sources) ? data.sources : [];
-    $("sourcesList").innerHTML = sources.map(s=>`<div class="source"><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener noreferrer">${esc(s.name||s.url||"Source")} ↗</a><div class="muted" style="font-size:.85rem;overflow-wrap:anywhere">${esc(s.url||"")}</div></div>`).join("") || `<div class="source muted">No sources listed.</div>`;
-    $("snapshotTable").innerHTML = snaps.length ? snaps.map(s=>`<tr><td>${esc(s.sourceName||s.label||"—")}</td><td>${esc(dateText(s.timestamp))}</td><td>${esc(scopeOf(s))}</td><td>${esc(cr(s.worldwideCr))}</td><td>${esc(cr(s.indiaCr))}</td><td>${esc(cr(s.overseasCr))}</td></tr>`).join("") : `<tr><td colspan="6">No snapshots available.</td></tr>`;
+    const risks=Array.isArray(data.riskDrivers)?data.riskDrivers.filter(r=>r&&typeof r==="object"&&num(r.sharePct)!==null):[];
+    const riskTotal=risks.reduce((sum,r)=>sum+Math.max(0,num(r.sharePct)||0),0);
+    $("riskBars").innerHTML=risks.length?risks.slice().sort((a,b)=>num(b.sharePct)-num(a.sharePct)).map(r=>`<div class="risk-row"><div>${esc(r.name)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(0,Math.min(100,num(r.sharePct)||0))}%"></div></div><strong>${esc(num(r.sharePct))}%</strong></div>`).join(""):`<div class="callout">No valid risk-driver assumptions are configured.</div>`;
+    const topRisk=risks.slice().sort((a,b)=>num(b.sharePct)-num(a.sharePct))[0];
+    set("riskInterpretation",risks.length?`The largest configured driver is ${topRisk.name} (${num(topRisk.sharePct)}%). The supplied weights total ${riskTotal.toFixed(1)}%. Treat these as analyst-assigned prioritisation weights only—not measured causal contributions, probabilities, or Six Sigma process capability.`:"Risk-driver interpretation is unavailable.");
+    const sources=Array.isArray(data.sources)?data.sources.filter(s=>s&&typeof s==="object"):[];
+    $("sourcesList").innerHTML=sources.map(s=>{
+      const url=safeUrl(s.url);
+      return `<div class="source">${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(s.name||url)} ↗</a>`:`<span>${esc(s.name||"Source")}</span>`}<div class="muted" style="font-size:.85rem;overflow-wrap:anywhere">${esc(s.url||"URL unavailable")}</div></div>`;
+    }).join("")||`<div class="source muted">No sources listed.</div>`;
+    $("snapshotTable").innerHTML=ordered.length?ordered.map(s=>`<tr><td>${esc(s.sourceName||s.label||"—")}</td><td>${esc(dateText(s.timestamp))}</td><td>${esc(scopeOf(s))}</td><td>${esc(cr(s.worldwideCr))}</td><td>${esc(cr(s.indiaCr))}</td><td>${esc(cr(s.overseasCr))}</td></tr>`).join(""):`<tr><td colspan="6">No snapshots available.</td></tr>`;
+
+    const invalidSnapshots=snaps.filter(s=>!snapshotDate(s)||!s.sourceName||!s.scope).length;
+    const warnings=[];
+    if(invalidSnapshots)warnings.push(`${invalidSnapshots} snapshot record(s) have a missing/invalid timestamp, source name or scope`);
+    if(!allDates)warnings.push("no valid all-dates snapshot is available");
+    if(risks.length&&Math.abs(riskTotal-100)>0.01)warnings.push(`risk weights total ${riskTotal.toFixed(1)}%, not 100%`);
+    if(!feed.sourceUpdatedText)warnings.push("automated feed has no source-update label");
+    const methodologyText=warnings.length?`Data-quality checks: ${warnings.join("; ")}. These warnings do not alter the source values.`:"Basic data checks passed for the supplied snapshot metadata and configured risk weights. Source claims and reporting definitions still require manual verification.";
+    set("methodologyNote",methodologyText);
   }
   async function loadData() {
     try {
-      const response = await fetch(`data.json?cacheBust=${Date.now()}`,{cache:"no-store"});
-      if (!response.ok) throw new Error(`data.json request failed (${response.status})`);
-      const data = await response.json();
+      const response=await fetch(`data.json?cacheBust=${Date.now()}`,{cache:"no-store"});
+      if(!response.ok)throw new Error(`data.json request failed (${response.status})`);
+      const data=await response.json();
+      if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("data.json must contain a JSON object.");
       render(data);
-    } catch (error) {
+    } catch(error) {
       set("statusBadge","Dashboard loaded · data.json unavailable");
       set("worldwideTotal","Unavailable");
       set("feedStatus","Could not load data.json");
-      set("feedMessage",error.message || "Unable to load dashboard data.");
-      $("feedStatus").style.color = "var(--red)";
+      set("feedMessage",error.message||"Unable to load dashboard data.");
+      $("feedStatus").style.color="var(--red)";
       console.error(error);
     }
   }
@@ -346,4 +402,4 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 })();
 </script>
 </body>
-</html>
+</html>w
