@@ -6,22 +6,25 @@ Primary sources:
   1. BoxOfficeIndia24
   2. Sacnilk (optional URL configuration required)
 
-Secondary validation:
-  The Week, Financial Express, Koimoi
+Audience data:
+  3. TMDB API — movie rating, vote count and written reviews
 
 Advance bookings and actual theatrical collections are stored separately.
 
-This is a best-effort HTML scraper, not an official API.
-Unrecognised or missing values are never inferred.
+This is a best-effort HTML scraper plus TMDB API integration.
+Missing values are never inferred. TMDB failures do not stop
+box-office ingestion or overwrite the last successful review snapshot.
 """
 
 import json
+import os
 import re
 import sys
+import tempfile
 from datetime import datetime
-from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
@@ -32,11 +35,11 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data.json"
+REVIEWS_FILE = ROOT / "reviews.json"
+
 IST = ZoneInfo("Asia/Kolkata")
 
-USER_AGENT = (
-    "Mozilla/5.0 (compatible; ReelMetrics/2.0)"
-)
+USER_AGENT = "Mozilla/5.0 (compatible; ReelMetrics/2.1)"
 
 BOI24_DAILY_URLS = {
     "2026-11-05": (
@@ -58,9 +61,15 @@ BOI24_OVERSEAS_URL = (
     "ramayana-day-1-advance-booking-20261105?view=overseas"
 )
 
-# Add the exact Sacnilk tracker URL here when confirmed.
-# Do not guess or substitute an unrelated page.
 SACNILK_URL = ""
+
+# Confirmed against the existing TMDB movie reference.
+# The returned title is validated before accepting any data.
+TMDB_MOVIE_ID = 656908
+TMDB_API_BASE = "https://api.themoviedb.org/3"
+
+TMDB_REVIEW_PAGES_MAX = 3
+TMDB_REVIEW_TEXT_MAX_CHARS = 5000
 
 
 # ---------------------------------------------------------
@@ -99,6 +108,45 @@ SOURCES = [
         "role": "Trade-report validation",
     },
 ]
+
+
+# ---------------------------------------------------------
+# TIME AND SAFE JSON WRITING
+# ---------------------------------------------------------
+
+def now_ist():
+    return datetime.now(IST).isoformat(timespec="seconds")
+
+
+def atomic_write_json(path, payload):
+    """Write JSON atomically to avoid corrupting an existing file."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    fd, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+        dir=str(path.parent),
+    )
+
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(
+                payload,
+                handle,
+                ensure_ascii=False,
+                indent=2,
+            )
+            handle.write("\n")
+
+        os.replace(temporary_name, path)
+
+    except Exception:
+        try:
+            os.unlink(temporary_name)
+        except OSError:
+            pass
+        raise
 
 
 # ---------------------------------------------------------
@@ -148,7 +196,7 @@ def visible_text(raw):
     return re.sub(
         r"\s+",
         " ",
-        " ".join(parser.parts)
+        " ".join(parser.parts),
     ).strip()
 
 
@@ -166,7 +214,6 @@ def fetch_page(url):
     )
 
     with urlopen(request, timeout=30) as response:
-
         if response.status != 200:
             raise RuntimeError(
                 f"HTTP error: {response.status}"
@@ -174,7 +221,7 @@ def fetch_page(url):
 
         return response.read().decode(
             "utf-8",
-            errors="replace"
+            errors="replace",
         )
 
 
@@ -352,8 +399,6 @@ def parse_day_page(raw, date, day, url):
             "Overseas gross outside expected range."
         )
 
-    # If the publisher explicitly provides all three values,
-    # check whether the components reconcile.
     if (
         worldwide is not None
         and overseas is not None
@@ -371,9 +416,7 @@ def parse_day_page(raw, date, day, url):
         "sourceName": "BoxOfficeIndia24",
         "sourceUrl": url,
         "sourceUpdatedText": extract_timestamp(text),
-        "fetchedAt": datetime.now(IST).isoformat(
-            timespec="seconds"
-        ),
+        "fetchedAt": now_ist(),
         "scope": "single_day_advance",
     }
 
@@ -415,8 +458,6 @@ def parse_overseas_page(raw):
         raise RuntimeError(
             "Overseas all-dates gross not found."
         )
-
-    metrics = extract_metrics(text)
 
     tickets = first_integer([
         r"gross\s+from\s+([\d,]+)\s+tickets",
@@ -461,15 +502,313 @@ def parse_overseas_page(raw):
         "sourceName": "BoxOfficeIndia24",
         "sourceUrl": BOI24_OVERSEAS_URL,
         "sourceUpdatedText": extract_timestamp(text),
-        "fetchedAt": datetime.now(IST).isoformat(
-            timespec="seconds"
-        ),
+        "fetchedAt": now_ist(),
         "scope": "overseas_all_dates",
         "note": (
             "Overseas all-dates advance booking. "
             "Not worldwide Day 1 or actual collection."
         ),
     }
+
+
+# ---------------------------------------------------------
+# TMDB API
+# ---------------------------------------------------------
+
+def tmdb_request(path, token, params=None):
+    """Make an authenticated TMDB API request."""
+
+    query = f"?{urlencode(params)}" if params else ""
+    url = f"{TMDB_API_BASE}{path}{query}"
+
+    request = Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/json",
+            "User-Agent": USER_AGENT,
+        },
+    )
+
+    with urlopen(request, timeout=25) as response:
+        if response.status != 200:
+            raise RuntimeError(
+                f"TMDB returned HTTP {response.status}."
+            )
+
+        return json.loads(
+            response.read().decode(
+                "utf-8",
+                errors="replace",
+            )
+        )
+
+
+def fetch_tmdb_audience_data():
+    """
+    Fetch movie details and genuine TMDB written reviews.
+
+    Does not invent review highlights or sentiment labels.
+    """
+
+    token = os.getenv(
+        "TMDB_READ_ACCESS_TOKEN",
+        "",
+    ).strip()
+
+    if not token:
+        raise RuntimeError(
+            "TMDB_READ_ACCESS_TOKEN is not configured."
+        )
+
+    # 1. Movie details
+    movie = tmdb_request(
+        f"/movie/{TMDB_MOVIE_ID}",
+        token,
+        {"language": "en-US"},
+    )
+
+    title = str(movie.get("title") or "").strip()
+    original_title = str(
+        movie.get("original_title") or ""
+    ).strip()
+
+    title_candidates = " ".join(
+        value
+        for value in (title, original_title)
+        if value
+    ).casefold()
+
+    if "ramayana" not in title_candidates:
+        raise RuntimeError(
+            "TMDB movie ID validation failed. "
+            "The returned title does not identify Ramayana."
+        )
+
+    # 2. Validate rating fields
+    vote_average = movie.get("vote_average")
+    vote_count = movie.get("vote_count")
+
+    if (
+        not isinstance(vote_average, (int, float))
+        or not 0 <= float(vote_average) <= 10
+    ):
+        vote_average = None
+
+    if (
+        not isinstance(vote_count, int)
+        or vote_count < 0
+    ):
+        vote_count = None
+
+    # 3. Fetch written reviews
+    first_page = tmdb_request(
+        f"/movie/{TMDB_MOVIE_ID}/reviews",
+        token,
+        {
+            "language": "en-US",
+            "page": 1,
+        },
+    )
+
+    total_review_results = max(
+        0,
+        int(first_page.get("total_results") or 0),
+    )
+
+    total_review_pages = max(
+        0,
+        int(first_page.get("total_pages") or 0),
+    )
+
+    pages_to_fetch = min(
+        total_review_pages,
+        TMDB_REVIEW_PAGES_MAX,
+    )
+
+    review_items = []
+
+    for page_number in range(1, pages_to_fetch + 1):
+
+        page_data = first_page
+
+        if page_number > 1:
+            page_data = tmdb_request(
+                f"/movie/{TMDB_MOVIE_ID}/reviews",
+                token,
+                {
+                    "language": "en-US",
+                    "page": page_number,
+                },
+            )
+
+        for item in page_data.get("results", []):
+
+            if not isinstance(item, dict):
+                continue
+
+            content = str(
+                item.get("content") or ""
+            ).strip()
+
+            if not content:
+                continue
+
+            author_details = (
+                item.get("author_details") or {}
+            )
+
+            rating = author_details.get("rating")
+
+            if (
+                not isinstance(rating, (int, float))
+                or not 0 <= float(rating) <= 10
+            ):
+                rating = None
+
+            review_items.append({
+                "id": item.get("id"),
+                "author": item.get("author"),
+                "username": author_details.get("username"),
+                "rating": rating,
+                "createdAt": item.get("created_at"),
+                "updatedAt": item.get("updated_at"),
+                "url": item.get("url"),
+                "content": content[
+                    :TMDB_REVIEW_TEXT_MAX_CHARS
+                ],
+                "contentTruncated": (
+                    len(content) > TMDB_REVIEW_TEXT_MAX_CHARS
+                ),
+                "source": "TMDB",
+            })
+
+    fetched_at = now_ist()
+
+    return {
+        "movie": title or "Ramayana: Rise of a Legend",
+        "status": "success",
+        "source": "The Movie Database (TMDB)",
+        "sourceUrl": (
+            f"https://www.themoviedb.org/movie/{TMDB_MOVIE_ID}"
+        ),
+        "lastUpdated": fetched_at,
+
+        # Existing website compatibility:
+        # TMDB average is out of 10, so multiply by 10
+        # for the existing 0–100 visual display.
+        "tmdbScore": (
+            round(float(vote_average) * 10, 1)
+            if vote_average is not None
+            else None
+        ),
+
+        "voteCount": vote_count,
+        "reviewCount": total_review_results,
+
+        # No fabricated editorial summaries.
+        "highlights": [],
+        "sentiment": None,
+        "reviews": review_items,
+
+        "message": (
+            "TMDB rating and written-review data fetched. "
+            "Sentiment analysis has not been performed."
+        ),
+
+        "tmdb": {
+            "movieId": TMDB_MOVIE_ID,
+            "title": title,
+            "originalTitle": original_title,
+            "overview": movie.get("overview"),
+            "releaseDate": movie.get("release_date"),
+
+            "voteAverage": (
+                round(float(vote_average), 2)
+                if vote_average is not None
+                else None
+            ),
+
+            "voteCount": vote_count,
+            "reviewCount": total_review_results,
+            "reviewPagesFetched": pages_to_fetch,
+            "reviewPagesAvailable": total_review_pages,
+            "posterPath": movie.get("poster_path"),
+            "backdropPath": movie.get("backdrop_path"),
+
+            "genres": [
+                genre.get("name")
+                for genre in movie.get("genres", [])
+                if (
+                    isinstance(genre, dict)
+                    and genre.get("name")
+                )
+            ],
+
+            "apiBase": TMDB_API_BASE,
+        },
+
+        "internalAudit": {
+            "tmdbMovieId": TMDB_MOVIE_ID,
+            "tmdbReviewCount": total_review_results,
+            "tmdbReviewRecordsFetched": len(review_items),
+            "sentimentAnalysis": "not_run",
+            "sentimentEvidence": (
+                "Raw TMDB review text only. "
+                "No sentiment labels generated."
+            ),
+        },
+    }
+
+
+def update_tmdb_reviews():
+    """
+    Update reviews.json independently.
+
+    If TMDB fails, retain the previous successful reviews.json.
+    """
+
+    try:
+        audience_data = fetch_tmdb_audience_data()
+
+        atomic_write_json(
+            REVIEWS_FILE,
+            audience_data,
+        )
+
+        print(
+            "TMDB audience data updated: "
+            f"{audience_data.get('voteCount')} votes, "
+            f"{audience_data.get('reviewCount')} reviews."
+        )
+
+        return {
+            "status": "success",
+            "fetchedAt": audience_data["lastUpdated"],
+            "reviewCount": audience_data.get(
+                "reviewCount", 0
+            ),
+            "voteCount": audience_data.get("voteCount"),
+        }
+
+    except Exception as exc:
+
+        print(
+            "TMDB update failed; existing reviews.json "
+            f"was preserved: {exc}",
+            file=sys.stderr,
+        )
+
+        return {
+            "status": (
+                "not_configured"
+                if "not configured" in str(exc).lower()
+                else "failed"
+            ),
+            "checkedAt": now_ist(),
+            "warning": str(exc),
+            "preservedPreviousData": REVIEWS_FILE.exists(),
+        }
 
 
 # ---------------------------------------------------------
@@ -520,6 +859,7 @@ def configure_source_metadata(data):
 # ---------------------------------------------------------
 
 def main():
+
     if not DATA_FILE.exists():
         raise RuntimeError(
             f"Missing data.json: {DATA_FILE}"
@@ -529,17 +869,20 @@ def main():
         DATA_FILE.read_text(encoding="utf-8")
     )
 
-    fetched_at = datetime.now(IST).isoformat(
-        timespec="seconds"
-    )
-
+    fetched_at = now_ist()
     warnings = []
 
-    # Maintain existing website-compatible feed.
-    feed = data.setdefault("automatedFeed", {})
+    # -----------------------------------------------------
+    # 1. TMDB AUDIENCE DATA
+    # -----------------------------------------------------
+
+    # This pipeline is deliberately independent.
+    # Failure here must not stop box-office ingestion.
+
+    audience_ingestion = update_tmdb_reviews()
 
     # -----------------------------------------------------
-    # 1. DAY-WISE BOI24 ADVANCE BOOKINGS
+    # 2. DAY-WISE BOI24 ADVANCE BOOKINGS
     # -----------------------------------------------------
 
     day_data = data.setdefault(
@@ -551,6 +894,7 @@ def main():
         BOI24_DAILY_URLS.items(),
         start=1,
     ):
+
         try:
             parsed = parse_day_page(
                 fetch_page(url),
@@ -559,7 +903,6 @@ def main():
                 url,
             )
 
-            # Update only a successfully parsed date.
             day_data[date] = parsed
 
             print(
@@ -567,6 +910,7 @@ def main():
             )
 
         except Exception as exc:
+
             warnings.append(
                 f"Day {day} failed: {exc}"
             )
@@ -577,7 +921,7 @@ def main():
             )
 
     # -----------------------------------------------------
-    # 2. OVERSEAS ALL-DATES SNAPSHOT
+    # 3. OVERSEAS ALL-DATES SNAPSHOT
     # -----------------------------------------------------
 
     try:
@@ -592,6 +936,7 @@ def main():
         )
 
     except Exception as exc:
+
         warnings.append(
             f"Overseas page failed: {exc}"
         )
@@ -602,10 +947,18 @@ def main():
         )
 
     # -----------------------------------------------------
-    # 3. LEGACY DAY 1 FEED COMPATIBILITY
+    # 4. LEGACY DAY 1 FEED COMPATIBILITY
     # -----------------------------------------------------
 
-    day1 = day_data.get("2026-11-05", {})
+    feed = data.setdefault(
+        "automatedFeed",
+        {},
+    )
+
+    day1 = day_data.get(
+        "2026-11-05",
+        {},
+    )
 
     if day1.get("indiaGrossCr") is not None:
         feed["indiaGrossCr"] = day1["indiaGrossCr"]
@@ -616,6 +969,9 @@ def main():
     if day1.get("shows") is not None:
         feed["shows"] = day1["shows"]
 
+    if day1.get("occupancyPct") is not None:
+        feed["occupancyPct"] = day1["occupancyPct"]
+
     feed["sourceName"] = (
         "BoxOfficeIndia24 — Ramayana Day 1"
     )
@@ -625,14 +981,18 @@ def main():
     )
 
     # Do not use overseas all-dates as Day 1 overseas.
-    # Remove ambiguous legacy values.
     feed.pop("overseasCr", None)
 
     if day1:
+
         feed["status"] = "success"
         feed["fetchedAt"] = day1.get(
             "fetchedAt",
             fetched_at,
+        )
+
+        feed["sourceUpdatedText"] = day1.get(
+            "sourceUpdatedText"
         )
 
         feed["message"] = (
@@ -642,14 +1002,24 @@ def main():
             "matching Day 1 scope."
         )
 
+        if day1.get("worldwideGrossCr") is not None:
+            feed["worldwideGrossCr"] = (
+                day1["worldwideGrossCr"]
+            )
+
+        if day1.get("overseasGrossCr") is not None:
+            feed["overseasGrossCr"] = (
+                day1["overseasGrossCr"]
+            )
+
     # -----------------------------------------------------
-    # 4. SOURCE REGISTRY AND POLICY
+    # 5. SOURCE REGISTRY AND POLICY
     # -----------------------------------------------------
 
     configure_source_metadata(data)
 
     # -----------------------------------------------------
-    # 5. SACNILK CONFIGURATION STATUS
+    # 6. SACNILK CONFIGURATION STATUS
     # -----------------------------------------------------
 
     data["sourceValidation"] = {
@@ -666,6 +1036,7 @@ def main():
                 "Ramayana tracker URL and a compatible parser."
             ),
         },
+
         "secondary": {
             "status": "registered_for_manual_validation",
             "note": (
@@ -677,7 +1048,7 @@ def main():
     }
 
     # -----------------------------------------------------
-    # 6. UPDATE STATUS
+    # 7. UPDATE STATUS
     # -----------------------------------------------------
 
     data["lastUpdated"] = fetched_at
@@ -688,16 +1059,21 @@ def main():
         else "partial_source_update"
     )
 
+    data["audienceIngestion"] = audience_ingestion
+
     data["ingestion"] = {
         "source": "BoxOfficeIndia24",
         "fetchedAt": fetched_at,
         "refreshIntervalMinutes": 30,
+
         "status": (
             "success"
             if not warnings
             else "partial"
         ),
+
         "warnings": warnings,
+
         "note": (
             "Successful page parsing does not guarantee "
             "publisher estimate accuracy or producer confirmation."
@@ -705,16 +1081,12 @@ def main():
     }
 
     # -----------------------------------------------------
-    # 7. WRITE DATA SAFELY
+    # 8. WRITE DATA SAFELY
     # -----------------------------------------------------
 
-    DATA_FILE.write_text(
-        json.dumps(
-            data,
-            ensure_ascii=False,
-            indent=2,
-        ) + "\n",
-        encoding="utf-8",
+    atomic_write_json(
+        DATA_FILE,
+        data,
     )
 
     print(
@@ -725,26 +1097,13 @@ def main():
         )
     )
 
-
-def fetch_page(url):
-    request = Request(
-        url,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Accept": "text/html,application/xhtml+xml",
-        },
-    )
-
-    with urlopen(request, timeout=30) as response:
-        if response.status != 200:
-            raise RuntimeError(
-                f"HTTP error: {response.status}"
-            )
-
-        return response.read().decode(
-            "utf-8",
-            errors="replace",
+    print(
+        json.dumps(
+            data["audienceIngestion"],
+            ensure_ascii=False,
+            indent=2,
         )
+    )
 
 
 if __name__ == "__main__":
