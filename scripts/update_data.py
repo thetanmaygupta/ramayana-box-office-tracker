@@ -1081,6 +1081,130 @@ def record_source_status(
     }
 
 
+
+def refresh_worldwide_all_dates(
+    data: dict[str, Any],
+    calculated_at: str,
+) -> None:
+    """
+    Rebuild the all-dates advance-booking aggregate from the independently
+    retained latest-valid India and overseas snapshots.
+
+    A failed source is not replaced with zero. Its previous valid snapshot
+    remains available in data.json and is combined with the other source's
+    newly accepted snapshot.
+    """
+
+    india = data.get("sacnilkSnapshot")
+    overseas = data.get("overseasAllDates")
+
+    if not isinstance(india, dict):
+        india = {}
+    if not isinstance(overseas, dict):
+        overseas = {}
+
+    india_value = india.get("indiaGrossCr")
+    overseas_value = overseas.get("grossCr")
+
+    india_valid = (
+        india.get("scope") == "india_all_dates"
+        and str(india.get("currency", "INR")).upper() == "INR"
+        and isinstance(india_value, (int, float))
+        and not isinstance(india_value, bool)
+        and 0 < float(india_value) < 1000
+    )
+    overseas_valid = (
+        overseas.get("scope") == "overseas_all_dates"
+        and str(overseas.get("currency", "INR")).upper() == "INR"
+        and isinstance(overseas_value, (int, float))
+        and not isinstance(overseas_value, bool)
+        and 0 < float(overseas_value) < 1000
+    )
+
+    previous = data.get("worldwideAllDates")
+    if not isinstance(previous, dict):
+        previous = {}
+
+    india_component = {
+        "grossCr": round(float(india_value), 2) if india_valid else None,
+        "sourceName": india.get("sourceName") if india_valid else None,
+        "sourceUrl": india.get("sourceUrl") if india_valid else None,
+        "sourceUpdatedText": india.get("sourceUpdatedText") if india_valid else None,
+        "fetchedAt": india.get("fetchedAt") if india_valid else None,
+        "scope": india.get("scope") if india_valid else None,
+    }
+    overseas_component = {
+        "grossCr": round(float(overseas_value), 2) if overseas_valid else None,
+        "sourceName": overseas.get("sourceName") if overseas_valid else None,
+        "sourceUrl": overseas.get("sourceUrl") if overseas_valid else None,
+        "sourceUpdatedText": overseas.get("sourceUpdatedText") if overseas_valid else None,
+        "fetchedAt": overseas.get("fetchedAt") if overseas_valid else None,
+        "scope": overseas.get("scope") if overseas_valid else None,
+    }
+
+    # Keep a last-known-good aggregate component only when its recorded
+    # component scope explicitly matches the required all-dates territory.
+    previous_india_component = previous.get("indiaComponent")
+    if not isinstance(previous_india_component, dict):
+        previous_india_component = {}
+    previous_overseas_component = previous.get("overseasComponent")
+    if not isinstance(previous_overseas_component, dict):
+        previous_overseas_component = {}
+
+    if not india_valid and previous_india_component.get("scope") == "india_all_dates":
+        india_component = previous_india_component
+        india_valid = isinstance(india_component.get("grossCr"), (int, float))
+    if not overseas_valid and previous_overseas_component.get("scope") == "overseas_all_dates":
+        overseas_component = previous_overseas_component
+        overseas_valid = isinstance(overseas_component.get("grossCr"), (int, float))
+
+    total = None
+    if india_valid and overseas_valid:
+        total = round(
+            float(india_component["grossCr"])
+            + float(overseas_component["grossCr"]),
+            2,
+        )
+
+    data["worldwideAllDates"] = {
+        "scope": "all_dates",
+        "currency": "INR",
+        "status": "calculated" if total is not None else "partial",
+        "calculationEligible": total is not None,
+        "indiaGrossCr": india_component.get("grossCr"),
+        "overseasGrossCr": overseas_component.get("grossCr"),
+        "worldwideGrossCr": total,
+        "calculatedAs": "Latest valid India all-dates gross + latest valid overseas all-dates gross",
+        "calculatedAt": calculated_at,
+        "indiaSourceName": india_component.get("sourceName"),
+        "indiaSourceUrl": india_component.get("sourceUrl"),
+        "indiaSourceUpdatedText": india_component.get("sourceUpdatedText"),
+        "indiaFetchedAt": india_component.get("fetchedAt"),
+        "overseasSourceName": overseas_component.get("sourceName"),
+        "overseasSourceUrl": overseas_component.get("sourceUrl"),
+        "overseasSourceUpdatedText": overseas_component.get("sourceUpdatedText"),
+        "overseasFetchedAt": overseas_component.get("fetchedAt"),
+        "indiaComponent": india_component,
+        "overseasComponent": overseas_component,
+        "note": (
+            "Calculated advance-booking snapshot using the latest valid "
+            "retained India and overseas all-dates components. Components "
+            "refresh independently and may have different publisher "
+            "timestamps. This is not actual theatrical collection."
+        ),
+    }
+
+    data["sourceSnapshots"] = {
+        "sacnilkIndia": india if india_valid else None,
+        "boxOfficeIndia24Overseas": overseas if overseas_valid else None,
+        "note": (
+            "India and overseas all-dates snapshots are retained and "
+            "refreshed independently. The worldwide total is recalculated "
+            "from the latest valid component values."
+        ),
+    }
+
+
 def main() -> int:
 
     data = load_json(
@@ -1239,33 +1363,25 @@ def main() -> int:
     sacnilk_candidate = None
     sacnilk_url_used = None
 
-    for url, scope in (
-        (SACNILK_ALL_DATES_URL, "india_all_dates"),
-        (SACNILK_LIVE_URL, "india_live_tracker"),
-        (SACNILK_DAY1_URL, "india_day_1_advance"),
-    ):
+    # Only the dedicated all-dates report may populate the India component.
+    # Do not fall back to a live/day-one page and mislabel its scope.
+    url = SACNILK_ALL_DATES_URL
+    scope = "india_all_dates"
 
-        try:
+    try:
+        sacnilk_candidate = parse_sacnilk_page(
+            fetch_page(url),
+            url,
+            scope,
+        )
+        sacnilk_url_used = url
 
-            sacnilk_candidate = parse_sacnilk_page(
-                fetch_page(url),
-                url,
-                scope,
-            )
-
-            sacnilk_url_used = url
-            break
-
-        except Exception as exc:
-
-            warnings.append(
-                f"Sacnilk {scope}: {exc}"
-            )
-
-            print(
-                f"Sacnilk {scope} not accepted: {exc}",
-                file=sys.stderr,
-            )
+    except Exception as exc:
+        warnings.append(f"Sacnilk {scope}: {exc}")
+        print(
+            f"Sacnilk {scope} not accepted; previous valid snapshot retained: {exc}",
+            file=sys.stderr,
+        )
 
     if sacnilk_candidate:
 
@@ -1371,21 +1487,9 @@ def main() -> int:
             if day1.get(key) is None:
                 feed.pop(key, None)
 
-    # 6. Keep all-dates snapshots separate.
-    # Do not silently sum incompatible sources.
-    data["sourceSnapshots"] = {
-        "sacnilkIndia": data.get("sacnilkSnapshot"),
-
-        "boxOfficeIndia24Overseas": data.get(
-            "overseasAllDates"
-        ),
-
-        "note": (
-            "Snapshots remain source-scoped. A combined worldwide "
-            "all-dates figure is not generated unless dates, territory "
-            "and gross definitions are explicitly compatible."
-        ),
-    }
+    # 6. Recalculate from the latest independently retained all-dates
+    # components. A source that did not update keeps its previous valid value.
+    refresh_worldwide_all_dates(data, fetched_at)
 
     configure_source_policy(data)
 
@@ -1433,9 +1537,10 @@ def main() -> int:
         "sourceStatuses": statuses,
 
         "note": (
-            "A successful fetch means the page was parsed and validated, "
-            "not that the publisher estimate is producer-confirmed. "
-            "Missing values are not inferred."
+            "Each source is validated and retained independently. A failed source "
+            "does not erase its last valid snapshot; the worldwide advance "
+            "total is recalculated from the latest valid all-dates components. "
+            "Publisher estimates are not producer-confirmed."
         ),
     }
 
@@ -1444,6 +1549,7 @@ def main() -> int:
         "dayWiseAdvance",
         "overseasAllDates",
         "sacnilkSnapshot",
+        "worldwideAllDates",
         "automatedFeed",
     )
 
