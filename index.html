@@ -493,14 +493,15 @@ footer{
   </div>
 
   <p class="section-description">
-    The latest available published snapshot explicitly covering all dates,
-    with India and overseas figures shown separately.
+    Calculated worldwide all-dates advance gross: Sacnilk India all-dates
+    gross plus BoxOfficeIndia24 overseas all-dates gross. Component source
+    timestamps and reporting treatments are displayed separately.
   </p>
 
   <div class="worldwide-hero">
     <div class="kpi-label">Worldwide advance gross</div>
     <div class="kpi-value" id="worldwideTotal">—</div>
-    <div class="muted">All-dates snapshot · not actual box-office collection</div>
+    <div class="muted">Calculated India + overseas advance gross · not actual collection</div>
   </div>
 
   <div class="worldwide-breakdown">
@@ -1235,9 +1236,21 @@ footer{
 
     const ordered=sortedSnapshots(snaps);
 
-    const allDates=snaps
-      .filter(s=>scopeKey(s)==="all dates" && snapshotDate(s))
-      .sort((a,b)=>snapshotDate(b)-snapshotDate(a))[0];
+    const worldwide = data.worldwideAllDates &&
+      typeof data.worldwideAllDates === "object" &&
+      !Array.isArray(data.worldwideAllDates)
+        ? data.worldwideAllDates
+        : null;
+
+    const indiaAllDates = num(worldwide?.indiaGrossCr);
+    const overseasAllDates = num(worldwide?.overseasGrossCr);
+
+    // Calculate the displayed total from the two separately sourced components.
+    // Do not use a precomputed total if either component is missing or invalid.
+    const worldwideTotal =
+      indiaAllDates !== null && overseasAllDates !== null
+        ? indiaAllDates + overseasAllDates
+        : null;
 
     const feed=data.automatedFeed&&typeof data.automatedFeed==="object"
       ? data.automatedFeed : {};
@@ -1254,12 +1267,44 @@ footer{
       })} IST`
     );
 
-    set("worldwideTotal",allDates?cr(allDates.worldwideCr):"Unavailable");
-    set("worldwideIndia",allDates?cr(allDates.indiaCr):"—");
-    set("worldwideOverseas",allDates?cr(allDates.overseasCr):"—");
-    set("worldwideSource",`Source: ${allDates?.sourceName||"Not available"}`);
-    set("worldwideTimestamp",`Snapshot: ${allDates?dateText(allDates.timestamp):"Unavailable"}`);
-    set("worldwideScope",`Scope: ${allDates?scopeOf(allDates):"all dates snapshot unavailable"}`);
+    set(
+      "worldwideTotal",
+      worldwideTotal === null ? "Unavailable" : cr(worldwideTotal)
+    );
+
+    set(
+      "worldwideIndia",
+      indiaAllDates === null ? "—" : cr(indiaAllDates)
+    );
+
+    set(
+      "worldwideOverseas",
+      overseasAllDates === null ? "—" : cr(overseasAllDates)
+    );
+
+    const indiaSource = safe(worldwide?.indiaSourceName);
+    const overseasSource = safe(worldwide?.overseasSourceName);
+
+    set(
+      "worldwideSource",
+      worldwide
+        ? `Sources: ${indiaSource} + ${overseasSource}`
+        : "Sources: unavailable"
+    );
+
+    set(
+      "worldwideTimestamp",
+      worldwide
+        ? `India: ${safe(worldwide.indiaSourceUpdatedText)} · Overseas: ${safe(worldwide.overseasSourceUpdatedText)}`
+        : "Source timestamps unavailable"
+    );
+
+    set(
+      "worldwideScope",
+      worldwide
+        ? "Scope: All dates · Advance bookings"
+        : "Scope: all-dates snapshot unavailable"
+    );
 
     renderSnapshotMovement(snaps);
 
@@ -1431,7 +1476,9 @@ footer{
         `${invalidSnapshots} snapshot record(s) have a missing/invalid timestamp, source name or scope`
       );
     }
-    if(!allDates) warnings.push("no valid all-dates snapshot is available");
+    if(!worldwide || indiaAllDates === null || overseasAllDates === null) {
+      warnings.push("worldwide all-dates components are unavailable");
+    }
     if(risks.length&&Math.abs(riskTotal-100)>0.01) {
       warnings.push(`risk weights total ${riskTotal.toFixed(1)}%, not 100%`);
     }
