@@ -1,13 +1,18 @@
 {
   "movie": "Ramayana: Rise of a Legend",
   "status": "awaiting_reviews",
-  "updatedAt": "2026-11-04T06:11:38Z",
+  "updatedAt": "2026-11-04T06:34:41Z",
   "highlights": [],
   "message": "Only 0 substantial TMDB reviews found. Waiting for genuine audience reviews.",
   "internalAudit": {
     "tmdbMovieId": 656908,
     "tmdbReviewCount": 0,
     "youtubeVideosDiscovered": [
+      {
+        "title": "Ramayana Movie First Reaction 😱 | Audience Review.",
+        "publishedAt": "2026-11-04T06:05:24Z",
+        "url": "https://www.youtube.com/watch?v=S_08HWczbIc"
+      },
       {
         "title": "Prabhas Fan Review on Ramayana Movie | Ranbir Kapoor | Yash | Ramayana Review | Ramayana Rating",
         "publishedAt": "2026-11-04T05:11:37Z",
@@ -54,14 +59,14 @@
         "url": "https://www.youtube.com/watch?v=RX0-EeIZRe8"
       },
       {
-        "title": "Public Angry on Sai Pallavi | Ramayana Public Talk | Ramayana Review | Yash | Ranbir Kapoor | Rating",
-        "publishedAt": "2026-11-04T01:15:27Z",
-        "url": "https://www.youtube.com/watch?v=SBQq6pyANvA"
-      },
-      {
         "title": "Ramayana Movie Public Talk Telugu | IMAX Theatre Public Response | Ranbir Kapoor | Yash",
         "publishedAt": "2026-11-04T02:57:32Z",
         "url": "https://www.youtube.com/watch?v=2J8gr4snpAQ"
+      },
+      {
+        "title": "Public Angry on Sai Pallavi | Ramayana Public Talk | Ramayana Review | Yash | Ranbir Kapoor | Rating",
+        "publishedAt": "2026-11-04T01:15:27Z",
+        "url": "https://www.youtube.com/watch?v=SBQq6pyANvA"
       },
       {
         "title": "Ramayana Original Public Talk | Ranbir Kapoor | Yash | Ramayana Review | Public Review | Rating",
