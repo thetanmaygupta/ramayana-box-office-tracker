@@ -1,25 +1,25 @@
-
 #!/usr/bin/env python3
 """
 ReelMetrics - Audience Pulse
 
-Primary source: TMDB written reviews.
-Supplementary source: YouTube review-video discovery.
+Primary evidence: TMDB written reviews.
+Supplementary discovery: YouTube review videos.
 
 VADER analyses actual TMDB review text.
-YouTube titles and descriptions are NOT treated as review transcripts.
+YouTube titles and descriptions are never sentiment evidence.
 
 Only Positive and constructive Mixed themes are published.
 Critical-only, abusive and unsupported themes are excluded.
 
-If evidence is insufficient, previous highlights are retained.
-No audience opinions are fabricated.
+Existing TMDB rating, vote count and review records are preserved.
+Audience Pulse updates only its own fields in reviews.json.
 """
 
 import json
 import os
 import re
 import sys
+import tempfile
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,15 +38,19 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "reviews.json"
 
 MOVIE_TITLE = "Ramayana: Rise of a Legend"
+DEFAULT_MOVIE_ID = 656908
 
 TMDB_API = "https://api.themoviedb.org/3"
 YOUTUBE_API = "https://www.googleapis.com/youtube/v3"
 
 MAX_REVIEWS = 60
+MAX_REVIEW_PAGES = 5
 MIN_REVIEW_LENGTH = 100
 MIN_INDEPENDENT_REVIEWS = 2
 
 ANALYZER = SentimentIntensityAnalyzer()
+
+USER_AGENT = "ReelMetrics-AudiencePulse/2.0"
 
 
 # ---------------------------------------------------------
@@ -92,6 +96,84 @@ CONSTRUCTIVE_TERMS = [
 
 
 # ---------------------------------------------------------
+# TIME / FILE HELPERS
+# ---------------------------------------------------------
+
+def utc_now():
+    return (
+        datetime.now(timezone.utc)
+        .isoformat(timespec="seconds")
+        .replace("+00:00", "Z")
+    )
+
+
+def load_previous():
+
+    if not OUTPUT.exists():
+        return {}
+
+    try:
+        data = json.loads(
+            OUTPUT.read_text(encoding="utf-8")
+        )
+
+        if not isinstance(data, dict):
+            raise ValueError("reviews.json root must be an object")
+
+        return data
+
+    except (json.JSONDecodeError, OSError, ValueError) as error:
+        raise RuntimeError(
+            f"Cannot safely read existing reviews.json: {error}"
+        ) from error
+
+
+def write_output(data):
+
+    OUTPUT.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    fd, temp_name = tempfile.mkstemp(
+        prefix=".reviews.",
+        suffix=".tmp",
+        dir=str(OUTPUT.parent)
+    )
+
+    try:
+
+        with os.fdopen(
+            fd,
+            "w",
+            encoding="utf-8"
+        ) as handle:
+
+            json.dump(
+                data,
+                handle,
+                ensure_ascii=False,
+                indent=2
+            )
+
+            handle.write("\n")
+
+        os.replace(
+            temp_name,
+            OUTPUT
+        )
+
+    except Exception:
+
+        try:
+            os.unlink(temp_name)
+        except OSError:
+            pass
+
+        raise
+
+
+# ---------------------------------------------------------
 # HTTP / JSON HELPERS
 # ---------------------------------------------------------
 
@@ -99,76 +181,117 @@ def get_json(url, token=None):
 
     headers = {
         "Accept": "application/json",
-        "User-Agent": "ReelMetrics-AudiencePulse/1.0"
+        "User-Agent": USER_AGENT
     }
 
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    request = Request(url, headers=headers)
+    request = Request(
+        url,
+        headers=headers
+    )
 
     try:
+
         with urlopen(request, timeout=30) as response:
-            return json.loads(
+
+            if response.status != 200:
+                raise RuntimeError(
+                    f"Unexpected HTTP status: {response.status}"
+                )
+
+            payload = json.loads(
                 response.read().decode("utf-8")
             )
 
+        if not isinstance(payload, dict):
+            raise RuntimeError(
+                "API returned an unexpected JSON structure"
+            )
+
+        return payload
+
     except HTTPError as error:
+
         detail = error.read().decode(
-            "utf-8", errors="replace"
+            "utf-8",
+            errors="replace"
         )[:500]
 
         raise RuntimeError(
             f"HTTP {error.code}: {detail}"
-        )
+        ) from error
 
     except URLError as error:
+
         raise RuntimeError(
             f"Network error: {error}"
+        ) from error
+
+
+# ---------------------------------------------------------
+# MOVIE ID VALIDATION
+# ---------------------------------------------------------
+
+def get_movie_id():
+
+    raw_id = os.getenv(
+        "TMDB_MOVIE_ID",
+        str(DEFAULT_MOVIE_ID)
+    ).strip()
+
+    if not raw_id.isdigit() or int(raw_id) <= 0:
+        raise RuntimeError(
+            "TMDB_MOVIE_ID must be a positive integer"
         )
 
+    return int(raw_id)
 
-# ---------------------------------------------------------
-# TMDB MOVIE LOOKUP
-# ---------------------------------------------------------
 
-def find_movie(token):
+def validate_movie(movie, expected_id):
 
-    query = urlencode({
-        "query": MOVIE_TITLE,
-        "include_adult": "false",
-        "language": "en-US"
-    })
+    if not isinstance(movie, dict):
+        raise RuntimeError(
+            "TMDB returned an invalid movie record"
+        )
 
-    data = get_json(
-        f"{TMDB_API}/search/movie?{query}",
+    if int(movie.get("id") or 0) != expected_id:
+        raise RuntimeError(
+            "TMDB movie ID validation failed"
+        )
+
+    title = str(
+        movie.get("title") or ""
+    ).strip()
+
+    original_title = str(
+        movie.get("original_title") or ""
+    ).strip()
+
+    if "ramayana" not in (
+        f"{title} {original_title}"
+    ).casefold():
+
+        raise RuntimeError(
+            "TMDB movie title validation failed"
+        )
+
+    return movie
+
+
+def find_movie(token, movie_id):
+
+    movie = get_json(
+        f"{TMDB_API}/movie/{movie_id}?"
+        + urlencode({"language": "en-US"}),
         token
     )
 
-    results = data.get("results", [])
-
-    expected = re.sub(
-        r"[^a-z0-9]",
-        "",
-        MOVIE_TITLE.lower()
+    return validate_movie(
+        movie,
+        movie_id
     )
-
-    matches = [
-        movie for movie in results
-        if re.sub(
-            r"[^a-z0-9]",
-            "",
-            (movie.get("title") or "").lower()
-        ) == expected
-    ]
-
-    if not matches:
-        raise RuntimeError(
-            "Exact movie title not found on TMDB. "
-            "Check the TMDB_MOVIE_ID repository variable."
-        )
-
-    return matches[0]
 
 
 # ---------------------------------------------------------
@@ -178,8 +301,13 @@ def find_movie(token):
 def fetch_reviews(movie_id, token):
 
     reviews = []
+    seen_ids = set()
 
-    for page in range(1, 6):
+    total_results = 0
+    total_pages = 0
+    pages_fetched = 0
+
+    for page in range(1, MAX_REVIEW_PAGES + 1):
 
         url = (
             f"{TMDB_API}/movie/{movie_id}/reviews?"
@@ -189,34 +317,72 @@ def fetch_reviews(movie_id, token):
             })
         )
 
-        data = get_json(url, token)
+        data = get_json(
+            url,
+            token
+        )
+
+        if page == 1:
+
+            total_results = max(
+                0,
+                int(data.get("total_results") or 0)
+            )
+
+            total_pages = max(
+                0,
+                int(data.get("total_pages") or 0)
+            )
+
+        pages_fetched += 1
 
         for item in data.get("results", []):
+
+            if not isinstance(item, dict):
+                continue
+
+            review_id = str(
+                item.get("id") or ""
+            )
+
+            if review_id and review_id in seen_ids:
+                continue
 
             content = re.sub(
                 r"\s+",
                 " ",
-                item.get("content") or ""
+                str(item.get("content") or "")
             ).strip()
 
             if len(content) < MIN_REVIEW_LENGTH:
                 continue
 
+            if review_id:
+                seen_ids.add(review_id)
+
             reviews.append({
-                "id": len(reviews) + 1,
-                "author": item.get("author", "Audience member"),
+                "id": review_id or f"review-{len(reviews) + 1}",
+                "author": item.get("author") or "Audience member",
                 "text": content,
-                "url": item.get("url", ""),
-                "created_at": item.get("created_at", "")
+                "url": item.get("url") or "",
+                "created_at": item.get("created_at") or ""
             })
 
             if len(reviews) >= MAX_REVIEWS:
-                return reviews
+                return reviews, {
+                    "totalResults": total_results,
+                    "totalPages": total_pages,
+                    "pagesFetched": pages_fetched
+                }
 
-        if page >= int(data.get("total_pages") or 1):
+        if page >= total_pages:
             break
 
-    return reviews
+    return reviews, {
+        "totalResults": total_results,
+        "totalPages": total_pages,
+        "pagesFetched": pages_fetched
+    }
 
 
 # ---------------------------------------------------------
@@ -226,7 +392,8 @@ def fetch_reviews(movie_id, token):
 def discover_youtube():
 
     api_key = os.getenv(
-        "YOUTUBE_API_KEY", ""
+        "YOUTUBE_API_KEY",
+        ""
     ).strip()
 
     if not api_key:
@@ -347,6 +514,7 @@ def find_topics(review):
             )
             for keyword in keywords
         ):
+
             found.append(topic)
 
     return found
@@ -386,11 +554,13 @@ def build_highlights(reviews):
             topic_data[topic].append({
                 "review_id": review["id"],
                 "url": review["url"],
+
                 "positive": [
                     item["text"]
                     for item in sentences
                     if item["sentiment"] == "Positive"
                 ],
+
                 "negative": [
                     item["text"]
                     for item in sentences
@@ -420,7 +590,6 @@ def build_highlights(reviews):
             if item["negative"]
         ]
 
-        # Positive theme
         if (
             len(positive_reviews) >= MIN_INDEPENDENT_REVIEWS
             and len(positive_reviews) > len(negative_reviews)
@@ -437,7 +606,6 @@ def build_highlights(reviews):
                 "about every viewer."
             )
 
-        # Mixed but constructive theme
         elif positive_reviews and negative_reviews:
 
             constructive = [
@@ -462,7 +630,6 @@ def build_highlights(reviews):
             )
 
         else:
-            # Critical-only and neutral-only themes excluded.
             continue
 
         evidence = []
@@ -496,19 +663,64 @@ def build_highlights(reviews):
 
 
 # ---------------------------------------------------------
-# WRITE JSON
+# MERGE AUDIENCE PULSE INTO EXISTING JSON
 # ---------------------------------------------------------
 
-def write_output(data):
+def merge_pulse(
+    previous,
+    highlights,
+    reviews,
+    review_stats,
+    youtube_videos,
+    youtube_error,
+    movie_id,
+    status,
+    message,
+    now
+):
 
-    OUTPUT.write_text(
-        json.dumps(
-            data,
-            ensure_ascii=False,
-            indent=2
-        ) + "\n",
-        encoding="utf-8"
-    )
+    output = dict(previous)
+
+    # Preserve TMDB rating, vote count, review records,
+    # movie metadata and any unrelated existing fields.
+    output["movie"] = MOVIE_TITLE
+    output["status"] = status
+    output["updatedAt"] = now
+    output["highlights"] = highlights
+    output["message"] = message
+
+    output["audiencePulse"] = {
+        "status": status,
+        "updatedAt": now,
+        "sentimentEngine": "VADER",
+        "reviewsAnalysed": len(reviews),
+        "minimumReviewLength": MIN_REVIEW_LENGTH,
+        "minimumIndependentReviews": MIN_INDEPENDENT_REVIEWS
+    }
+
+    output["internalAudit"] = {
+        **(
+            previous.get("internalAudit", {})
+            if isinstance(previous.get("internalAudit"), dict)
+            else {}
+        ),
+
+        "tmdbMovieId": movie_id,
+        "tmdbReviewCount": review_stats["totalResults"],
+        "tmdbReviewRecordsFetched": len(reviews),
+        "tmdbReviewPagesFetched": review_stats["pagesFetched"],
+        "tmdbReviewPagesAvailable": review_stats["totalPages"],
+
+        "youtubeVideosDiscovered": youtube_videos,
+        "youtubeUsedAsSentimentEvidence": False,
+        "youtubeDiscoveryError": youtube_error,
+
+        "sentimentEngine": "VADER",
+        "publishedHighlightCount": len(highlights),
+        "sentimentAnalysis": "completed"
+    }
+
+    return output
 
 
 # ---------------------------------------------------------
@@ -517,30 +729,14 @@ def write_output(data):
 
 def main():
 
-    previous = {}
-
-    if OUTPUT.exists():
-
-        try:
-            previous = json.loads(
-                OUTPUT.read_text(
-                    encoding="utf-8"
-                )
-            )
-
-        except (json.JSONDecodeError, OSError):
-            previous = {}
-
-    now = datetime.now(
-        timezone.utc
-    ).isoformat(
-        timespec="seconds"
-    ).replace("+00:00", "Z")
+    previous = load_previous()
+    now = utc_now()
 
     try:
 
         token = os.getenv(
-            "TMDB_READ_ACCESS_TOKEN", ""
+            "TMDB_READ_ACCESS_TOKEN",
+            ""
         ).strip()
 
         if not token:
@@ -548,91 +744,97 @@ def main():
                 "Missing TMDB_READ_ACCESS_TOKEN GitHub secret."
             )
 
-        movie_id = os.getenv(
-            "TMDB_MOVIE_ID", ""
-        ).strip()
+        movie_id = get_movie_id()
 
-        if movie_id:
-
-            movie = {
-                "id": int(movie_id),
-                "title": MOVIE_TITLE
-            }
-
-        else:
-            movie = find_movie(token)
-
-        # Discover YouTube review videos.
-        youtube_videos, youtube_error = (
-            discover_youtube()
+        movie = find_movie(
+            token,
+            movie_id
         )
+
+        # YouTube is supplementary discovery only.
+        youtube_videos = []
+        youtube_error = None
+
+        try:
+
+            youtube_videos, youtube_error = (
+                discover_youtube()
+            )
+
+        except Exception as error:
+
+            youtube_error = str(error)
+
+            print(
+                f"YouTube discovery unavailable: {error}",
+                file=sys.stderr
+            )
 
         print(
-            f"YouTube videos discovered: "
-            f"{len(youtube_videos)}"
+            f"YouTube videos discovered: {len(youtube_videos)}"
         )
 
-        # Fetch actual written reviews.
-        reviews = fetch_reviews(
-            movie["id"],
+        # Fetch actual written TMDB reviews.
+        reviews, review_stats = fetch_reviews(
+            movie_id,
             token
         )
 
         print(
-            f"TMDB written reviews found: "
-            f"{len(reviews)}"
+            f"TMDB total reviews: {review_stats['totalResults']}"
         )
 
-        audit = {
-            "tmdbMovieId": movie["id"],
-            "tmdbReviewCount": len(reviews),
-            "youtubeVideosDiscovered": youtube_videos,
-            "youtubeUsedAsSentimentEvidence": False,
-            "youtubeDiscoveryError": youtube_error,
-            "sentimentEngine": "VADER"
-        }
+        print(
+            f"Substantial reviews fetched: {len(reviews)}"
+        )
 
-        # No sufficient evidence.
+        # Insufficient evidence: retain existing highlights.
         if len(reviews) < MIN_INDEPENDENT_REVIEWS:
 
-            output = {
-                "movie": MOVIE_TITLE,
-                "status": "awaiting_reviews",
-                "updatedAt": now,
-                "highlights": previous.get(
-                    "highlights", []
+            output = merge_pulse(
+                previous=previous,
+                highlights=previous.get("highlights", []),
+                reviews=reviews,
+                review_stats=review_stats,
+                youtube_videos=youtube_videos,
+                youtube_error=youtube_error,
+                movie_id=movie_id,
+                status="awaiting_reviews",
+                message=(
+                    f"Only {len(reviews)} substantial TMDB reviews "
+                    "found. Waiting for genuine audience reviews."
                 ),
-                "message": (
-                    f"Only {len(reviews)} substantial "
-                    "TMDB reviews found. Waiting for "
-                    "genuine audience reviews."
-                ),
-                "internalAudit": audit
-            }
+                now=now
+            )
 
             write_output(output)
 
             print(output["message"])
             return
 
-        highlights = build_highlights(reviews)
+        highlights = build_highlights(
+            reviews
+        )
 
         # No eligible sentiment themes.
         if not highlights:
 
-            output = {
-                "movie": MOVIE_TITLE,
-                "status": "awaiting_evidence",
-                "updatedAt": now,
-                "highlights": previous.get(
-                    "highlights", []
+            output = merge_pulse(
+                previous=previous,
+                highlights=previous.get("highlights", []),
+                reviews=reviews,
+                review_stats=review_stats,
+                youtube_videos=youtube_videos,
+                youtube_error=youtube_error,
+                movie_id=movie_id,
+                status="awaiting_evidence",
+                message=(
+                    "No Positive or constructive Mixed themes "
+                    "met the evidence rules. Previous highlights "
+                    "have been retained."
                 ),
-                "message": (
-                    "No Positive or constructive Mixed "
-                    "themes met the evidence rules."
-                ),
-                "internalAudit": audit
-            }
+                now=now
+            )
 
             write_output(output)
 
@@ -640,22 +842,22 @@ def main():
             return
 
         # Successful update.
-        output = {
-            "movie": MOVIE_TITLE,
-            "status": "success",
-            "updatedAt": now,
-            "highlights": highlights,
-            "editorialNote": (
-                "Original rule-based summaries of "
-                "TMDB written reviews. Only Positive "
-                "and constructive Mixed themes "
-                "are published."
+        output = merge_pulse(
+            previous=previous,
+            highlights=highlights,
+            reviews=reviews,
+            review_stats=review_stats,
+            youtube_videos=youtube_videos,
+            youtube_error=youtube_error,
+            movie_id=movie_id,
+            status="success",
+            message=(
+                "Audience Pulse generated from actual TMDB "
+                "written reviews. YouTube discovery is not "
+                "used as sentiment evidence."
             ),
-            "internalAudit": {
-                **audit,
-                "publishedHighlightCount": len(highlights)
-            }
-        }
+            now=now
+        )
 
         write_output(output)
 
@@ -666,20 +868,27 @@ def main():
 
     except Exception as error:
 
-        previous["movie"] = MOVIE_TITLE
+        # Never destroy the last known-good audience data.
+        output = dict(previous)
 
-        previous["status"] = (
+        output["movie"] = MOVIE_TITLE
+
+        output["status"] = (
             "stale"
             if previous.get("highlights")
             else "error"
         )
 
-        previous["lastAttemptAt"] = now
-        previous["lastError"] = str(error)
+        output["lastAttemptAt"] = now
+        output["lastError"] = str(error)
 
-        previous.setdefault("highlights", [])
+        output.setdefault(
+            "highlights",
+            []
+        )
 
-        write_output(previous)
+        # Atomic write preserves the previous ratings and reviews.
+        write_output(output)
 
         print(
             f"Audience Pulse not replaced: {error}",
@@ -694,4 +903,15 @@ def main():
 # ---------------------------------------------------------
 
 if __name__ == "__main__":
-    main()
+
+    try:
+        main()
+
+    except Exception as error:
+
+        print(
+            f"FATAL: {error}",
+            file=sys.stderr
+        )
+
+        raise SystemExit(1)
