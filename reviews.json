@@ -1,111 +1,41 @@
 {
   "movie": "Ramayana: Rise of a Legend",
-  "status": "awaiting_reviews",
-  "updatedAt": "2026-11-04T06:34:41Z",
+  "status": "success",
+  "source": "The Movie Database (TMDB)",
+  "sourceUrl": "https://www.themoviedb.org/movie/656908",
+  "lastUpdated": "2026-11-04T16:08:12+05:30",
+  "tmdbScore": 57.0,
+  "voteCount": 3,
+  "reviewCount": 0,
   "highlights": [],
-  "message": "Only 0 substantial TMDB reviews found. Waiting for genuine audience reviews.",
+  "sentiment": null,
+  "reviews": [],
+  "message": "TMDB rating and written reviews fetched. No sentiment labels are inferred.",
+  "tmdb": {
+    "movieId": 656908,
+    "title": "Ramayana: Rise of a Legend",
+    "originalTitle": "रामायणम्",
+    "overview": "An ancient epic follows a young prince and princess whose marriage and subsequent exile mark the beginning of a legendary journey. Their story of love, duty and destiny sets the stage for greater challenges ahead.",
+    "releaseDate": "2026-11-04",
+    "voteAverage": 5.7,
+    "voteCount": 3,
+    "reviewCount": 0,
+    "reviewPagesFetched": 0,
+    "reviewPagesAvailable": 0,
+    "posterPath": "/dPrtk4iNf6T5w8fWfg4uxDDbJSW.jpg",
+    "backdropPath": "/bkhPaFOiqc9GeLMdf1D44KbozRH.jpg",
+    "genres": [
+      "Fantasy",
+      "Action",
+      "Adventure"
+    ],
+    "apiBase": "https://api.themoviedb.org/3"
+  },
   "internalAudit": {
     "tmdbMovieId": 656908,
     "tmdbReviewCount": 0,
-    "youtubeVideosDiscovered": [
-      {
-        "title": "Ramayana Movie First Reaction 😱 | Audience Review.",
-        "publishedAt": "2026-11-04T06:05:24Z",
-        "url": "https://www.youtube.com/watch?v=S_08HWczbIc"
-      },
-      {
-        "title": "Prabhas Fan Review on Ramayana Movie | Ranbir Kapoor | Yash | Ramayana Review | Ramayana Rating",
-        "publishedAt": "2026-11-04T05:11:37Z",
-        "url": "https://www.youtube.com/watch?v=Y_Yyz4Y_q2c"
-      },
-      {
-        "title": "Ramayana reviews || Ramayana publictalk || RanbirKapoor | Yash | Saipallavi #shorts SPS Media .",
-        "publishedAt": "2026-11-04T05:04:43Z",
-        "url": "https://www.youtube.com/watch?v=trYpANJ3Bo4"
-      },
-      {
-        "title": "రావణాయణం By Public Review Rakul, Rehman &amp; Sai Pallavi #saipallavi #ramayana #Yash#Ranabir#Review",
-        "publishedAt": "2026-11-04T04:47:39Z",
-        "url": "https://www.youtube.com/watch?v=lCLN76VJg9g"
-      },
-      {
-        "title": "Ramayana Review | Ramayana Movie Review | Ramayana: Rise Of A Legend Review ",
-        "publishedAt": "2026-11-04T04:30:00Z",
-        "url": "https://www.youtube.com/watch?v=uSm_yUl4jvY"
-      },
-      {
-        "title": "Ramayana Movie Review 🔥 | Ranbir Kapoor, Yash, Sai Pallavi | Nitesh Tiwari | Biggest Update #shorts",
-        "publishedAt": "2026-11-04T03:34:10Z",
-        "url": "https://www.youtube.com/watch?v=FRH026oMRIw"
-      },
-      {
-        "title": "RANBIR KAPOOR LEAKS RAMAYANA PART 3?!😂| Spoiler Kapoor Is Back! #ramayan #ranbirkapoor #yash #shorts",
-        "publishedAt": "2026-11-04T03:30:16Z",
-        "url": "https://www.youtube.com/watch?v=8atSdH6uPvc"
-      },
-      {
-        "title": "Ramayana Part 1 movie review yass ने जीता सबका दिल! 😱 #moviereview #ramayanpart1 #yash",
-        "publishedAt": "2026-11-04T02:09:14Z",
-        "url": "https://www.youtube.com/watch?v=eVsZka9Fk9E"
-      },
-      {
-        "title": "Ramayana: Rise of a Legend Movie Details",
-        "publishedAt": "2026-11-04T01:40:20Z",
-        "url": "https://www.youtube.com/watch?v=570_H5-o-Mo"
-      },
-      {
-        "title": "Ramayana publictalk | Ramayana Review | Yash | RanbirKapoor Ramayana movie Reviews SPS Media .",
-        "publishedAt": "2026-11-04T01:38:31Z",
-        "url": "https://www.youtube.com/watch?v=RX0-EeIZRe8"
-      },
-      {
-        "title": "Ramayana Movie Public Talk Telugu | IMAX Theatre Public Response | Ranbir Kapoor | Yash",
-        "publishedAt": "2026-11-04T02:57:32Z",
-        "url": "https://www.youtube.com/watch?v=2J8gr4snpAQ"
-      },
-      {
-        "title": "Public Angry on Sai Pallavi | Ramayana Public Talk | Ramayana Review | Yash | Ranbir Kapoor | Rating",
-        "publishedAt": "2026-11-04T01:15:27Z",
-        "url": "https://www.youtube.com/watch?v=SBQq6pyANvA"
-      },
-      {
-        "title": "Ramayana Original Public Talk | Ranbir Kapoor | Yash | Ramayana Review | Public Review | Rating",
-        "publishedAt": "2026-11-04T01:00:09Z",
-        "url": "https://www.youtube.com/watch?v=oGBEIng8E_E"
-      },
-      {
-        "title": "Ramayana Genuine Public Talk | Ranbir Kapoor | Yash | Ramayana Review | Ramayana Public Rating",
-        "publishedAt": "2026-11-04T00:45:27Z",
-        "url": "https://www.youtube.com/watch?v=_Mi0dCb9vc0"
-      },
-      {
-        "title": "Ramayana Public Talk From Prasad IMAX | Ranbir Kapoor | Yash | Ramayana Review | Ramayana Rating",
-        "publishedAt": "2026-11-04T00:20:08Z",
-        "url": "https://www.youtube.com/watch?v=i2uq8ddXKRc"
-      },
-      {
-        "title": "Ramayana: Rise of Legends Movie Review | Kya Ye Mythological Epic Hai? | Hindi Review",
-        "publishedAt": "2026-11-03T17:39:35Z",
-        "url": "https://www.youtube.com/watch?v=etrQJKEeMsg"
-      },
-      {
-        "title": "Watch This Before RAMAYANA Rise Of Lagend ! ",
-        "publishedAt": "2026-11-03T16:30:38Z",
-        "url": "https://www.youtube.com/watch?v=6iaUWRJpmWg"
-      },
-      {
-        "title": "Namit Malhotra and Nitesh Tiwari Interview | RAMAYANA: Rise Of A Legend | Filme Shilmy",
-        "publishedAt": "2026-11-03T13:53:22Z",
-        "url": "https://www.youtube.com/watch?v=ukm-REKW-0o"
-      },
-      {
-        "title": "Ramayana: The Rise Of W Legend (English Song)| A.R. Rehman | Hans Zimmer | Ramayan New Song 2026",
-        "publishedAt": "2026-11-03T12:05:59Z",
-        "url": "https://www.youtube.com/watch?v=lmmhd_TeAcQ"
-      }
-    ],
-    "youtubeUsedAsSentimentEvidence": false,
-    "youtubeDiscoveryError": null,
-    "sentimentEngine": "VADER"
+    "tmdbReviewRecordsFetched": 0,
+    "sentimentAnalysis": "not_run",
+    "scoreDefinition": "TMDB vote_average multiplied by 10"
   }
 }
