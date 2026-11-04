@@ -1242,18 +1242,29 @@ footer{
         ? data.worldwideAllDates
         : null;
 
-    // Prefer the latest source-scoped snapshots. Never combine components
-    // unless the data explicitly marks their scopes and definitions compatible.
+    // Use the latest retained component from each source independently.
+    // Different fetch times are expected; exact all-dates scope and INR
+    // currency are the compatibility requirements for this dashboard total.
     const sourceSnapshots = data.sourceSnapshots && typeof data.sourceSnapshots === "object"
       ? data.sourceSnapshots : {};
-    const indiaSnapshot = sourceSnapshots.sacnilkIndia || null;
-    const overseasSnapshot = sourceSnapshots.boxOfficeIndia24Overseas || null;
-    const indiaAllDates = num(indiaSnapshot?.indiaGrossCr ?? worldwide?.indiaGrossCr);
-    const overseasAllDates = num(overseasSnapshot?.grossCr ?? worldwide?.overseasGrossCr);
-    const calculationEligible = worldwide?.calculationEligible === true ||
-      (worldwide?.status === "comparable" && worldwide?.calculationEligible !== false);
-    const worldwideTotal = calculationEligible && indiaAllDates !== null && overseasAllDates !== null
-      ? indiaAllDates + overseasAllDates
+    const indiaSnapshot = sourceSnapshots.sacnilkIndia || worldwide?.indiaComponent || null;
+    const overseasSnapshot = sourceSnapshots.boxOfficeIndia24Overseas || worldwide?.overseasComponent || null;
+
+    const indiaCandidate = num(indiaSnapshot?.indiaGrossCr ?? indiaSnapshot?.grossCr ?? worldwide?.indiaGrossCr);
+    const overseasCandidate = num(overseasSnapshot?.grossCr ?? worldwide?.overseasGrossCr);
+    const indiaScopeValid = indiaSnapshot?.scope === "india_all_dates" ||
+      (!indiaSnapshot?.scope && worldwide?.indiaComponent?.scope === "india_all_dates");
+    const overseasScopeValid = overseasSnapshot?.scope === "overseas_all_dates" ||
+      (!overseasSnapshot?.scope && worldwide?.overseasComponent?.scope === "overseas_all_dates");
+    const indiaCurrencyValid = String(indiaSnapshot?.currency || worldwide?.currency || "INR").toUpperCase() === "INR";
+    const overseasCurrencyValid = String(overseasSnapshot?.currency || worldwide?.currency || "INR").toUpperCase() === "INR";
+
+    const indiaAllDates = indiaScopeValid && indiaCurrencyValid && indiaCandidate > 0
+      ? indiaCandidate : null;
+    const overseasAllDates = overseasScopeValid && overseasCurrencyValid && overseasCandidate > 0
+      ? overseasCandidate : null;
+    const worldwideTotal = indiaAllDates !== null && overseasAllDates !== null
+      ? Number((indiaAllDates + overseasAllDates).toFixed(2))
       : null;
 
     const feed=data.automatedFeed&&typeof data.automatedFeed==="object"
@@ -1273,12 +1284,14 @@ footer{
 
     set(
       "worldwideTotal",
-      worldwideTotal === null ? "Not comparable" : cr(worldwideTotal)
+      worldwideTotal === null
+        ? (indiaAllDates !== null || overseasAllDates !== null ? "Awaiting both sources" : "Unavailable")
+        : cr(worldwideTotal)
     );
     const worldwideDefinition = document.querySelector("#worldwidePanel .worldwide-hero .muted");
-    if (worldwideDefinition) worldwideDefinition.textContent = worldwideTotal === null
-      ? "India and overseas snapshots shown separately · combined total withheld until scopes match · not actual collection"
-      : "Calculated India + overseas advance gross · not actual collection";
+    if (worldwideDefinition) worldwideDefinition.textContent = worldwideTotal !== null
+      ? "Latest valid India + overseas all-dates advance gross · sources refresh independently · not actual collection"
+      : "Available source snapshot retained; worldwide total appears when both all-dates components are available · not actual collection";
 
     set(
       "worldwideIndia",
@@ -1295,25 +1308,29 @@ footer{
 
     set(
       "worldwideSource",
-      worldwide
-        ? `Sources: ${indiaSource} + ${overseasSource}`
-        : "Sources: unavailable"
+      `Sources: ${indiaAllDates !== null ? indiaSource : "India unavailable"} · ${overseasAllDates !== null ? overseasSource : "Overseas unavailable"}`
     );
 
+    const indiaTime = indiaSnapshot?.sourceUpdatedText || indiaSnapshot?.fetchedAt ||
+      worldwide?.indiaSourceUpdatedText || worldwide?.indiaFetchedAt;
+    const overseasTime = overseasSnapshot?.sourceUpdatedText || overseasSnapshot?.fetchedAt ||
+      worldwide?.overseasSourceUpdatedText || worldwide?.overseasFetchedAt;
     set(
       "worldwideTimestamp",
-      worldwide || indiaSnapshot || overseasSnapshot
-        ? `India fetched: ${safe(indiaSnapshot?.fetchedAt ?? worldwide?.indiaSourceUpdatedText)} · Overseas updated: ${safe(overseasSnapshot?.sourceUpdatedText ?? worldwide?.overseasSourceUpdatedText)}`
+      indiaTime || overseasTime
+        ? `India: ${safe(indiaTime)} · Overseas: ${safe(overseasTime)}`
         : "Source timestamps unavailable"
     );
 
     set(
       "worldwideScope",
-      indiaSnapshot || overseasSnapshot
-        ? "Scope: separate source snapshots · all dates"
-        : worldwide
-          ? "Scope: All dates · Advance bookings"
-          : "Scope: all-dates snapshot unavailable"
+      indiaAllDates !== null && overseasAllDates !== null
+        ? "Scope: India + overseas · all-dates advance bookings"
+        : indiaAllDates !== null
+          ? "Scope: India all-dates · overseas snapshot unavailable"
+          : overseasAllDates !== null
+            ? "Scope: Overseas all-dates · India snapshot unavailable"
+            : "Scope: all-dates snapshots unavailable"
     );
 
     renderSnapshotMovement(snaps);
@@ -1505,8 +1522,8 @@ footer{
         `${invalidSnapshots} snapshot record(s) have a missing/invalid timestamp, source name or scope`
       );
     }
-    if(!worldwide || indiaAllDates === null || overseasAllDates === null) {
-      warnings.push("worldwide all-dates components are unavailable");
+    if(indiaAllDates === null || overseasAllDates === null) {
+      warnings.push("one or both worldwide all-dates source components are unavailable; any valid component remains displayed");
     }
     if(risks.length&&Math.abs(riskTotal-100)>0.01) {
       warnings.push(`risk weights total ${riskTotal.toFixed(1)}%, not 100%`);
