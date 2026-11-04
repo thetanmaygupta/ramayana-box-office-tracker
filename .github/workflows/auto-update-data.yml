@@ -16,13 +16,13 @@ permissions:
   id-token: write
 
 concurrency:
-  group: box-office-data
+  group: reelmetrics-data-pipeline
   cancel-in-progress: false
 
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     environment:
       name: github-pages
@@ -39,9 +39,30 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Fetch, update and push data safely
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Fetch box office and TMDB data
         env:
           TMDB_READ_ACCESS_TOKEN: ${{ secrets.TMDB_READ_ACCESS_TOKEN }}
+          TMDB_MOVIE_ID: ${{ vars.TMDB_MOVIE_ID }}
+        run: python scripts/update_data.py
+
+      - name: Generate Audience Pulse
+        env:
+          TMDB_READ_ACCESS_TOKEN: ${{ secrets.TMDB_READ_ACCESS_TOKEN }}
+          TMDB_MOVIE_ID: ${{ vars.TMDB_MOVIE_ID }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python scripts/pulse.py
+
+      - name: Validate generated files
+        run: |
+          python -m py_compile scripts/update_data.py scripts/pulse.py
+          python -m json.tool data.json > /dev/null
+          python -m json.tool reviews.json > /dev/null
+          echo "Python and JSON validation passed."
+
+      - name: Commit generated data
         shell: bash
         run: |
           set -e
@@ -49,39 +70,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          pushed=false
+          git add data.json reviews.json
 
-          for attempt in 1 2 3; do
-            echo "Starting update attempt $attempt..."
-
-            git fetch origin main
-            git reset --hard origin/main
-
-            python scripts/update_data.py
-
-            git add -A -- data.json reviews.json
-
-            if git diff --cached --quiet; then
-              echo "No generated JSON changes detected."
-              pushed=true
-              break
-            fi
-
-            git commit -m "Update automated box-office and audience data"
-
-            if git push origin HEAD:main; then
-              echo "Generated data pushed successfully."
-              pushed=true
-              break
-            fi
-
-            echo "Push race detected. Latest main will be fetched again."
-            sleep 5
-          done
-
-          if [ "$pushed" != "true" ]; then
-            echo "Failed to publish generated data after 3 attempts." >&2
-            exit 1
+          if git diff --cached --quiet; then
+            echo "No generated data changes."
+          else
+            git commit -m "Update ReelMetrics box office and audience data"
+            git push origin HEAD:main
           fi
 
       - name: Configure GitHub Pages
