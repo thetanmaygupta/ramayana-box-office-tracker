@@ -44,6 +44,16 @@
     "tmdbReviewPagesAvailable": 0,
     "youtubeVideosDiscovered": [
       {
+        "title": "Tollywood Copying Ramayana? 😱 New Movie Review | Rise of a Legend",
+        "publishedAt": "2026-11-04T13:15:05Z",
+        "url": "https://www.youtube.com/watch?v=KeDhw7ULGSo"
+      },
+      {
+        "title": "Ramayana 5 Star Review: Haters Shocked 🔥 #ramayana #shorts #ranbirkapoor",
+        "publishedAt": "2026-11-04T12:38:18Z",
+        "url": "https://www.youtube.com/watch?v=0ENzl4ODCCM"
+      },
+      {
         "title": "Is Nitesh Tiwari Bigger Than SS Rajamouli? 🤯⚡#ramayana #shorts",
         "publishedAt": "2026-11-04T12:30:08Z",
         "url": "https://www.youtube.com/watch?v=z-ekKDdOyeo"
@@ -84,16 +94,6 @@
         "url": "https://www.youtube.com/watch?v=q4hP-saAfCA"
       },
       {
-        "title": "Ramayana 💯Genuine Review | Ramayana Genuine Public Talk | Yash | Sai Pallavi#Short #Ramayana Review",
-        "publishedAt": "2026-11-04T07:12:26Z",
-        "url": "https://www.youtube.com/watch?v=c3lXsI1azwQ"
-      },
-      {
-        "title": "Ramayana: SCAM reveal || ajitspov. #ytshorts #review #moviereview #shorts",
-        "publishedAt": "2026-11-04T07:01:02Z",
-        "url": "https://www.youtube.com/watch?v=xmiHRyvLvso"
-      },
-      {
         "title": "Ramayana: Rise of a Legend – Is It Really a Masterpiece? | The Most Honest Review from USA!",
         "publishedAt": "2026-11-04T11:59:16Z",
         "url": "https://www.youtube.com/watch?v=kzHLkVY780E"
@@ -117,6 +117,11 @@
         "title": "Ramayana First public review: ರಾಮಾಯಣ ಹೇಗಿದೆ ಇಂಗ್ಲಿಷ್ ಮಂದಿಗೆ ಇಷ್ಟ ಆಯ್ತಾ ಇಲ್ವಾ|Yash |Saipallavi| SStv",
         "publishedAt": "2026-11-04T07:32:44Z",
         "url": "https://www.youtube.com/watch?v=-kWEsO2vATg"
+      },
+      {
+        "title": "Ramayana 💯Genuine Review | Ramayana Genuine Public Talk | Yash | Sai Pallavi#Short #Ramayana Review",
+        "publishedAt": "2026-11-04T07:12:26Z",
+        "url": "https://www.youtube.com/watch?v=c3lXsI1azwQ"
       },
       {
         "title": "Ravana Big Problem In Hindi Voice 🗣️ 🤯 By SFC                      #ramayana #ravana #yash",
@@ -144,10 +149,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-04T13:04:29Z",
+  "updatedAt": "2026-11-04T13:18:18Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-04T13:04:29Z",
+    "updatedAt": "2026-11-04T13:18:18Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 0,
     "minimumReviewLength": 100,
