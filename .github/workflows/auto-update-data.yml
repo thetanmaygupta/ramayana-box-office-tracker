@@ -22,7 +22,7 @@ concurrency:
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     environment:
       name: github-pages
@@ -39,47 +39,49 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Fetch latest booking and audience data
+      - name: Fetch, update and push data safely
         env:
           TMDB_READ_ACCESS_TOKEN: ${{ secrets.TMDB_READ_ACCESS_TOKEN }}
-        run: python scripts/update_data.py
-
-      - name: Commit and push generated JSON files
+        shell: bash
         run: |
+          set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A -- data.json reviews.json
+          pushed=false
 
-          if git diff --cached --quiet; then
-            echo "No generated data changes to commit."
-          else
+          for attempt in 1 2 3; do
+            echo "Starting update attempt $attempt..."
+
+            git fetch origin main
+            git reset --hard origin/main
+
+            python scripts/update_data.py
+
+            git add -A -- data.json reviews.json
+
+            if git diff --cached --quiet; then
+              echo "No generated JSON changes detected."
+              pushed=true
+              break
+            fi
+
             git commit -m "Update automated box-office and audience data"
 
-            pushed=false
-
-            for attempt in 1 2 3; do
-              git fetch origin main
-
-              if ! git rebase origin/main; then
-                echo "Rebase failed. Manual conflict resolution required." >&2
-                exit 1
-              fi
-
-              if git push origin HEAD:main; then
-                pushed=true
-                echo "Generated data committed successfully."
-                break
-              fi
-
-              echo "Push attempt $attempt failed."
-              sleep 3
-            done
-
-            if [ "$pushed" != "true" ]; then
-              echo "Unable to push generated data after 3 attempts." >&2
-              exit 1
+            if git push origin HEAD:main; then
+              echo "Generated data pushed successfully."
+              pushed=true
+              break
             fi
+
+            echo "Push race detected. Latest main will be fetched again."
+            sleep 5
+          done
+
+          if [ "$pushed" != "true" ]; then
+            echo "Failed to publish generated data after 3 attempts." >&2
+            exit 1
           fi
 
       - name: Configure GitHub Pages
