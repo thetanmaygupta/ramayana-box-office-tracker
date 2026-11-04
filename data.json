@@ -1,8 +1,8 @@
 {
   "project": "Ramayana: Rise of a Legend — Box Office Tracker",
   "lastUpdated": "2026-11-04T07:18:52+05:30",
-  "dataStatus": "source_scoped_snapshot",
-  "statusNote": "Seed data from a published report snapshot. It is not a live feed; replace this file with verified updates.",
+  "dataStatus": "source_scoped_combined_snapshot",
+  "statusNote": "Worldwide all-dates advance gross is calculated from separately timestamped Sacnilk India and BoxOfficeIndia24 overseas snapshots. This is not a live feed or a fully harmonised worldwide measurement.",
   "releaseDate": "2026-11-05",
   "currency": "INR",
   "bookingSnapshots": [
@@ -217,6 +217,22 @@
     "fetchedAt": "2026-11-04T07:18:54+05:30",
     "scope": "overseas_all_dates",
     "note": "Overseas all-dates advance booking. Not worldwide Day 1 or actual collection."
+  },
+  "worldwideAllDates": {
+    "scope": "all_dates",
+    "currency": "INR",
+    "indiaGrossCr": 94.85,
+    "indiaSourceName": "Sacnilk",
+    "indiaSourceUrl": "https://www.sacnilk.com/",
+    "indiaSourceUpdatedText": "2026-11-04 04:00 IST",
+    "overseasGrossCr": 39.93,
+    "overseasSourceName": "BoxOfficeIndia24",
+    "overseasSourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
+    "overseasSourceUpdatedText": "2026-11-04 07:12 IST",
+    "worldwideGrossCr": 134.78,
+    "calculatedAs": "India all-dates gross + overseas all-dates gross",
+    "fetchedAt": "2026-11-04T07:18:54+05:30",
+    "note": "Calculated all-dates advance-booking snapshot: Sacnilk India gross plus BoxOfficeIndia24 overseas gross. Component timestamps and reporting treatments differ. Not an official or fully harmonised worldwide figure, and not actual theatrical collection."
   },
   "sourcePolicy": {
     "primary": [
