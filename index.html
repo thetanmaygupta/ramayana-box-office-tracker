@@ -657,10 +657,9 @@ footer{
   </div>
 
   <div class="callout">
-    <strong style="color:var(--text)">Scenario-only mode</strong><br>
+    <strong style="color:var(--text)">Planning scenarios</strong><br>
     No calibrated forecast model is enabled in data.json.
-    These are planning scenarios and will not move simply because
-    the booking figure changes.
+    These estimates are not actual collections. They will be updated when verified worldwide Day 1 collection figures arrive.
   </div>
 </section>
 
@@ -674,34 +673,32 @@ footer{
   </div>
 
   <p class="section-description">
-    A live interpretation of the latest reported advance-booking data.
-    The analysis refreshes with data.json; it distinguishes observed demand
-    from unverified momentum.
+    The latest bookings give us an early picture. Here’s what they could mean for opening day — and what still depends on audiences turning up.
   </p>
 
   <div class="scenario-summary">
     <div class="summary-box">
-      <span>Demand signal</span>
+      <span>How bookings look</span>
       <strong id="readingSignal">Awaiting data</strong>
     </div>
     <div class="summary-box">
-      <span>Day 1 scenario</span>
+      <span>Current estimate</span>
       <strong id="readingForecast">—</strong>
     </div>
     <div class="summary-box">
-      <span>Data confidence</span>
+      <span>Data freshness</span>
       <strong id="readingConfidence">—</strong>
     </div>
   </div>
 
   <div class="callout" id="readingHeadline" style="margin-top:18px">
-    The booking signal will appear when valid feed data is available.
+    We’re waiting for the latest booking figures.
   </div>
   <div class="callout" id="readingDetail" style="margin-top:12px">
-    Booking metrics, comparable movement and source freshness will be assessed here.
+    The latest ticket sales, shows and occupancy will appear here.
   </div>
   <div class="callout" id="readingRisks" style="margin-top:12px">
-    Key risks will be derived from the available fields.
+    The opening-day picture will become clearer as more people book and attend.
   </div>
 </section>
 
@@ -710,24 +707,23 @@ footer{
   <div class="section-head">
     <div>
       <div class="eyebrow">06 / Audience intelligence</div>
-      <h2>Audience Pulse</h2>
+      <h2>Audience Score & Reviews</h2>
     </div>
   </div>
 
   <p class="section-description">
-    A concise, evidence-led view of the platform-reported audience score,
-    written-review coverage and audience sentiment.
+    The latest TMDB audience rating and available written reviews.
   </p>
 
   <div class="pulse-overview" id="audiencePulseCards" aria-live="polite">
     <article class="pulse-block pulse-score">
-      <div class="pulse-label">Audience Score · TMDB</div>
+      <div class="pulse-label">TMDB audience rating</div>
       <div class="pulse-score-line">
         <strong class="pulse-number" id="pulseScore">Unavailable</strong>
         <span class="pulse-chip pending" id="pulseVoteCount">Vote count pending</span>
       </div>
       <p class="pulse-description">
-        Platform-reported audience score, displayed independently of written reviews.
+        The rating currently shown by TMDB. A small number of votes can change it quickly.
       </p>
     </article>
 
@@ -735,22 +731,10 @@ footer{
       <h3>Written Review Insights</h3>
       <strong class="pulse-number pulse-review-count" id="pulseReviewCount">0 verified reviews</strong>
       <p class="pulse-description" id="pulseReviewDescription">
-        Editorial highlights will appear when sufficient genuine review text is available.
+        Written reviews will appear here when TMDB has published them.
       </p>
       <div class="pulse-highlights" id="pulseHighlights"></div>
     </article>
-
-    <article class="pulse-block">
-      <h3>Audience Sentiment</h3>
-      <p class="pulse-description" id="pulseSentiment">
-        Insufficient evidence to establish a reliable sentiment trend.
-      </p>
-      <div class="pulse-sentiment-breakdown" id="pulseSentimentBreakdown" hidden></div>
-    </article>
-  </div>
-
-  <div class="audience-status" id="audiencePulseStatus">
-    Waiting for audience review data.
   </div>
 </section>
 
@@ -799,45 +783,6 @@ footer{
   </div>
 </section>
 
-<section class="panel" id="methodologyPanel">
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">09 / Methodology & controls</div>
-      <h2>How the tracker treats data</h2>
-    </div>
-  </div>
-
-  <div class="steps">
-    <div class="step">
-      <b>DEFINE</b>
-      <span class="muted">Identify metric, territory and date scope.</span>
-    </div>
-    <div class="step">
-      <b>MEASURE</b>
-      <span class="muted">Capture source value, publication label and fetch time.</span>
-    </div>
-    <div class="step">
-      <b>ANALYSE</b>
-      <span class="muted">Compare only compatible reporting definitions.</span>
-    </div>
-    <div class="step">
-      <b>IMPROVE</b>
-      <span class="muted">Correct parsing only after validating source changes.</span>
-    </div>
-    <div class="step">
-      <b>CONTROL</b>
-      <span class="muted">Preserve last successful data and flag stale observations.</span>
-    </div>
-  </div>
-
-  <div class="callout" id="methodologyNote">
-    <strong style="color:var(--text)">Data caveat:</strong>
-    This dashboard displays the contents of data.json.
-    An automated fetch can succeed while the source remains unchanged
-    or while its update timestamp is unavailable.
-    Scenario values are illustrative until calibrated against historical outcomes.
-  </div>
-</section>
 
 
 <section class="panel" id="snapshotRegisterPanel">
@@ -1145,22 +1090,22 @@ footer{
 
     let signal = "Mixed";
     let headline =
-      "Bookings are available, but this snapshot alone does not establish a reliable acceleration trend.";
+      "Bookings are coming in, but it’s still too early to call the opening. The next updates will tell us whether momentum is building.";
 
     if (occupancy !== null && occupancy >= 25 && gross !== null && gross >= 30) {
       signal = "Strong demand";
       headline =
-        "Tracked Day 1 gross and occupancy are both elevated. If source definitions remain consistent, this supports the upper half of the configured scenario range.";
+        "That’s a strong booking pace. If it holds through showtime, Ramayana could be heading towards the upper end of our opening-day expectations.";
     }
     else if (occupancy !== null && occupancy >= 16 && gross !== null && gross >= 25) {
       signal = "Positive, conversion-dependent";
       headline =
-        "Advance bookings show a substantial base, but occupancy indicates remaining capacity. Final opening performance depends on late booking conversion, walk-ins and show utilisation.";
+        "There’s a healthy base of advance bookings. The real test now is how many more seats fill up before the first show — walk-ins could make a difference too.";
     }
     else if (occupancy !== null && occupancy < 12) {
       signal = "Cautious — conversion risk";
       headline =
-        "Occupancy is relatively low in the tracked shows. A large gross headline alone is not enough to confirm opening-day demand; watch open-sale tickets and occupancy together.";
+        "The headline booking figure looks promising, but plenty of seats are still available in the tracked shows. Let’s see whether late bookings and walk-ins pick up.";
     }
 
     set("readingState",sourceOk ? "Fresh source snapshot" : "Source time unverified/stale");
@@ -1335,9 +1280,25 @@ footer{
 
     renderSnapshotMovement(snaps);
 
-    const scenarios=Array.isArray(data.forecastScenarios)
+    let scenarios=Array.isArray(data.forecastScenarios)
       ? data.forecastScenarios.filter(x=>x&&typeof x==="object"&&num(x.valueCr)!==null)
       : [];
+
+    const dayOneActuals=Array.isArray(data.actualCollections?.records)
+      ? data.actualCollections.records.filter(r=>r && Number(r.day)===1 &&
+          String(r.status||"").toLowerCase()==="verified" &&
+          num(r.worldwideGrossCr)!==null)
+      : [];
+    const verifiedDayOneActual=dayOneActuals.length
+      ? dayOneActuals[dayOneActuals.length-1] : null;
+    const configuredCeiling=scenarios.length
+      ? Math.max(...scenarios.map(s=>num(s.valueCr))) : null;
+
+    if(verifiedDayOneActual && configuredCeiling!==null &&
+       num(verifiedDayOneActual.worldwideGrossCr)>configuredCeiling) {
+      const scale=num(verifiedDayOneActual.worldwideGrossCr)/configuredCeiling;
+      scenarios=scenarios.map(s=>({...s,valueCr:Number((num(s.valueCr)*scale).toFixed(2))}));
+    }
 
     const central=findCentral(scenarios);
 
@@ -1401,7 +1362,9 @@ footer{
 
       set(
         "scenarioInterpretation",
-        `Interpretation: the configured outcomes span ${cr(lower)} to ${cr(upper)}. The central planning point is ${central===null?"not configured":cr(central)}. The labels describe alternative assumptions; they do not represent assigned probabilities or a calibrated prediction interval.`
+        verifiedDayOneActual && configuredCeiling!==null && num(verifiedDayOneActual.worldwideGrossCr)>configuredCeiling
+          ? `Ramayana has passed the previous best-case mark with a verified worldwide Day 1 collection of ${cr(num(verifiedDayOneActual.worldwideGrossCr))}. The scenario range has been scaled up to reflect that result.`
+          : `The current planning range is ${cr(lower)} to ${cr(upper)}, with a central estimate of ${central===null?"not configured":cr(central)}. These are scenarios, not guaranteed outcomes.`
       );
     } else {
       set(
@@ -1539,14 +1502,11 @@ footer{
 
   /* AUDIENCE PULSE DATA LOADER */
   async function loadAudiencePulse() {
-    const status=$("audiencePulseStatus");
     const scoreEl=$("pulseScore");
     const votesEl=$("pulseVoteCount");
     const reviewCountEl=$("pulseReviewCount");
     const reviewDescription=$("pulseReviewDescription");
-    const sentimentEl=$("pulseSentiment");
     const highlightsEl=$("pulseHighlights");
-    const breakdownEl=$("pulseSentimentBreakdown");
 
     try {
       const response=await fetch(`./reviews.json?cacheBust=${Date.now()}`,{cache:"no-store"});
@@ -1554,10 +1514,13 @@ footer{
       const data=await response.json();
       if(!data || typeof data!=="object" || Array.isArray(data)) throw new Error("Invalid reviews.json format.");
 
-      const rawScore=data.tmdbScore ?? data.audienceScore ?? data.tmdb?.score;
-      const score=rawScore===undefined || rawScore===null || rawScore==="" ? null : Number(rawScore);
-      if(Number.isFinite(score) && score>=0 && score<=100) {
-        scoreEl.textContent=`${score}%`;
+      const canonicalScore=data.tmdbRating ?? data.tmdb?.rating;
+      const legacyScore=data.tmdbScore ?? data.audienceScore ?? data.tmdb?.score;
+      const score=canonicalScore!==undefined && canonicalScore!==null && canonicalScore!==""
+        ? Number(canonicalScore)
+        : (legacyScore!==undefined && legacyScore!==null && legacyScore!=="" ? Number(legacyScore)/10 : null);
+      if(Number.isFinite(score) && score>=0 && score<=10) {
+        scoreEl.textContent=`${score.toFixed(1)}/10`;
       } else {
         scoreEl.textContent="Unavailable";
       }
@@ -1589,36 +1552,15 @@ footer{
             <p>${esc(item.text)}</p>
           </article>`).join("");
       } else {
-        reviewDescription.textContent="Editorial highlights will appear when sufficient genuine review text is available.";
+        reviewDescription.textContent="Written reviews will appear here when TMDB has published them.";
         highlightsEl.innerHTML="";
       }
 
-      const sentiment=data.sentiment && typeof data.sentiment==="object" ? data.sentiment : null;
-      const values=sentiment ? ["positive","mixed","critical"].map(key=>Number(sentiment[key])) : [];
-      const validSentiment=values.length===3 && values.every(v=>Number.isFinite(v)&&v>=0) &&
-        Math.abs(values.reduce((a,b)=>a+b,0)-100)<0.1;
-      if(validSentiment) {
-        sentimentEl.textContent="Distribution across the classified, verified review sample.";
-        breakdownEl.hidden=false;
-        breakdownEl.innerHTML=["positive","mixed","critical"].map((key,i)=>`
-          <div class="pulse-sentiment-row">
-            <span>${key[0].toUpperCase()+key.slice(1)}</span>
-            <div class="pulse-sentiment-track"><div class="pulse-sentiment-fill ${key}" style="width:${values[i]}%"></div></div>
-            <strong>${values[i]}%</strong>
-          </div>`).join("");
-      } else {
-        sentimentEl.textContent="Insufficient evidence to establish a reliable sentiment trend.";
-        breakdownEl.hidden=true;
-        breakdownEl.innerHTML="";
-      }
-      if(status) status.textContent=`Audience data checked · ${data.lastUpdated || "latest available review feed"}. Scores and review evidence are shown separately. A low vote count is preliminary.`;
     } catch(error) {
       console.error("Audience Pulse loading error:",error);
       if(status) status.textContent="Audience review feed unavailable; the box-office dashboard continues independently.";
       reviewDescription.textContent="Review evidence could not be loaded. No audience conclusions have been generated.";
-      sentimentEl.textContent="Insufficient evidence to establish a reliable sentiment trend.";
       highlightsEl.innerHTML="";
-      breakdownEl.hidden=true;
     }
   }
 
