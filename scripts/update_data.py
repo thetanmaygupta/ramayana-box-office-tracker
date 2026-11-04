@@ -1,45 +1,64 @@
 #!/usr/bin/env python3
 """
-ReelMetrics — Ramayana Box Office Data Updater
+ReelMetrics — automated box-office and audience-data updater.
 
-Primary sources:
-  1. BoxOfficeIndia24
-  2. Sacnilk (optional URL configuration required)
+Design goals
+------------
+* Preserve the existing data.json schema and frontend compatibility.
+* Keep advance bookings separate from actual theatrical collections.
+* Keep Day 1, Day 2, Day 3, and all-dates scopes separate.
+* Never manufacture missing figures or combine mismatched scopes.
+* Reject suspicious parses and stale publisher snapshots.
+* Keep the last good value when a source fails or omits a metric.
+* Update reviews.json independently; TMDB failure never blocks box-office data.
+* Write JSON atomically so an interrupted run cannot corrupt the files.
 
-Audience data:
-  3. TMDB API — movie rating, vote count and written reviews
+Environment:
+    TMDB_READ_ACCESS_TOKEN  (optional for box-office ingestion; required for TMDB)
 
-Advance bookings and actual theatrical collections are stored separately.
-
-This is a best-effort HTML scraper plus TMDB API integration.
-Missing values are never inferred. TMDB failures do not stop
-box-office ingestion or overwrite the last successful review snapshot.
+No third-party Python packages are required.
 """
+
+from __future__ import annotations
 
 import json
 import os
 import re
 import sys
 import tempfile
-from datetime import datetime
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 
-# ---------------------------------------------------------
+# ---------------------------------------------------------------------------
 # CONFIGURATION
-# ---------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data.json"
 REVIEWS_FILE = ROOT / "reviews.json"
 
 IST = ZoneInfo("Asia/Kolkata")
+UTC = timezone.utc
 
-USER_AGENT = "Mozilla/5.0 (compatible; ReelMetrics/2.1)"
+USER_AGENT = (
+    "Mozilla/5.0 (compatible; ReelMetrics/3.0; "
+    "+https://github.com/thetanmaygupta/ramayana-box-office-tracker)"
+)
+HTTP_TIMEOUT_SECONDS = 25
+MAX_HTML_BYTES = 8_000_000
+
+RELEASE_DATE = "2026-11-05"
+TMDB_MOVIE_ID = 656908
+TMDB_API_BASE = "https://api.themoviedb.org/3"
+TMDB_REVIEW_PAGES_MAX = 3
+TMDB_REVIEW_TEXT_MAX_CHARS = 5000
 
 BOI24_DAILY_URLS = {
     "2026-11-05": (
@@ -55,618 +74,500 @@ BOI24_DAILY_URLS = {
         "ramayana-day-3-advance-booking-20261107"
     ),
 }
-
 BOI24_OVERSEAS_URL = (
     "https://www.boxofficeindia24.com/quicknews/"
     "ramayana-day-1-advance-booking-20261105?view=overseas"
 )
 
-SACNILK_URL = ""
-
-# Confirmed against the existing TMDB movie reference.
-# The returned title is validated before accepting any data.
-TMDB_MOVIE_ID = 656908
-TMDB_API_BASE = "https://api.themoviedb.org/3"
-
-TMDB_REVIEW_PAGES_MAX = 3
-TMDB_REVIEW_TEXT_MAX_CHARS = 5000
-
-
-# ---------------------------------------------------------
-# SOURCE REGISTRY
-# ---------------------------------------------------------
+SACNILK_LIVE_URL = (
+    "https://www.sacnilk.com/livetracker/"
+    "ramayana_part_1_2026_Advance-Booking-Live"
+)
+SACNILK_DAY1_URL = (
+    "https://www.sacnilk.com/quicknews/"
+    "ramayana_part_1_2026_First_Day_Advance_Booking_Report"
+)
+SACNILK_ALL_DATES_URL = (
+    "https://www.sacnilk.com/quicknews/"
+    "ramayana_part_1_2026_Overall_Advance_Booking_Report"
+)
 
 SOURCES = [
     {
         "name": "Sacnilk",
         "tier": "primary",
         "url": "https://www.sacnilk.com/",
-        "role": "India advance-booking cross-check",
+        "role": "India advance-booking tracker and cross-check",
     },
     {
         "name": "BoxOfficeIndia24",
         "tier": "primary",
         "url": "https://www.boxofficeindia24.com/",
-        "role": "India, overseas and worldwide advance bookings",
+        "role": "Day-wise India and overseas advance-booking reports",
     },
     {
         "name": "The Week",
         "tier": "secondary",
         "url": "https://www.theweek.in/",
-        "role": "Editorial validation",
+        "role": "Editorial validation; not an independent tracker when citing primary data",
     },
     {
         "name": "Financial Express",
         "tier": "secondary",
         "url": "https://www.financialexpress.com/",
-        "role": "Editorial validation",
+        "role": "Editorial validation; not an independent tracker when citing primary data",
     },
     {
         "name": "Koimoi",
         "tier": "secondary",
         "url": "https://www.koimoi.com/",
-        "role": "Trade-report validation",
+        "role": "Trade-report validation; not an independent tracker when citing primary data",
     },
 ]
 
 
-# ---------------------------------------------------------
-# TIME AND SAFE JSON WRITING
-# ---------------------------------------------------------
+# ---------------------------------------------------------------------------
+# GENERAL UTILITIES
+# ---------------------------------------------------------------------------
 
-def now_ist():
+def now_ist() -> str:
     return datetime.now(IST).isoformat(timespec="seconds")
 
 
-def atomic_write_json(path, payload):
-    """Write JSON atomically to avoid corrupting an existing file."""
+def parse_datetime(value: Any) -> datetime | None:
+    """Parse ISO timestamps and common publisher timestamp formats."""
+    if not value or not isinstance(value, str):
+        return None
+    raw = value.strip()
+    candidates = [raw, raw.replace(" IST", "+05:30")]
+    for candidate in candidates:
+        try:
+            parsed = datetime.fromisoformat(candidate.replace("Z", "+00:00"))
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=IST)
+            return parsed.astimezone(UTC)
+        except ValueError:
+            pass
+    for fmt in (
+        "%Y-%m-%d %H:%M IST",
+        "%Y-%m-%d %H:%M",
+        "%d %b %Y %H:%M",
+        "%d %B %Y %H:%M",
+    ):
+        try:
+            return datetime.strptime(raw, fmt).replace(tzinfo=IST).astimezone(UTC)
+        except ValueError:
+            continue
+    return None
 
+
+def atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-
-    fd, temporary_name = tempfile.mkstemp(
-        prefix=f".{path.name}.",
-        suffix=".tmp",
-        dir=str(path.parent),
+    fd, temp_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".tmp", dir=str(path.parent)
     )
-
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(
-                payload,
-                handle,
-                ensure_ascii=False,
-                indent=2,
-            )
+            json.dump(payload, handle, ensure_ascii=False, indent=2)
             handle.write("\n")
-
-        os.replace(temporary_name, path)
-
+        os.replace(temp_name, path)
     except Exception:
         try:
-            os.unlink(temporary_name)
+            os.unlink(temp_name)
         except OSError:
             pass
         raise
 
 
-# ---------------------------------------------------------
-# HTML EXTRACTION
-# ---------------------------------------------------------
+def load_json(path: Path, default: dict[str, Any]) -> dict[str, Any]:
+    if not path.exists():
+        return default
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(value, dict):
+            raise ValueError("JSON root must be an object")
+        return value
+    except Exception as exc:
+        raise RuntimeError(f"Cannot read {path.name}: {exc}") from exc
 
-class TextExtractor(HTMLParser):
-    """Extract visible text from HTML."""
 
-    SKIP_TAGS = {
-        "script",
-        "style",
-        "noscript",
-        "svg",
+def fetch_bytes(url: str, accept: str = "text/html,application/json") -> bytes:
+    request = Request(
+        url,
+        headers={"User-Agent": USER_AGENT, "Accept": accept},
+    )
+    with urlopen(request, timeout=HTTP_TIMEOUT_SECONDS) as response:
+        if response.status != 200:
+            raise RuntimeError(f"HTTP {response.status} for {url}")
+        body = response.read(MAX_HTML_BYTES + 1)
+        if len(body) > MAX_HTML_BYTES:
+            raise RuntimeError(f"Response too large: {url}")
+        return body
+
+
+def fetch_page(url: str) -> str:
+    return fetch_bytes(url).decode("utf-8", errors="replace")
+
+
+def fetch_json(url: str, headers: dict[str, str] | None = None) -> dict[str, Any]:
+    request_headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "application/json",
     }
+    if headers:
+        request_headers.update(headers)
+    request = Request(url, headers=request_headers)
+    with urlopen(request, timeout=HTTP_TIMEOUT_SECONDS) as response:
+        if response.status != 200:
+            raise RuntimeError(f"HTTP {response.status} for API request")
+        payload = json.loads(response.read().decode("utf-8", errors="replace"))
+    if not isinstance(payload, dict):
+        raise RuntimeError("API returned an unexpected JSON structure")
+    return payload
 
-    def __init__(self):
+
+# ---------------------------------------------------------------------------
+# HTML TEXT EXTRACTION
+# ---------------------------------------------------------------------------
+
+class VisibleTextParser(HTMLParser):
+    SKIP = {"script", "style", "noscript", "svg", "template"}
+
+    def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
-        self.parts = []
-        self.skip_depth = 0
-        self.skip_tags = []
+        self.parts: list[str] = []
+        self.skip_stack: list[str] = []
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         tag = tag.lower()
+        if tag in self.SKIP:
+            self.skip_stack.append(tag)
 
-        if tag in self.SKIP_TAGS:
-            self.skip_tags.append(tag)
-            self.skip_depth += 1
-
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag: str) -> None:
         tag = tag.lower()
+        if tag in self.skip_stack:
+            # Remove the most recent matching skipped element.
+            index = len(self.skip_stack) - 1 - self.skip_stack[::-1].index(tag)
+            del self.skip_stack[index:]
 
-        if tag in self.SKIP_TAGS and self.skip_depth:
-            if tag in self.skip_tags:
-                self.skip_tags.remove(tag)
-                self.skip_depth -= 1
-
-    def handle_data(self, data):
-        if not self.skip_depth and data.strip():
+    def handle_data(self, data: str) -> None:
+        if not self.skip_stack and data.strip():
             self.parts.append(data.strip())
 
 
-def visible_text(raw):
-    parser = TextExtractor()
-    parser.feed(raw)
-
-    return re.sub(
-        r"\s+",
-        " ",
-        " ".join(parser.parts),
-    ).strip()
+def visible_text(raw_html: str) -> str:
+    parser = VisibleTextParser()
+    parser.feed(raw_html)
+    return re.sub(r"\s+", " ", " ".join(parser.parts)).strip()
 
 
-# ---------------------------------------------------------
-# HTTP
-# ---------------------------------------------------------
-
-def fetch_page(url):
-    request = Request(
-        url,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Accept": "text/html,application/xhtml+xml",
-        },
-    )
-
-    with urlopen(request, timeout=30) as response:
-        if response.status != 200:
-            raise RuntimeError(
-                f"HTTP error: {response.status}"
-            )
-
-        return response.read().decode(
-            "utf-8",
-            errors="replace",
-        )
-
-
-# ---------------------------------------------------------
-# NUMBER PARSING
-# ---------------------------------------------------------
-
-def number(pattern, text):
-    match = re.search(pattern, text, re.I)
-
-    if not match:
-        return None
-
+def clean_number(value: str) -> float | None:
     try:
-        return float(
-            match.group(1).replace(",", "")
-        )
-    except (ValueError, IndexError):
+        return float(value.replace(",", "").strip())
+    except (TypeError, ValueError):
         return None
 
 
-def integer(pattern, text):
-    value = number(pattern, text)
-
-    if value is None:
-        return None
-
-    return int(value)
-
-
-def first_number(patterns, text):
-    for pattern in patterns:
-        value = number(pattern, text)
-
-        if value is not None:
-            return value
-
-    return None
-
-
-def first_integer(patterns, text):
-    for pattern in patterns:
-        value = integer(pattern, text)
-
-        if value is not None:
-            return value
-
-    return None
-
-
-# ---------------------------------------------------------
-# COMMON SOURCE METADATA
-# ---------------------------------------------------------
-
-def extract_timestamp(text):
-    patterns = [
-        r"(?:last\s+updated|updated\s+at)"
-        r"\s*[:\-]?\s*"
-        r"(\d{4}-\d{2}-\d{2}\s+\d{1,2}:\d{2}"
-        r"(?:\s*IST)?)",
-
-        r"Updated\s+(\d{1,2}:\d{2}\s*IST)",
-    ]
-
+def find_number(patterns: list[str], text: str) -> float | None:
     for pattern in patterns:
         match = re.search(pattern, text, re.I)
-
         if match:
-            return match.group(1)
-
+            value = clean_number(match.group(1))
+            if value is not None:
+                return value
     return None
 
 
-def extract_metrics(text):
+def find_integer(patterns: list[str], text: str) -> int | None:
+    value = find_number(patterns, text)
+    return int(value) if value is not None else None
+
+
+def extract_publisher_timestamp(text: str) -> str | None:
+    patterns = [
+        r"(?:last\s+updated|updated\s+at|updated)\s*[:\-]?\s*"
+        r"(\d{4}-\d{2}-\d{2}\s+\d{1,2}:\d{2}(?:\s*IST)?)",
+        r"(?:last\s+updated|updated\s+at|updated)\s*[:\-]?\s*"
+        r"(\d{1,2}\s+[A-Za-z]+\s+\d{4}\s+\d{1,2}:\d{2})",
+        r"Updated\s+(\d{1,2}:\d{2}\s*IST)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.I)
+        if match:
+            return match.group(1).strip()
+    return None
+
+
+def is_newer_or_equal(candidate: dict[str, Any], previous: dict[str, Any]) -> bool:
+    """Reject older source snapshots when both publisher timestamps are parseable."""
+    new_time = parse_datetime(candidate.get("sourceUpdatedText"))
+    old_time = parse_datetime(previous.get("sourceUpdatedText"))
+    if new_time and old_time:
+        return new_time >= old_time
+    # If a publisher timestamp is absent, don't replace an existing timestamped record.
+    if old_time and not new_time:
+        return False
+    return True
+
+
+def merge_non_null(previous: dict[str, Any], candidate: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(previous)
+    for key, value in candidate.items():
+        if value is not None:
+            merged[key] = value
+    return merged
+
+
+# ---------------------------------------------------------------------------
+# BOXOFFICEINDIA24 PARSERS
+# ---------------------------------------------------------------------------
+
+def extract_metrics(text: str) -> dict[str, Any]:
     return {
-        "tickets": first_integer([
+        "tickets": find_integer([
             r"gross\s+from\s+([\d,]+)\s+tickets?",
             r"([\d,]+)\s+tickets?\b",
         ], text),
-
-        "shows": first_integer([
+        "shows": find_integer([
             r"across\s+([\d,]+)\s+shows?",
             r"([\d,]+)\s+shows?\b",
         ], text),
-
-        "occupancyPct": first_number([
-            r"occupancy(?:\s+rate)?\s*[:\-]?\s*"
-            r"([\d,.]+)\s*%",
+        "occupancyPct": find_number([
+            r"occupancy(?:\s+rate)?\s*[:\-]?\s*([\d,.]+)\s*%",
         ], text),
     }
 
 
-# ---------------------------------------------------------
-# INDIA ADVANCE BOOKING
-# ---------------------------------------------------------
-
-def extract_india(text):
-    patterns = [
-        r"India\s*:\s*₹?\s*"
-        r"([\d,]+(?:\.\d+)?)\s*Cr",
-
-        r"(?:India\s+gross|India\s+Day\s*1\s+gross)"
-        r"\s*[:\-]?\s*₹?\s*"
-        r"([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)",
-    ]
-
-    return first_number(patterns, text)
+def extract_india_gross(text: str) -> float | None:
+    return find_number([
+        r"\bIndia\s*:\s*₹?\s*([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\b",
+        r"\bIndia\s+(?:gross|Day\s*\d+\s+gross)\s*[:\-]?\s*₹?\s*"
+        r"([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\b",
+    ], text)
 
 
-# ---------------------------------------------------------
-# WORLDWIDE AND OVERSEAS ADVANCE
-# ---------------------------------------------------------
-
-def extract_worldwide(text):
-    patterns = [
-        r"Worldwide\s*:\s*₹?\s*"
-        r"([\d,]+(?:\.\d+)?)\s*Cr",
-
-        r"Worldwide\s+(?:advance\s+booking\s+)?"
-        r"(?:gross\s*)?[:\-]?\s*₹?\s*"
-        r"([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)",
-    ]
-
-    return first_number(patterns, text)
+def extract_worldwide_gross(text: str) -> float | None:
+    return find_number([
+        r"\bWorldwide\s*:\s*₹?\s*([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\b",
+        r"\bWorldwide\s+(?:advance\s+booking\s+)?(?:gross\s*)?[:\-]?\s*₹?\s*"
+        r"([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\b",
+    ], text)
 
 
-def extract_overseas(text):
-    patterns = [
-        r"overseas\s*[:\-]?\s*₹?\s*"
-        r"([\d,]+(?:\.\d+)?)\s*Cr",
-
-        r"overseas\s+(?:advance\s+booking\s+)?"
-        r"(?:gross\s*)?[:\-]?\s*₹?\s*"
-        r"([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)",
-    ]
-
-    return first_number(patterns, text)
+def extract_overseas_gross(text: str) -> float | None:
+    return find_number([
+        r"\bOverseas\s*:\s*₹?\s*([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\b",
+        r"\bOverseas\s+(?:advance\s+booking\s+)?(?:gross\s*)?[:\-]?\s*₹?\s*"
+        r"([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\b",
+    ], text)
 
 
-# ---------------------------------------------------------
-# DAY-SPECIFIC REPORT PARSER
-# ---------------------------------------------------------
+def parse_boi24_day(raw_html: str, date: str, day: int, url: str) -> dict[str, Any]:
+    text = visible_text(raw_html)
+    if "ramayana" not in text.casefold():
+        raise RuntimeError("Page title/content did not identify Ramayana")
 
-def parse_day_page(raw, date, day, url):
-    text = visible_text(raw)
-
-    if "Ramayana" not in text:
-        raise RuntimeError(
-            "Ramayana report not detected."
-        )
-
-    india = extract_india(text)
-    worldwide = extract_worldwide(text)
-    overseas = extract_overseas(text)
-
-    metrics = extract_metrics(text)
-
+    india = extract_india_gross(text)
     if india is None:
-        raise RuntimeError(
-            "India gross was not found."
-        )
-
+        raise RuntimeError("Could not identify a labelled India gross figure")
     if not 0 < india < 1000:
-        raise RuntimeError(
-            "India gross outside expected range."
-        )
+        raise RuntimeError("India gross failed range validation")
+
+    worldwide = extract_worldwide_gross(text)
+    overseas = extract_overseas_gross(text)
 
     if worldwide is not None and worldwide < india:
-        raise RuntimeError(
-            "Worldwide gross is below India gross."
-        )
-
+        raise RuntimeError("Worldwide gross is lower than India gross")
     if overseas is not None and overseas > 1000:
-        raise RuntimeError(
-            "Overseas gross outside expected range."
-        )
+        raise RuntimeError("Overseas gross failed range validation")
+    if worldwide is not None and overseas is not None:
+        if abs(worldwide - (india + overseas)) > 0.20:
+            raise RuntimeError("Worldwide, India and overseas values do not reconcile")
 
-    if (
-        worldwide is not None
-        and overseas is not None
-        and abs(worldwide - (india + overseas)) > 0.15
-    ):
-        raise RuntimeError(
-            "Worldwide total does not reconcile with "
-            "India and overseas components."
-        )
-
-    result = {
+    result: dict[str, Any] = {
         "date": date,
         "day": day,
         "indiaGrossCr": round(india, 2),
         "sourceName": "BoxOfficeIndia24",
         "sourceUrl": url,
-        "sourceUpdatedText": extract_timestamp(text),
+        "sourceUpdatedText": extract_publisher_timestamp(text),
         "fetchedAt": now_ist(),
         "scope": "single_day_advance",
+        "currency": "INR",
     }
-
-    for key, value in metrics.items():
-        if value is not None:
-            result[key] = value
-
+    result.update({k: v for k, v in extract_metrics(text).items() if v is not None})
     if worldwide is not None:
-        result["worldwideGrossCr"] = round(
-            worldwide, 2
-        )
-
+        result["worldwideGrossCr"] = round(worldwide, 2)
     if overseas is not None:
-        result["overseasGrossCr"] = round(
-            overseas, 2
-        )
-
+        result["overseasGrossCr"] = round(overseas, 2)
     result["worldwideVerifiedFromPublisher"] = (
-        worldwide is not None
-        and overseas is not None
+        worldwide is not None and overseas is not None
     )
-
     return result
 
 
-# ---------------------------------------------------------
-# OVERSEAS ALL-DATES VIEW
-# ---------------------------------------------------------
-
-def parse_overseas_page(raw):
-    text = visible_text(raw)
-
-    gross = first_number([
-        r"OVERSEAS\s+ADVANCE[^₹]{0,120}"
-        r"₹\s*([\d,]+(?:\.\d+)?)\s*Cr",
+def parse_boi24_overseas(raw_html: str) -> dict[str, Any]:
+    text = visible_text(raw_html)
+    # Anchor the amount to the OVERSEAS ADVANCE label; never use an arbitrary first currency value.
+    gross = find_number([
+        r"OVERSEAS\s+ADVANCE[^₹]{0,180}₹\s*([\d,]+(?:\.\d+)?)\s*Cr",
     ], text)
-
-    if gross is None:
-        raise RuntimeError(
-            "Overseas all-dates gross not found."
-        )
-
-    tickets = first_integer([
-        r"gross\s+from\s+([\d,]+)\s+tickets",
-    ], text)
-
-    shows = first_integer([
-        r"([\d,]+)\s+SHOWS",
-    ], text)
-
-    cinemas = first_integer([
-        r"([\d,]+)\s+CINEMAS",
-    ], text)
-
-    countries = first_integer([
-        r"([\d,]+)\s+COUNTRIES",
-    ], text)
-
-    occupancy = first_number([
-        r"([\d.]+)\s*%\s*OCCUPANCY",
-    ], text)
-
-    date_range = None
-
-    match = re.search(
-        r"OVERSEAS\s+ADVANCE\s*[·|]\s*"
-        r"([\d]{1,2}\s*[–-]\s*[\d]{1,2}\s+[A-Za-z]+)",
-        text,
-        re.I,
-    )
-
-    if match:
-        date_range = match.group(1)
+    if gross is None or not 0 < gross < 1000:
+        raise RuntimeError("Could not validate the overseas all-dates gross")
 
     return {
         "grossCr": round(gross, 2),
-        "tickets": tickets,
-        "shows": shows,
-        "cinemas": cinemas,
-        "countries": countries,
-        "occupancyPct": occupancy,
-        "dateRange": date_range,
+        "tickets": find_integer([r"gross\s+from\s+([\d,]+)\s+tickets?"], text),
+        "shows": find_integer([r"([\d,]+)\s+SHOWS"], text),
+        "cinemas": find_integer([r"([\d,]+)\s+CINEMAS"], text),
+        "countries": find_integer([r"([\d,]+)\s+COUNTRIES"], text),
+        "occupancyPct": find_number([r"([\d.]+)\s*%\s*OCCUPANCY"], text),
+        "dateRange": (
+            re.search(
+                r"OVERSEAS\s+ADVANCE\s*[·|]\s*(\d{1,2}\s*[–-]\s*\d{1,2}\s+[A-Za-z]+)",
+                text, re.I
+            ).group(1)
+            if re.search(
+                r"OVERSEAS\s+ADVANCE\s*[·|]\s*(\d{1,2}\s*[–-]\s*\d{1,2}\s+[A-Za-z]+)",
+                text, re.I
+            ) else None
+        ),
         "sourceName": "BoxOfficeIndia24",
         "sourceUrl": BOI24_OVERSEAS_URL,
-        "sourceUpdatedText": extract_timestamp(text),
+        "sourceUpdatedText": extract_publisher_timestamp(text),
         "fetchedAt": now_ist(),
         "scope": "overseas_all_dates",
-        "note": (
-            "Overseas all-dates advance booking. "
-            "Not worldwide Day 1 or actual collection."
-        ),
+        "currency": "INR",
+        "note": "Overseas all-dates advance booking; not worldwide Day 1 and not actual collection.",
     }
 
 
-# ---------------------------------------------------------
-# TMDB API
-# ---------------------------------------------------------
+# ---------------------------------------------------------------------------
+# SACNILK PARSING — conservative and labelled-field only
+# ---------------------------------------------------------------------------
 
-def tmdb_request(path, token, params=None):
-    """Make an authenticated TMDB API request."""
+def extract_sacnilk_labeled_gross(text: str, labels: tuple[str, ...]) -> float | None:
+    """
+    Extract only amounts explicitly adjacent to a requested label.
+    Deliberately avoids generic first-number parsing on pages with many figures.
+    """
+    for label in labels:
+        patterns = [
+            rf"\b{label}\b\s*(?:gross|collection|advance booking)?\s*[:\-]?\s*₹?\s*"
+            rf"([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\b",
+            rf"₹\s*([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)\s*(?:{label})\b",
+        ]
+        value = find_number(patterns, text)
+        if value is not None:
+            return value
+    return None
 
+
+def parse_sacnilk_page(raw_html: str, url: str, scope: str) -> dict[str, Any]:
+    text = visible_text(raw_html)
+    if "ramayana" not in text.casefold():
+        raise RuntimeError("Sacnilk page did not identify Ramayana")
+
+    india = extract_sacnilk_labeled_gross(
+        text, ("India", "India Gross", "India Net")
+    )
+    worldwide = extract_sacnilk_labeled_gross(
+        text, ("Worldwide", "Worldwide Gross")
+    )
+    overseas = extract_sacnilk_labeled_gross(
+        text, ("Overseas", "Overseas Gross")
+    )
+
+    # A Sacnilk page can contain multiple unrelated totals. Accept it only
+    # when a clearly labelled India figure is found.
+    if india is None or not 0 < india < 1000:
+        raise RuntimeError(
+            "No unambiguous labelled India gross found on Sacnilk; previous snapshot retained"
+        )
+
+    if worldwide is not None and worldwide < india:
+        raise RuntimeError("Sacnilk worldwide figure is below India figure")
+
+    result: dict[str, Any] = {
+        "indiaGrossCr": round(india, 2),
+        "sourceName": "Sacnilk",
+        "sourceUrl": url,
+        "sourceUpdatedText": extract_publisher_timestamp(text),
+        "fetchedAt": now_ist(),
+        "scope": scope,
+        "currency": "INR",
+        "parsePolicy": "labelled_values_only",
+    }
+    if worldwide is not None:
+        result["worldwideGrossCr"] = round(worldwide, 2)
+    if overseas is not None:
+        result["overseasGrossCr"] = round(overseas, 2)
+    return result
+
+
+# ---------------------------------------------------------------------------
+# TMDB AUDIENCE DATA
+# ---------------------------------------------------------------------------
+
+def tmdb_request(path: str, token: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
     query = f"?{urlencode(params)}" if params else ""
-    url = f"{TMDB_API_BASE}{path}{query}"
-
-    request = Request(
-        url,
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/json",
-            "User-Agent": USER_AGENT,
-        },
+    return fetch_json(
+        f"{TMDB_API_BASE}{path}{query}",
+        headers={"Authorization": f"Bearer {token}"},
     )
 
-    with urlopen(request, timeout=25) as response:
-        if response.status != 200:
-            raise RuntimeError(
-                f"TMDB returned HTTP {response.status}."
-            )
 
-        return json.loads(
-            response.read().decode(
-                "utf-8",
-                errors="replace",
-            )
-        )
-
-
-def fetch_tmdb_audience_data():
-    """
-    Fetch movie details and genuine TMDB written reviews.
-
-    Does not invent review highlights or sentiment labels.
-    """
-
-    token = os.getenv(
-        "TMDB_READ_ACCESS_TOKEN",
-        "",
-    ).strip()
-
+def fetch_tmdb_audience_data() -> dict[str, Any]:
+    token = os.getenv("TMDB_READ_ACCESS_TOKEN", "").strip()
     if not token:
-        raise RuntimeError(
-            "TMDB_READ_ACCESS_TOKEN is not configured."
-        )
+        raise RuntimeError("TMDB_READ_ACCESS_TOKEN is not configured")
 
-    # 1. Movie details
     movie = tmdb_request(
-        f"/movie/{TMDB_MOVIE_ID}",
-        token,
-        {"language": "en-US"},
+        f"/movie/{TMDB_MOVIE_ID}", token, {"language": "en-US"}
     )
-
     title = str(movie.get("title") or "").strip()
-    original_title = str(
-        movie.get("original_title") or ""
-    ).strip()
+    original_title = str(movie.get("original_title") or "").strip()
+    if "ramayana" not in f"{title} {original_title}".casefold():
+        raise RuntimeError("TMDB movie ID/title validation failed")
 
-    title_candidates = " ".join(
-        value
-        for value in (title, original_title)
-        if value
-    ).casefold()
+    average = movie.get("vote_average")
+    votes = movie.get("vote_count")
+    if not isinstance(average, (int, float)) or not 0 <= float(average) <= 10:
+        average = None
+    if not isinstance(votes, int) or votes < 0:
+        votes = None
 
-    if "ramayana" not in title_candidates:
-        raise RuntimeError(
-            "TMDB movie ID validation failed. "
-            "The returned title does not identify Ramayana."
+    first = tmdb_request(
+        f"/movie/{TMDB_MOVIE_ID}/reviews", token,
+        {"language": "en-US", "page": 1}
+    )
+    total_results = max(0, int(first.get("total_results") or 0))
+    total_pages = max(0, int(first.get("total_pages") or 0))
+    pages = min(total_pages, TMDB_REVIEW_PAGES_MAX)
+
+    reviews: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for page in range(1, pages + 1):
+        payload = first if page == 1 else tmdb_request(
+            f"/movie/{TMDB_MOVIE_ID}/reviews", token,
+            {"language": "en-US", "page": page}
         )
-
-    # 2. Validate rating fields
-    vote_average = movie.get("vote_average")
-    vote_count = movie.get("vote_count")
-
-    if (
-        not isinstance(vote_average, (int, float))
-        or not 0 <= float(vote_average) <= 10
-    ):
-        vote_average = None
-
-    if (
-        not isinstance(vote_count, int)
-        or vote_count < 0
-    ):
-        vote_count = None
-
-    # 3. Fetch written reviews
-    first_page = tmdb_request(
-        f"/movie/{TMDB_MOVIE_ID}/reviews",
-        token,
-        {
-            "language": "en-US",
-            "page": 1,
-        },
-    )
-
-    total_review_results = max(
-        0,
-        int(first_page.get("total_results") or 0),
-    )
-
-    total_review_pages = max(
-        0,
-        int(first_page.get("total_pages") or 0),
-    )
-
-    pages_to_fetch = min(
-        total_review_pages,
-        TMDB_REVIEW_PAGES_MAX,
-    )
-
-    review_items = []
-
-    for page_number in range(1, pages_to_fetch + 1):
-
-        page_data = first_page
-
-        if page_number > 1:
-            page_data = tmdb_request(
-                f"/movie/{TMDB_MOVIE_ID}/reviews",
-                token,
-                {
-                    "language": "en-US",
-                    "page": page_number,
-                },
-            )
-
-        for item in page_data.get("results", []):
-
+        for item in payload.get("results", []):
             if not isinstance(item, dict):
                 continue
-
-            content = str(
-                item.get("content") or ""
-            ).strip()
-
+            review_id = str(item.get("id") or "")
+            if review_id and review_id in seen_ids:
+                continue
+            content = str(item.get("content") or "").strip()
             if not content:
                 continue
-
-            author_details = (
-                item.get("author_details") or {}
-            )
-
+            if review_id:
+                seen_ids.add(review_id)
+            author_details = item.get("author_details") or {}
             rating = author_details.get("rating")
-
-            if (
-                not isinstance(rating, (int, float))
-                or not 0 <= float(rating) <= 10
-            ):
+            if not isinstance(rating, (int, float)) or not 0 <= float(rating) <= 10:
                 rating = None
-
-            review_items.append({
+            reviews.append({
                 "id": item.get("id"),
                 "author": item.get("author"),
                 "username": author_details.get("username"),
@@ -674,437 +575,286 @@ def fetch_tmdb_audience_data():
                 "createdAt": item.get("created_at"),
                 "updatedAt": item.get("updated_at"),
                 "url": item.get("url"),
-                "content": content[
-                    :TMDB_REVIEW_TEXT_MAX_CHARS
-                ],
-                "contentTruncated": (
-                    len(content) > TMDB_REVIEW_TEXT_MAX_CHARS
-                ),
+                "content": content[:TMDB_REVIEW_TEXT_MAX_CHARS],
+                "contentTruncated": len(content) > TMDB_REVIEW_TEXT_MAX_CHARS,
                 "source": "TMDB",
             })
 
     fetched_at = now_ist()
-
     return {
         "movie": title or "Ramayana: Rise of a Legend",
         "status": "success",
         "source": "The Movie Database (TMDB)",
-        "sourceUrl": (
-            f"https://www.themoviedb.org/movie/{TMDB_MOVIE_ID}"
-        ),
+        "sourceUrl": f"https://www.themoviedb.org/movie/{TMDB_MOVIE_ID}",
         "lastUpdated": fetched_at,
-
-        # Existing website compatibility:
-        # TMDB average is out of 10, so multiply by 10
-        # for the existing 0–100 visual display.
-        "tmdbScore": (
-            round(float(vote_average) * 10, 1)
-            if vote_average is not None
-            else None
-        ),
-
-        "voteCount": vote_count,
-        "reviewCount": total_review_results,
-
-        # No fabricated editorial summaries.
+        # Compatibility with existing 0–100 frontend score display.
+        # This is a scaled TMDB average, not a positive-vote percentage.
+        "tmdbScore": round(float(average) * 10, 1) if average is not None else None,
+        "voteCount": votes,
+        "reviewCount": total_results,
         "highlights": [],
         "sentiment": None,
-        "reviews": review_items,
-
-        "message": (
-            "TMDB rating and written-review data fetched. "
-            "Sentiment analysis has not been performed."
-        ),
-
+        "reviews": reviews,
+        "message": "TMDB rating and written reviews fetched. No sentiment labels are inferred.",
         "tmdb": {
             "movieId": TMDB_MOVIE_ID,
             "title": title,
             "originalTitle": original_title,
             "overview": movie.get("overview"),
             "releaseDate": movie.get("release_date"),
-
-            "voteAverage": (
-                round(float(vote_average), 2)
-                if vote_average is not None
-                else None
-            ),
-
-            "voteCount": vote_count,
-            "reviewCount": total_review_results,
-            "reviewPagesFetched": pages_to_fetch,
-            "reviewPagesAvailable": total_review_pages,
+            "voteAverage": round(float(average), 2) if average is not None else None,
+            "voteCount": votes,
+            "reviewCount": total_results,
+            "reviewPagesFetched": pages,
+            "reviewPagesAvailable": total_pages,
             "posterPath": movie.get("poster_path"),
             "backdropPath": movie.get("backdrop_path"),
-
             "genres": [
-                genre.get("name")
-                for genre in movie.get("genres", [])
-                if (
-                    isinstance(genre, dict)
-                    and genre.get("name")
-                )
+                g.get("name") for g in movie.get("genres", [])
+                if isinstance(g, dict) and g.get("name")
             ],
-
             "apiBase": TMDB_API_BASE,
         },
-
         "internalAudit": {
             "tmdbMovieId": TMDB_MOVIE_ID,
-            "tmdbReviewCount": total_review_results,
-            "tmdbReviewRecordsFetched": len(review_items),
+            "tmdbReviewCount": total_results,
+            "tmdbReviewRecordsFetched": len(reviews),
             "sentimentAnalysis": "not_run",
-            "sentimentEvidence": (
-                "Raw TMDB review text only. "
-                "No sentiment labels generated."
-            ),
+            "scoreDefinition": "TMDB vote_average multiplied by 10",
         },
     }
 
 
-def update_tmdb_reviews():
-    """
-    Update reviews.json independently.
-
-    If TMDB fails, retain the previous successful reviews.json.
-    """
-
+def update_reviews() -> dict[str, Any]:
     try:
-        audience_data = fetch_tmdb_audience_data()
-
-        atomic_write_json(
-            REVIEWS_FILE,
-            audience_data,
-        )
-
+        payload = fetch_tmdb_audience_data()
+        atomic_write_json(REVIEWS_FILE, payload)
         print(
-            "TMDB audience data updated: "
-            f"{audience_data.get('voteCount')} votes, "
-            f"{audience_data.get('reviewCount')} reviews."
+            f"TMDB updated: {payload.get('voteCount')} votes; "
+            f"{payload.get('reviewCount')} reviews; "
+            f"{len(payload.get('reviews', []))} review records fetched."
         )
-
         return {
             "status": "success",
-            "fetchedAt": audience_data["lastUpdated"],
-            "reviewCount": audience_data.get(
-                "reviewCount", 0
-            ),
-            "voteCount": audience_data.get("voteCount"),
+            "fetchedAt": payload["lastUpdated"],
+            "reviewCount": payload.get("reviewCount", 0),
+            "voteCount": payload.get("voteCount"),
         }
-
     except Exception as exc:
-
-        print(
-            "TMDB update failed; existing reviews.json "
-            f"was preserved: {exc}",
-            file=sys.stderr,
-        )
-
+        # Keep the last known-good reviews file untouched.
+        print(f"TMDB update failed; reviews.json preserved: {exc}", file=sys.stderr)
         return {
-            "status": (
-                "not_configured"
-                if "not configured" in str(exc).lower()
-                else "failed"
-            ),
+            "status": "failed" if os.getenv("TMDB_READ_ACCESS_TOKEN") else "not_configured",
             "checkedAt": now_ist(),
             "warning": str(exc),
             "preservedPreviousData": REVIEWS_FILE.exists(),
         }
 
 
-# ---------------------------------------------------------
-# SOURCE HIERARCHY
-# ---------------------------------------------------------
+# ---------------------------------------------------------------------------
+# DATA MODEL / INGESTION
+# ---------------------------------------------------------------------------
 
-def configure_source_metadata(data):
+def configure_source_policy(data: dict[str, Any]) -> None:
     data["sources"] = SOURCES
-
     data["sourcePolicy"] = {
-        "primary": [
-            "Sacnilk",
-            "BoxOfficeIndia24",
-        ],
-        "secondary": [
-            "The Week",
-            "Financial Express",
-            "Koimoi",
-        ],
-        "actualCollections": (
-            "Separate dataset. Never combine with advance bookings."
-        ),
+        "primary": ["Sacnilk", "BoxOfficeIndia24"],
+        "secondary": ["The Week", "Financial Express", "Koimoi"],
+        "actualCollections": "Separate dataset. Never combine with advance bookings.",
         "independenceRule": (
-            "Secondary publications citing a primary tracker "
-            "are not independent measurements."
+            "Secondary publications citing a primary tracker are not independent measurements."
         ),
         "comparisonRule": (
-            "Compare matching dates, territories, gross/net "
-            "definitions, blocked-seat treatment and timestamps."
+            "Compare matching dates, territories, gross/net definitions, "
+            "blocked-seat treatment and publisher timestamps."
+        ),
+    }
+    data.setdefault("actualCollections", {
+        "status": "awaiting_verified_trade_reports",
+        "records": [],
+        "note": "Actual theatrical collections are separate from advance-booking figures.",
+    })
+
+
+def record_source_status(statuses: dict[str, Any], name: str, status: str,
+                         url: str, warning: str | None = None) -> None:
+    statuses[name] = {
+        "status": status,
+        "url": url,
+        "checkedAt": now_ist(),
+        "warning": warning,
+    }
+
+
+def main() -> int:
+    data = load_json(DATA_FILE, {})
+    if not data:
+        raise RuntimeError("data.json is empty or missing; refusing to create a blank dataset")
+
+    original_data = json.loads(json.dumps(data))
+    fetched_at = now_ist()
+    warnings: list[str] = []
+    statuses: dict[str, Any] = {}
+
+    # 1) TMDB is independent of box-office sources.
+    audience_status = update_reviews()
+
+    # 2) Day-wise BOI24 snapshots. Failed or older pages never erase good data.
+    day_data = data.setdefault("dayWiseAdvance", {})
+    for day_number, (date, url) in enumerate(BOI24_DAILY_URLS.items(), start=1):
+        try:
+            candidate = parse_boi24_day(fetch_page(url), date, day_number, url)
+            previous = day_data.get(date, {})
+            if not is_newer_or_equal(candidate, previous):
+                raise RuntimeError("Publisher snapshot is older than stored snapshot")
+            day_data[date] = merge_non_null(previous, candidate)
+            record_source_status(statuses, f"boi24_day_{day_number}", "success", url)
+            print(f"BOI24 Day {day_number}: updated")
+        except Exception as exc:
+            warning = f"BOI24 Day {day_number}: {exc}"
+            warnings.append(warning)
+            record_source_status(statuses, f"boi24_day_{day_number}", "retained_previous", url, str(exc))
+            print(warning, file=sys.stderr)
+
+    # 3) BOI24 overseas all-dates snapshot.
+    try:
+        candidate = parse_boi24_overseas(fetch_page(BOI24_OVERSEAS_URL))
+        previous = data.get("overseasAllDates", {})
+        if not is_newer_or_equal(candidate, previous):
+            raise RuntimeError("Publisher snapshot is older than stored snapshot")
+        data["overseasAllDates"] = merge_non_null(previous, candidate)
+        record_source_status(statuses, "boi24_overseas_all_dates", "success", BOI24_OVERSEAS_URL)
+        print("BOI24 overseas all-dates: updated")
+    except Exception as exc:
+        warning = f"BOI24 overseas all-dates: {exc}"
+        warnings.append(warning)
+        record_source_status(statuses, "boi24_overseas_all_dates", "retained_previous",
+                             BOI24_OVERSEAS_URL, str(exc))
+        print(warning, file=sys.stderr)
+
+    # 4) Sacnilk India all-dates cross-check. Conservative parser: only labelled values.
+    sacnilk_candidate = None
+    sacnilk_url_used = None
+    for url, scope in (
+        (SACNILK_ALL_DATES_URL, "india_all_dates"),
+        (SACNILK_LIVE_URL, "india_live_tracker"),
+        (SACNILK_DAY1_URL, "india_day_1_advance"),
+    ):
+        try:
+            sacnilk_candidate = parse_sacnilk_page(fetch_page(url), url, scope)
+            sacnilk_url_used = url
+            break
+        except Exception as exc:
+            warnings.append(f"Sacnilk {scope}: {exc}")
+            print(f"Sacnilk {scope} not accepted: {exc}", file=sys.stderr)
+
+    if sacnilk_candidate:
+        previous = data.get("sacnilkSnapshot", {})
+        if is_newer_or_equal(sacnilk_candidate, previous):
+            data["sacnilkSnapshot"] = merge_non_null(previous, sacnilk_candidate)
+            record_source_status(statuses, "sacnilk", "success", sacnilk_url_used or SACNILK_LIVE_URL)
+        else:
+            record_source_status(statuses, "sacnilk", "retained_previous",
+                                 sacnilk_url_used or SACNILK_LIVE_URL,
+                                 "Older publisher snapshot rejected")
+    else:
+        record_source_status(statuses, "sacnilk", "unavailable",
+                             SACNILK_LIVE_URL, "No unambiguous labelled India gross found")
+
+    # 5) Keep legacy Day 1 feed keys used by the current website.
+    feed = data.setdefault("automatedFeed", {})
+    day1 = day_data.get(RELEASE_DATE, {})
+    if day1:
+        feed.update({
+            "sourceName": "BoxOfficeIndia24 — Ramayana Day 1",
+            "sourceUrl": BOI24_DAILY_URLS[RELEASE_DATE],
+            "status": "success",
+            "fetchedAt": day1.get("fetchedAt"),
+            "sourceUpdatedText": day1.get("sourceUpdatedText"),
+            "message": (
+                "Day 1 India advance booking. Worldwide is shown only when "
+                "the publisher reports a matching Day 1 scope."
+            ),
+        })
+        for key in (
+            "indiaGrossCr", "tickets", "shows", "occupancyPct",
+            "worldwideGrossCr", "overseasGrossCr",
+        ):
+            if day1.get(key) is not None:
+                feed[key] = day1[key]
+    else:
+        feed.setdefault("status", "awaiting_verified_source_data")
+
+    # Do not leave stale worldwide fields in the legacy Day 1 feed if the
+    # current accepted Day 1 page no longer publishes matching figures.
+    if day1:
+        for key in ("worldwideGrossCr", "overseasGrossCr"):
+            if day1.get(key) is None:
+                feed.pop(key, None)
+
+    # 6) Sacnilk and BOI24 all-dates are stored as separate source snapshots.
+    # Do not silently sum them: their dates/definitions may differ.
+    data["sourceSnapshots"] = {
+        "sacnilkIndia": data.get("sacnilkSnapshot"),
+        "boxOfficeIndia24Overseas": data.get("overseasAllDates"),
+        "note": (
+            "Snapshots remain source-scoped. A combined worldwide all-dates "
+            "figure is not generated unless dates, territory and gross definitions "
+            "are explicitly compatible."
         ),
     }
 
-    data.setdefault(
-        "actualCollections",
-        {
-            "status": "awaiting_verified_trade_reports",
-            "records": [],
-            "note": (
-                "Actual theatrical collections are separate "
-                "from advance-booking figures."
-            ),
-        },
-    )
-
-
-# ---------------------------------------------------------
-# MAIN UPDATE
-# ---------------------------------------------------------
-
-def main():
-
-    if not DATA_FILE.exists():
-        raise RuntimeError(
-            f"Missing data.json: {DATA_FILE}"
-        )
-
-    data = json.loads(
-        DATA_FILE.read_text(encoding="utf-8")
-    )
-
-    fetched_at = now_ist()
-    warnings = []
-
-    # -----------------------------------------------------
-    # 1. TMDB AUDIENCE DATA
-    # -----------------------------------------------------
-
-    # This pipeline is deliberately independent.
-    # Failure here must not stop box-office ingestion.
-
-    audience_ingestion = update_tmdb_reviews()
-
-    # -----------------------------------------------------
-    # 2. DAY-WISE BOI24 ADVANCE BOOKINGS
-    # -----------------------------------------------------
-
-    day_data = data.setdefault(
-        "dayWiseAdvance",
-        {},
-    )
-
-    for day, (date, url) in enumerate(
-        BOI24_DAILY_URLS.items(),
-        start=1,
-    ):
-
-        try:
-            parsed = parse_day_page(
-                fetch_page(url),
-                date,
-                day,
-                url,
-            )
-
-            day_data[date] = parsed
-
-            print(
-                f"Day {day}: successfully updated."
-            )
-
-        except Exception as exc:
-
-            warnings.append(
-                f"Day {day} failed: {exc}"
-            )
-
-            print(
-                f"Day {day} retained previous data: {exc}",
-                file=sys.stderr,
-            )
-
-    # -----------------------------------------------------
-    # 3. OVERSEAS ALL-DATES SNAPSHOT
-    # -----------------------------------------------------
-
-    try:
-        overseas = parse_overseas_page(
-            fetch_page(BOI24_OVERSEAS_URL)
-        )
-
-        data["overseasAllDates"] = overseas
-
-        print(
-            "Overseas all-dates snapshot updated."
-        )
-
-    except Exception as exc:
-
-        warnings.append(
-            f"Overseas page failed: {exc}"
-        )
-
-        print(
-            f"Overseas snapshot retained: {exc}",
-            file=sys.stderr,
-        )
-
-    # -----------------------------------------------------
-    # 4. LEGACY DAY 1 FEED COMPATIBILITY
-    # -----------------------------------------------------
-
-    feed = data.setdefault(
-        "automatedFeed",
-        {},
-    )
-
-    day1 = day_data.get(
-        "2026-11-05",
-        {},
-    )
-
-    if day1.get("indiaGrossCr") is not None:
-        feed["indiaGrossCr"] = day1["indiaGrossCr"]
-
-    if day1.get("tickets") is not None:
-        feed["tickets"] = day1["tickets"]
-
-    if day1.get("shows") is not None:
-        feed["shows"] = day1["shows"]
-
-    if day1.get("occupancyPct") is not None:
-        feed["occupancyPct"] = day1["occupancyPct"]
-
-    feed["sourceName"] = (
-        "BoxOfficeIndia24 — Ramayana Day 1"
-    )
-
-    feed["sourceUrl"] = (
-        BOI24_DAILY_URLS["2026-11-05"]
-    )
-
-    # Do not use overseas all-dates as Day 1 overseas.
-    feed.pop("overseasCr", None)
-
-    if day1:
-
-        feed["status"] = "success"
-        feed["fetchedAt"] = day1.get(
-            "fetchedAt",
-            fetched_at,
-        )
-
-        feed["sourceUpdatedText"] = day1.get(
-            "sourceUpdatedText"
-        )
-
-        feed["message"] = (
-            "Day 1 India advance booking from "
-            "BoxOfficeIndia24. Worldwide total is only "
-            "available when explicitly reported with "
-            "matching Day 1 scope."
-        )
-
-        if day1.get("worldwideGrossCr") is not None:
-            feed["worldwideGrossCr"] = (
-                day1["worldwideGrossCr"]
-            )
-
-        if day1.get("overseasGrossCr") is not None:
-            feed["overseasGrossCr"] = (
-                day1["overseasGrossCr"]
-            )
-
-    # -----------------------------------------------------
-    # 5. SOURCE REGISTRY AND POLICY
-    # -----------------------------------------------------
-
-    configure_source_metadata(data)
-
-    # -----------------------------------------------------
-    # 6. SACNILK CONFIGURATION STATUS
-    # -----------------------------------------------------
-
+    configure_source_policy(data)
     data["sourceValidation"] = {
-        "sacnilk": {
-            "status": (
-                "configured"
-                if SACNILK_URL
-                else "awaiting_exact_tracker_url"
-            ),
-            "url": SACNILK_URL or None,
-            "note": (
-                "Sacnilk is registered as a primary source. "
-                "Automated comparison requires its exact "
-                "Ramayana tracker URL and a compatible parser."
-            ),
+        "sacnilk": statuses.get("sacnilk", {
+            "status": "not_checked", "url": SACNILK_LIVE_URL
+        }),
+        "boxOfficeIndia24": {
+            key: value for key, value in statuses.items() if key.startswith("boi24_")
         },
-
         "secondary": {
             "status": "registered_for_manual_validation",
-            "note": (
-                "The Week, Financial Express and Koimoi "
-                "are not counted as independent measurements "
-                "when they cite a primary tracker."
-            ),
+            "note": "Secondary reports are validation references, not independent measurements when they cite primary trackers.",
         },
     }
 
-    # -----------------------------------------------------
-    # 7. UPDATE STATUS
-    # -----------------------------------------------------
+    data["audienceIngestion"] = audience_status
 
-    data["lastUpdated"] = fetched_at
-
-    data["dataStatus"] = (
-        "source_scoped_snapshot"
-        if not warnings
-        else "partial_source_update"
-    )
-
-    data["audienceIngestion"] = audience_ingestion
-
+    # Update the top-level timestamp only if an actual dataset value changed.
+    # This avoids presenting a no-change poll as a new source-data update.
     data["ingestion"] = {
-        "source": "BoxOfficeIndia24",
-        "fetchedAt": fetched_at,
+        "source": "BoxOfficeIndia24 + Sacnilk + TMDB",
+        "checkedAt": fetched_at,
         "refreshIntervalMinutes": 30,
-
-        "status": (
-            "success"
-            if not warnings
-            else "partial"
-        ),
-
+        "status": "success" if not warnings else "partial",
         "warnings": warnings,
-
+        "sourceStatuses": statuses,
         "note": (
-            "Successful page parsing does not guarantee "
-            "publisher estimate accuracy or producer confirmation."
+            "A successful fetch means the page was parsed and validated, not that "
+            "the publisher estimate is producer-confirmed. Missing values are not inferred."
         ),
     }
 
-    # -----------------------------------------------------
-    # 8. WRITE DATA SAFELY
-    # -----------------------------------------------------
-
-    atomic_write_json(
-        DATA_FILE,
-        data,
+    # lastUpdated changes only when source figures or source records change.
+    tracked_keys = (
+        "dayWiseAdvance", "overseasAllDates", "sacnilkSnapshot", "automatedFeed"
     )
-
-    print(
-        json.dumps(
-            data["ingestion"],
-            ensure_ascii=False,
-            indent=2,
-        )
+    source_data_changed = any(
+        original_data.get(key) != data.get(key) for key in tracked_keys
     )
+    if source_data_changed:
+        data["lastUpdated"] = fetched_at
+    data["lastChecked"] = fetched_at
+    atomic_write_json(DATA_FILE, data)
 
-    print(
-        json.dumps(
-            data["audienceIngestion"],
-            ensure_ascii=False,
-            indent=2,
-        )
-    )
+    print(json.dumps(data["ingestion"], ensure_ascii=False, indent=2))
+    print(json.dumps(audience_status, ensure_ascii=False, indent=2))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        raise SystemExit(main())
+    except Exception as error:
+        print(f"FATAL: {error}", file=sys.stderr)
+        raise SystemExit(1)
