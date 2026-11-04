@@ -22,7 +22,7 @@ concurrency:
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     environment:
       name: github-pages
@@ -39,37 +39,45 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Fetch latest booking data
+      - name: Fetch latest booking and audience data
+        env:
+          TMDB_READ_ACCESS_TOKEN: ${{ secrets.TMDB_READ_ACCESS_TOKEN }}
         run: python scripts/update_data.py
 
-      - name: Commit and push updated data safely
+      - name: Commit and push generated JSON files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet -- data.json; then
-            echo "data.json has no changes; no data commit is needed."
-          else
-            git add data.json
-            git commit -m "Update automated box-office data"
+          git add -A -- data.json reviews.json
 
-            # Rebase the data update onto the newest main before each push.
-            # If another commit arrives during the push, fetch and retry.
+          if git diff --cached --quiet; then
+            echo "No generated data changes to commit."
+          else
+            git commit -m "Update automated box-office and audience data"
+
             pushed=false
+
             for attempt in 1 2 3; do
               git fetch origin main
-              git rebase origin/main
+
+              if ! git rebase origin/main; then
+                echo "Rebase failed. Manual conflict resolution required." >&2
+                exit 1
+              fi
+
               if git push origin HEAD:main; then
                 pushed=true
-                echo "Data update pushed successfully."
+                echo "Generated data committed successfully."
                 break
               fi
-              echo "Push attempt $attempt failed; retrying."
-              sleep 2
+
+              echo "Push attempt $attempt failed."
+              sleep 3
             done
 
             if [ "$pushed" != "true" ]; then
-              echo "Could not push data update after 3 attempts." >&2
+              echo "Unable to push generated data after 3 attempts." >&2
               exit 1
             fi
           fi
