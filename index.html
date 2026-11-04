@@ -270,7 +270,7 @@ h1 span{display:block;color:var(--gold)}
 .summary-box{border-top:1px solid var(--line);padding-top:12px}
 .summary-box span{display:block;color:var(--muted);margin-bottom:8px}
 .summary-box strong{font-size:clamp(1.3rem,4vw,1.8rem)}
-.table-wrap{overflow-x:auto;margin-top:18px}
+.table-wrap{overflow-x:auto;overflow-y:hidden;max-width:100%;min-width:0;margin-top:18px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;min-width:500px}
 th,td{
   text-align:left;
@@ -723,7 +723,7 @@ footer{
     <article class="pulse-block pulse-score">
       <div class="pulse-label">Audience Score · TMDB</div>
       <div class="pulse-score-line">
-        <strong class="pulse-number" id="pulseScore">57%</strong>
+        <strong class="pulse-number" id="pulseScore">Unavailable</strong>
         <span class="pulse-chip pending" id="pulseVoteCount">Vote count pending</span>
       </div>
       <p class="pulse-description">
@@ -884,7 +884,7 @@ footer{
 (() => {
   "use strict";
 
-  const REFRESH_MS = 15 * 60 * 1000;
+  const REFRESH_MS = 30 * 60 * 1000;
   const FEED_STALE_MS = 6 * 60 * 60 * 1000;
   const SOURCE_STALE_MS = 6 * 60 * 60 * 1000;
 
@@ -1242,15 +1242,19 @@ footer{
         ? data.worldwideAllDates
         : null;
 
-    const indiaAllDates = num(worldwide?.indiaGrossCr);
-    const overseasAllDates = num(worldwide?.overseasGrossCr);
-
-    // Calculate the displayed total from the two separately sourced components.
-    // Do not use a precomputed total if either component is missing or invalid.
-    const worldwideTotal =
-      indiaAllDates !== null && overseasAllDates !== null
-        ? indiaAllDates + overseasAllDates
-        : null;
+    // Prefer the latest source-scoped snapshots. Never combine components
+    // unless the data explicitly marks their scopes and definitions compatible.
+    const sourceSnapshots = data.sourceSnapshots && typeof data.sourceSnapshots === "object"
+      ? data.sourceSnapshots : {};
+    const indiaSnapshot = sourceSnapshots.sacnilkIndia || null;
+    const overseasSnapshot = sourceSnapshots.boxOfficeIndia24Overseas || null;
+    const indiaAllDates = num(indiaSnapshot?.indiaGrossCr ?? worldwide?.indiaGrossCr);
+    const overseasAllDates = num(overseasSnapshot?.grossCr ?? worldwide?.overseasGrossCr);
+    const calculationEligible = worldwide?.calculationEligible === true ||
+      (worldwide?.status === "comparable" && worldwide?.calculationEligible !== false);
+    const worldwideTotal = calculationEligible && indiaAllDates !== null && overseasAllDates !== null
+      ? indiaAllDates + overseasAllDates
+      : null;
 
     const feed=data.automatedFeed&&typeof data.automatedFeed==="object"
       ? data.automatedFeed : {};
@@ -1269,8 +1273,12 @@ footer{
 
     set(
       "worldwideTotal",
-      worldwideTotal === null ? "Unavailable" : cr(worldwideTotal)
+      worldwideTotal === null ? "Not comparable" : cr(worldwideTotal)
     );
+    const worldwideDefinition = document.querySelector("#worldwidePanel .worldwide-hero .muted");
+    if (worldwideDefinition) worldwideDefinition.textContent = worldwideTotal === null
+      ? "India and overseas snapshots shown separately · combined total withheld until scopes match · not actual collection"
+      : "Calculated India + overseas advance gross · not actual collection";
 
     set(
       "worldwideIndia",
@@ -1282,8 +1290,8 @@ footer{
       overseasAllDates === null ? "—" : cr(overseasAllDates)
     );
 
-    const indiaSource = safe(worldwide?.indiaSourceName);
-    const overseasSource = safe(worldwide?.overseasSourceName);
+    const indiaSource = safe(indiaSnapshot?.sourceName ?? worldwide?.indiaSourceName);
+    const overseasSource = safe(overseasSnapshot?.sourceName ?? worldwide?.overseasSourceName);
 
     set(
       "worldwideSource",
@@ -1294,16 +1302,18 @@ footer{
 
     set(
       "worldwideTimestamp",
-      worldwide
-        ? `India: ${safe(worldwide.indiaSourceUpdatedText)} · Overseas: ${safe(worldwide.overseasSourceUpdatedText)}`
+      worldwide || indiaSnapshot || overseasSnapshot
+        ? `India fetched: ${safe(indiaSnapshot?.fetchedAt ?? worldwide?.indiaSourceUpdatedText)} · Overseas updated: ${safe(overseasSnapshot?.sourceUpdatedText ?? worldwide?.overseasSourceUpdatedText)}`
         : "Source timestamps unavailable"
     );
 
     set(
       "worldwideScope",
-      worldwide
-        ? "Scope: All dates · Advance bookings"
-        : "Scope: all-dates snapshot unavailable"
+      indiaSnapshot || overseasSnapshot
+        ? "Scope: separate source snapshots · all dates"
+        : worldwide
+          ? "Scope: All dates · Advance bookings"
+          : "Scope: all-dates snapshot unavailable"
     );
 
     renderSnapshotMovement(snaps);
@@ -1452,8 +1462,27 @@ footer{
         : "Risk-driver interpretation is unavailable."
     );
 
-    $("snapshotTable").innerHTML=ordered.length
-      ? ordered.map(s=>`
+    const sourceRegister = [
+      indiaSnapshot && {
+        sourceName: indiaSnapshot.sourceName || "Sacnilk",
+        timestamp: indiaSnapshot.fetchedAt,
+        scope: indiaSnapshot.scope || "india_all_dates",
+        worldwideCr: null,
+        indiaCr: indiaSnapshot.indiaGrossCr,
+        overseasCr: null
+      },
+      overseasSnapshot && {
+        sourceName: overseasSnapshot.sourceName || "BoxOfficeIndia24",
+        timestamp: overseasSnapshot.fetchedAt,
+        scope: overseasSnapshot.scope || "overseas_all_dates",
+        worldwideCr: null,
+        indiaCr: null,
+        overseasCr: overseasSnapshot.grossCr
+      }
+    ].filter(Boolean);
+    const registerRows = [...sourceRegister, ...ordered];
+    $("snapshotTable").innerHTML=registerRows.length
+      ? registerRows.map(s=>`
           <tr>
             <td>${esc(s.sourceName||s.label||"—")}</td>
             <td>${esc(dateText(s.timestamp))}</td>
@@ -1509,13 +1538,18 @@ footer{
       if(!data || typeof data!=="object" || Array.isArray(data)) throw new Error("Invalid reviews.json format.");
 
       const rawScore=data.tmdbScore ?? data.audienceScore ?? data.tmdb?.score;
-      const score=rawScore===undefined || rawScore===null ? 57 : Number(rawScore);
-      if(Number.isFinite(score) && score>=0 && score<=100) scoreEl.textContent=`${score}%`;
+      const score=rawScore===undefined || rawScore===null || rawScore==="" ? null : Number(rawScore);
+      if(Number.isFinite(score) && score>=0 && score<=100) {
+        scoreEl.textContent=`${score}%`;
+      } else {
+        scoreEl.textContent="Unavailable";
+      }
 
       const rawVotes=data.voteCount ?? data.tmdbVoteCount ?? data.tmdb?.voteCount;
       if(rawVotes!==undefined && rawVotes!==null && rawVotes!=="" && Number.isInteger(Number(rawVotes)) && Number(rawVotes)>=0) {
-        votesEl.textContent=`${Number(rawVotes).toLocaleString("en-IN")} votes`;
-        votesEl.classList.remove("pending");
+        const voteCount=Number(rawVotes);
+        votesEl.textContent=`${voteCount.toLocaleString("en-IN")} votes${voteCount<10?" · early sample":""}`;
+        votesEl.classList.toggle("pending",voteCount<10);
       } else {
         votesEl.textContent="Vote count pending";
         votesEl.classList.add("pending");
@@ -1560,7 +1594,7 @@ footer{
         breakdownEl.hidden=true;
         breakdownEl.innerHTML="";
       }
-      if(status) status.textContent=`Audience data checked · ${data.lastUpdated || "latest available review feed"}. Scores and review evidence are shown separately.`;
+      if(status) status.textContent=`Audience data checked · ${data.lastUpdated || "latest available review feed"}. Scores and review evidence are shown separately. A low vote count is preliminary.`;
     } catch(error) {
       console.error("Audience Pulse loading error:",error);
       if(status) status.textContent="Audience review feed unavailable; the box-office dashboard continues independently.";
