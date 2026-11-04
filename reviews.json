@@ -1,41 +1,106 @@
 {
   "movie": "Ramayana: Rise of a Legend",
-  "status": "success",
-  "source": "The Movie Database (TMDB)",
-  "sourceUrl": "https://www.themoviedb.org/movie/656908",
-  "lastUpdated": "2026-11-04T17:22:31+05:30",
-  "tmdbScore": 57.0,
-  "voteCount": 3,
-  "reviewCount": 0,
+  "status": "awaiting_reviews",
+  "updatedAt": "2026-11-04T11:54:47Z",
   "highlights": [],
-  "sentiment": null,
-  "reviews": [],
-  "message": "TMDB rating and written reviews fetched. No sentiment labels are inferred.",
-  "tmdb": {
-    "movieId": 656908,
-    "title": "Ramayana: Rise of a Legend",
-    "originalTitle": "रामायणम्",
-    "overview": "An ancient epic follows a young prince and princess whose marriage and subsequent exile mark the beginning of a legendary journey. Their story of love, duty and destiny sets the stage for greater challenges ahead.",
-    "releaseDate": "2026-11-04",
-    "voteAverage": 5.7,
-    "voteCount": 3,
-    "reviewCount": 0,
-    "reviewPagesFetched": 0,
-    "reviewPagesAvailable": 0,
-    "posterPath": "/dPrtk4iNf6T5w8fWfg4uxDDbJSW.jpg",
-    "backdropPath": "/bkhPaFOiqc9GeLMdf1D44KbozRH.jpg",
-    "genres": [
-      "Fantasy",
-      "Action",
-      "Adventure"
-    ],
-    "apiBase": "https://api.themoviedb.org/3"
-  },
+  "message": "Only 0 substantial TMDB reviews found. Waiting for genuine audience reviews.",
   "internalAudit": {
     "tmdbMovieId": 656908,
     "tmdbReviewCount": 0,
-    "tmdbReviewRecordsFetched": 0,
-    "sentimentAnalysis": "not_run",
-    "scoreDefinition": "TMDB vote_average multiplied by 10"
+    "youtubeVideosDiscovered": [
+      {
+        "title": "Ramayana Movie Review  | Ranbir Kapoor, Yash, Sai Pallavi | Honest Review #Shorts",
+        "publishedAt": "2026-11-04T10:56:31Z",
+        "url": "https://www.youtube.com/watch?v=1_1Ewkyn0Xo"
+      },
+      {
+        "title": "Ramayana Early Reviews: Yash Ka Raavan Chha Gaya 🔥 | Ranbir Kapoor? 😳",
+        "publishedAt": "2026-11-04T08:06:23Z",
+        "url": "https://www.youtube.com/watch?v=DPJlcMsIlWU"
+      },
+      {
+        "title": "Ramayana Review: Breathtaking Film With Grand Visuals | Ranbir Kapoor, Yash, Sai Pallavi",
+        "publishedAt": "2026-11-04T08:05:48Z",
+        "url": "https://www.youtube.com/watch?v=N6ZmW0TMRqY"
+      },
+      {
+        "title": "RAMAYANA MOVIE REVIEW BEFORE RELEASE #ramayan #ramayana #ranbirkapoor #yash #shorts #trendingshorts",
+        "publishedAt": "2026-11-04T07:58:37Z",
+        "url": "https://www.youtube.com/watch?v=gDpo7Jmh1Nk"
+      },
+      {
+        "title": "Ramayana Movie Review 🔥 Mixed Reviews! Can It Beat Avatar &amp; Avengers? #Ramayana #RamayanaReview",
+        "publishedAt": "2026-11-04T07:16:13Z",
+        "url": "https://www.youtube.com/watch?v=q4hP-saAfCA"
+      },
+      {
+        "title": "Ramayana 💯Genuine Review | Ramayana Genuine Public Talk | Yash | Sai Pallavi#Short #Ramayana Review",
+        "publishedAt": "2026-11-04T07:12:26Z",
+        "url": "https://www.youtube.com/watch?v=c3lXsI1azwQ"
+      },
+      {
+        "title": "Ramayana: SCAM reveal || ajitspov. #ytshorts #review #moviereview #shorts",
+        "publishedAt": "2026-11-04T07:01:02Z",
+        "url": "https://www.youtube.com/watch?v=xmiHRyvLvso"
+      },
+      {
+        "title": "Ravana Big Problem In Hindi Voice 🗣️ 🤯 By SFC                      #ramayana #ravana #yash",
+        "publishedAt": "2026-11-04T06:57:00Z",
+        "url": "https://www.youtube.com/watch?v=vMOs4YYrRZk"
+      },
+      {
+        "title": "Ramayana Movie First Reaction 😱 | Audience Review.",
+        "publishedAt": "2026-11-04T06:05:24Z",
+        "url": "https://www.youtube.com/watch?v=S_08HWczbIc"
+      },
+      {
+        "title": "Ramayana: Rise of a Legend | Ramayan Trailer | Ramayana: Jai Jai Ram #Ramayana #movie #song",
+        "publishedAt": "2026-11-04T05:29:31Z",
+        "url": "https://www.youtube.com/watch?v=pUoiY5MyIb4"
+      },
+      {
+        "title": "Ramayana Review: Ranbir Kapoor, Yash, Sai Pallavi, Ravie Dubey, Namit Malhotra &amp; Nitesh Tiwari",
+        "publishedAt": "2026-11-04T10:46:59Z",
+        "url": "https://www.youtube.com/watch?v=jBYZzBaPfWw"
+      },
+      {
+        "title": "Ramayana London Screening BIG Update! 😱 UK Release, Early Buzz &amp; Historic Expectations!",
+        "publishedAt": "2026-11-04T10:10:55Z",
+        "url": "https://www.youtube.com/watch?v=U8jqZnBNj6g"
+      },
+      {
+        "title": "Ramayana paid review by ashish chanchlani l #youtubeshorts #shorts",
+        "publishedAt": "2026-11-04T09:13:41Z",
+        "url": "https://www.youtube.com/watch?v=oPzUR1Pgp-U"
+      },
+      {
+        "title": "Ramayana review l Ramayana paid review by Aashish chanchlani and Taran Adarsh ",
+        "publishedAt": "2026-11-04T09:08:58Z",
+        "url": "https://www.youtube.com/watch?v=-PuM84Ex3O8"
+      },
+      {
+        "title": "Ramayana First public review: ರಾಮಾಯಣ ಹೇಗಿದೆ ಇಂಗ್ಲಿಷ್ ಮಂದಿಗೆ ಇಷ್ಟ ಆಯ್ತಾ ಇಲ್ವಾ|Yash |Saipallavi| SStv",
+        "publishedAt": "2026-11-04T07:32:44Z",
+        "url": "https://www.youtube.com/watch?v=-kWEsO2vATg"
+      },
+      {
+        "title": "Ramayana Review | Ramayana Movie Review | Ramayana: Rise Of A Legend Review ",
+        "publishedAt": "2026-11-04T04:30:00Z",
+        "url": "https://www.youtube.com/watch?v=uSm_yUl4jvY"
+      },
+      {
+        "title": "Ramayana Public Talk | Ramayana Public Review | Ramayana Public Review Telugu  Ranveer| Yash| Nitesh",
+        "publishedAt": "2026-11-04T04:02:59Z",
+        "url": "https://www.youtube.com/watch?v=x5Dg26vQeYI"
+      },
+      {
+        "title": "Ramayana Movie Public Talk Telugu | IMAX Theatre Public Response | Ranbir Kapoor | Yash",
+        "publishedAt": "2026-11-04T02:57:32Z",
+        "url": "https://www.youtube.com/watch?v=2J8gr4snpAQ"
+      }
+    ],
+    "youtubeUsedAsSentimentEvidence": false,
+    "youtubeDiscoveryError": null,
+    "sentimentEngine": "VADER"
   }
 }
