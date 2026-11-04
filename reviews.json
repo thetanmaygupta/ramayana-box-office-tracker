@@ -1,13 +1,53 @@
 {
   "movie": "Ramayana: Rise of a Legend",
   "status": "awaiting_reviews",
-  "updatedAt": "2026-11-04T12:22:00Z",
+  "source": "The Movie Database (TMDB)",
+  "sourceUrl": "https://www.themoviedb.org/movie/656908",
+  "lastUpdated": "2026-11-04T18:34:27+05:30",
+  "tmdbScore": 57.0,
+  "tmdbRating": 5.7,
+  "tmdbRatingOutOf": 10,
+  "tmdbScoreDefinition": "Legacy compatibility field: TMDB vote_average multiplied by 10; not a positive-vote percentage.",
+  "voteCount": 3,
+  "reviewCount": 0,
   "highlights": [],
+  "sentiment": null,
+  "reviews": [],
   "message": "Only 0 substantial TMDB reviews found. Waiting for genuine audience reviews.",
+  "tmdb": {
+    "movieId": 656908,
+    "title": "Ramayana: Rise of a Legend",
+    "originalTitle": "रामायणम्",
+    "overview": "An ancient epic follows a young prince and princess whose marriage and subsequent exile mark the beginning of a legendary journey. Their story of love, duty and destiny sets the stage for greater challenges ahead.",
+    "releaseDate": "2026-11-05",
+    "voteAverage": 5.7,
+    "voteCount": 3,
+    "reviewCount": 0,
+    "reviewPagesFetched": 0,
+    "reviewPagesAvailable": 0,
+    "posterPath": "/hz2Hv8tPToHvQ7HaxzqeLvahmcJ.jpg",
+    "backdropPath": "/prbMZ3DPf8taS6JYQd6igPnm2mA.jpg",
+    "genres": [
+      "Fantasy",
+      "Action",
+      "Adventure"
+    ],
+    "apiBase": "https://api.themoviedb.org/3"
+  },
   "internalAudit": {
     "tmdbMovieId": 656908,
     "tmdbReviewCount": 0,
+    "tmdbReviewRecordsFetched": 0,
+    "sentimentAnalysis": "completed",
+    "scoreDefinition": "tmdbRating is TMDB vote_average on a 0–10 scale; legacy tmdbScore is vote_average × 10 and must not be labelled as a positive-vote percentage.",
+    "tmdbReviewPagesFetched": 1,
+    "tmdbReviewPagesAvailable": 0,
     "youtubeVideosDiscovered": [
+      {
+        "title": "Is Nitesh Tiwari Bigger Than SS Rajamouli? 🤯⚡#ramayana #shorts",
+        "publishedAt": "2026-11-04T12:30:08Z",
+        "url": "https://www.youtube.com/watch?v=z-ekKDdOyeo"
+      },
       {
         "title": "Ramayana Movie Honest Review🔴 #ramayana #shorts #moviereview",
         "publishedAt": "2026-11-04T11:57:09Z",
@@ -54,11 +94,6 @@
         "url": "https://www.youtube.com/watch?v=xmiHRyvLvso"
       },
       {
-        "title": "Ravana Big Problem In Hindi Voice 🗣️ 🤯 By SFC                      #ramayana #ravana #yash",
-        "publishedAt": "2026-11-04T06:57:00Z",
-        "url": "https://www.youtube.com/watch?v=vMOs4YYrRZk"
-      },
-      {
         "title": "Ramayana: Rise of a Legend – Is It Really a Masterpiece? | The Most Honest Review from USA!",
         "publishedAt": "2026-11-04T11:59:16Z",
         "url": "https://www.youtube.com/watch?v=kzHLkVY780E"
@@ -84,6 +119,11 @@
         "url": "https://www.youtube.com/watch?v=-kWEsO2vATg"
       },
       {
+        "title": "Ravana Big Problem In Hindi Voice 🗣️ 🤯 By SFC                      #ramayana #ravana #yash",
+        "publishedAt": "2026-11-04T06:57:00Z",
+        "url": "https://www.youtube.com/watch?v=vMOs4YYrRZk"
+      },
+      {
         "title": "Ramayana Review | Ramayana Movie Review | Ramayana: Rise Of A Legend Review ",
         "publishedAt": "2026-11-04T04:30:00Z",
         "url": "https://www.youtube.com/watch?v=uSm_yUl4jvY"
@@ -94,13 +134,23 @@
         "url": "https://www.youtube.com/watch?v=x5Dg26vQeYI"
       },
       {
-        "title": "Ramayana Movie Public Talk Telugu | IMAX Theatre Public Response | Ranbir Kapoor | Yash",
-        "publishedAt": "2026-11-04T02:57:32Z",
-        "url": "https://www.youtube.com/watch?v=2J8gr4snpAQ"
+        "title": "THE SOUND OF RAMAYANA: RISE OF A LEGEND | REACTION!!",
+        "publishedAt": "2026-11-04T03:45:26Z",
+        "url": "https://www.youtube.com/watch?v=ScQgGOumY5k"
       }
     ],
     "youtubeUsedAsSentimentEvidence": false,
     "youtubeDiscoveryError": null,
-    "sentimentEngine": "VADER"
+    "sentimentEngine": "VADER",
+    "publishedHighlightCount": 0
+  },
+  "updatedAt": "2026-11-04T13:04:29Z",
+  "audiencePulse": {
+    "status": "awaiting_reviews",
+    "updatedAt": "2026-11-04T13:04:29Z",
+    "sentimentEngine": "VADER",
+    "reviewsAnalysed": 0,
+    "minimumReviewLength": 100,
+    "minimumIndependentReviews": 2
   }
 }
