@@ -3,12 +3,12 @@
   "status": "awaiting_reviews",
   "source": "The Movie Database (TMDB)",
   "sourceUrl": "https://www.themoviedb.org/movie/656908",
-  "lastUpdated": "2026-11-05T23:40:29+05:30",
-  "tmdbScore": 70.0,
-  "tmdbRating": 7.0,
+  "lastUpdated": "2026-11-06T05:15:42+05:30",
+  "tmdbScore": 64.0,
+  "tmdbRating": 6.4,
   "tmdbRatingOutOf": 10,
   "tmdbScoreDefinition": "Legacy compatibility field: TMDB vote_average multiplied by 10; not a positive-vote percentage.",
-  "voteCount": 5,
+  "voteCount": 7,
   "reviewCount": 0,
   "highlights": [],
   "sentiment": null,
@@ -20,13 +20,13 @@
     "originalTitle": "रामायणम्",
     "overview": "An ancient epic follows a young prince and princess whose marriage and subsequent exile mark the beginning of a legendary journey. Their story of love, duty and destiny sets the stage for greater challenges ahead.",
     "releaseDate": "2026-11-05",
-    "voteAverage": 7.0,
-    "voteCount": 5,
+    "voteAverage": 6.4,
+    "voteCount": 7,
     "reviewCount": 0,
     "reviewPagesFetched": 0,
     "reviewPagesAvailable": 0,
     "posterPath": "/hz2Hv8tPToHvQ7HaxzqeLvahmcJ.jpg",
-    "backdropPath": "/yHVZncPRZr63mezRX20IyKLrSkv.jpg",
+    "backdropPath": "/prbMZ3DPf8taS6JYQd6igPnm2mA.jpg",
     "genres": [
       "Fantasy",
       "Action",
@@ -44,6 +44,11 @@
     "tmdbReviewPagesAvailable": 0,
     "youtubeVideosDiscovered": [
       {
+        "title": "Ramayana: Rise of a Legend Review — India&#39;s Biggest Epic Worth the Hype?",
+        "publishedAt": "2026-11-05T22:11:29Z",
+        "url": "https://www.youtube.com/watch?v=k3cSdWcGzMw"
+      },
+      {
         "title": "RAMAYANA: Rise of a Legend (2026) QUICK REVIEW",
         "publishedAt": "2026-11-05T20:11:35Z",
         "url": "https://www.youtube.com/watch?v=KQagBtb59FU"
@@ -57,6 +62,11 @@
         "title": "Ramayana Rise of a Legend Movie Review | Ranbir Kapoor &amp; Yash | #Shorts",
         "publishedAt": "2026-11-05T18:23:46Z",
         "url": "https://www.youtube.com/watch?v=DMkE3YLE7Bg"
+      },
+      {
+        "title": "Ramayana Part One Movie Review | Ramayana Movie Review",
+        "publishedAt": "2026-11-05T16:53:57Z",
+        "url": "https://www.youtube.com/watch?v=3d4vaed5bY4"
       },
       {
         "title": "बढिया मूवी है | Ramayana Movie Public Review #shorts#ramayanamoviepublicreaction#ramayana",
@@ -82,16 +92,6 @@
         "title": "🏹Ramayana Public Review🎙️.... #ramayana #ramayanareview #ramayanapublicreview #tamilreview #review",
         "publishedAt": "2026-11-05T15:46:03Z",
         "url": "https://www.youtube.com/watch?v=iGNPtPRVvU8"
-      },
-      {
-        "title": "ഇതാണ് രാമായണം🔥 Ramayana Review Malayalam",
-        "publishedAt": "2026-11-05T15:33:32Z",
-        "url": "https://www.youtube.com/watch?v=SfmN5yMUwVs"
-      },
-      {
-        "title": "எல்லாரையும் மிரள வைக்கும் ராமாயணம் Graphics! | Ramayana Movie Review | Ranbir | Sai Pallavi | Yash",
-        "publishedAt": "2026-11-05T15:30:15Z",
-        "url": "https://www.youtube.com/watch?v=n5pocgymadM"
       },
       {
         "title": "MY HONEST RAMAYAN REVIEW : GHEE KHATAM ? OR NOT",
@@ -144,10 +144,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-05T22:09:30Z",
+  "updatedAt": "2026-11-05T23:45:45Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-05T22:09:30Z",
+    "updatedAt": "2026-11-05T23:45:45Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 0,
     "minimumReviewLength": 100,
