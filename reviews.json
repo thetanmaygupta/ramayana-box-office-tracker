@@ -44,11 +44,6 @@
     "tmdbReviewPagesAvailable": 0,
     "youtubeVideosDiscovered": [
       {
-        "title": "Ramayana Movie Honest Public Review | Ramayana Public Review | Ranbir Vs Yash #shorts",
-        "publishedAt": "2026-11-06T18:57:29Z",
-        "url": "https://www.youtube.com/watch?v=HZuolpyGG9w"
-      },
-      {
         "title": "||Ramayana Movie Review||Ravan Jatayu Fight||#shorts",
         "publishedAt": "2026-11-06T18:27:29Z",
         "url": "https://www.youtube.com/watch?v=_H0RhIjEyRA"
@@ -94,6 +89,16 @@
         "url": "https://www.youtube.com/watch?v=bshgBWSnk7Q"
       },
       {
+        "title": "Ramayana Movie Review: Expectations Se Bhi Aage! 😱 #ramayana #ranbirkapoor #shorts",
+        "publishedAt": "2026-11-06T15:04:37Z",
+        "url": "https://www.youtube.com/watch?v=_WIdMukN5gU"
+      },
+      {
+        "title": "#RAMAYANA WINNING HEARTS! Critics &amp; Audience All Praising It #RamayanaReview #RanbirKapoor #trending",
+        "publishedAt": "2026-11-06T19:51:54Z",
+        "url": "https://www.youtube.com/watch?v=im-dsMBn9xU"
+      },
+      {
         "title": "Ramayana படம் எப்படி இருக்கு..??? | Ramayana Movie | Ranbir Kapoor | Yash | Ramayana | #Shorts",
         "publishedAt": "2026-11-06T15:30:40Z",
         "url": "https://www.youtube.com/watch?v=553jaAiA4-Q"
@@ -137,11 +142,6 @@
         "title": "Reaction On RAMAYANA: RISE OF A LEGEND | Public Review | Pakistani Reaction | 🇵🇰❤️🇮🇳",
         "publishedAt": "2026-11-06T10:00:30Z",
         "url": "https://www.youtube.com/watch?v=EhECsuB5r-U"
-      },
-      {
-        "title": "Yash as Ravana 🔥 Ramayana Movie Review | Jatayu Fight Scene #Shorts",
-        "publishedAt": "2026-11-06T09:00:20Z",
-        "url": "https://www.youtube.com/watch?v=qWFdfCmzwxo"
       }
     ],
     "youtubeUsedAsSentimentEvidence": false,
@@ -149,10 +149,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-06T19:48:01Z",
+  "updatedAt": "2026-11-06T21:40:56Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-06T19:48:01Z",
+    "updatedAt": "2026-11-06T21:40:56Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 0,
     "minimumReviewLength": 100,
