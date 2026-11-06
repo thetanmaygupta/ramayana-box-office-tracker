@@ -1,6 +1,6 @@
 {
   "project": "Ramayana: Rise of a Legend — Box Office Tracker",
-  "lastUpdated": "2026-11-06T05:15:42+05:30",
+  "lastUpdated": "2026-11-06T10:09:09+05:30",
   "dataStatus": "source_scoped_snapshot",
   "statusNote": "Worldwide all-dates advance gross is calculated from separately timestamped Sacnilk India and BoxOfficeIndia24 overseas snapshots. This is not a live feed or a fully harmonised worldwide measurement.",
   "releaseDate": "2026-11-05",
@@ -142,8 +142,8 @@
     "sourceName": "BoxOfficeIndia24 — Ramayana Day 1",
     "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
     "status": "success",
-    "fetchedAt": "2026-11-06T05:15:43+05:30",
-    "sourceUpdatedText": "2026-11-06 05:13 IST",
+    "fetchedAt": "2026-11-06T10:09:10+05:30",
+    "sourceUpdatedText": "2026-11-06 10:03 IST",
     "indiaGrossCr": 43.63,
     "indiaGrossExcludingBlocksCr": null,
     "tickets": 1160243,
@@ -152,8 +152,8 @@
     "occupancyPct": 19.2,
     "message": "Day 1 India advance booking. Worldwide is shown only when the publisher reports a matching Day 1 scope.",
     "indiaGrossIncludingBlocksCr": 36.06,
-    "worldwideGrossCr": 90.79,
-    "overseasGrossCr": 47.16
+    "worldwideGrossCr": 95.18,
+    "overseasGrossCr": 51.55
   },
   "dayWiseAdvance": {
     "2026-11-05": {
@@ -162,64 +162,64 @@
       "indiaGrossCr": 43.63,
       "sourceName": "BoxOfficeIndia24",
       "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
-      "sourceUpdatedText": "2026-11-06 05:13 IST",
-      "fetchedAt": "2026-11-06T05:15:43+05:30",
+      "sourceUpdatedText": "2026-11-06 10:03 IST",
+      "fetchedAt": "2026-11-06T10:09:10+05:30",
       "scope": "single_day_advance",
       "tickets": 1160243,
       "shows": 26407,
       "occupancyPct": 19.2,
-      "worldwideGrossCr": 90.79,
-      "overseasGrossCr": 47.16,
+      "worldwideGrossCr": 95.18,
+      "overseasGrossCr": 51.55,
       "worldwideVerifiedFromPublisher": true,
       "currency": "INR"
     },
     "2026-11-06": {
       "date": "2026-11-06",
       "day": 2,
-      "indiaGrossCr": 23.75,
+      "indiaGrossCr": 30.89,
       "sourceName": "BoxOfficeIndia24",
       "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-2-advance-booking-20261106",
-      "sourceUpdatedText": "2026-11-06 05:13 IST",
-      "fetchedAt": "2026-11-06T05:15:43+05:30",
+      "sourceUpdatedText": "2026-11-06 10:03 IST",
+      "fetchedAt": "2026-11-06T10:09:10+05:30",
       "scope": "single_day_advance",
-      "tickets": 647259,
-      "shows": 24640,
-      "occupancyPct": 12.2,
-      "worldwideGrossCr": 35.2,
-      "overseasGrossCr": 11.46,
+      "tickets": 827385,
+      "shows": 24875,
+      "occupancyPct": 15.1,
+      "worldwideGrossCr": 44.53,
+      "overseasGrossCr": 13.63,
       "worldwideVerifiedFromPublisher": true,
       "currency": "INR"
     },
     "2026-11-07": {
       "date": "2026-11-07",
       "day": 3,
-      "indiaGrossCr": 19.78,
+      "indiaGrossCr": 20.27,
       "sourceName": "BoxOfficeIndia24",
       "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-3-advance-booking-20261107",
-      "sourceUpdatedText": "2026-11-06 05:13 IST",
-      "fetchedAt": "2026-11-06T05:15:44+05:30",
+      "sourceUpdatedText": "2026-11-06 10:03 IST",
+      "fetchedAt": "2026-11-06T10:09:11+05:30",
       "scope": "single_day_advance",
-      "tickets": 474905,
-      "shows": 15764,
-      "occupancyPct": 14.2,
-      "worldwideGrossCr": 26.86,
-      "overseasGrossCr": 7.08,
+      "tickets": 486107,
+      "shows": 15828,
+      "occupancyPct": 14.5,
+      "worldwideGrossCr": 29.09,
+      "overseasGrossCr": 8.82,
       "worldwideVerifiedFromPublisher": true,
       "currency": "INR"
     }
   },
   "overseasAllDates": {
-    "grossCr": 71.52,
-    "tickets": 570952,
-    "shows": 32099,
-    "cinemas": 3001,
+    "grossCr": 80.63,
+    "tickets": 651466,
+    "shows": 33003,
+    "cinemas": 3015,
     "countries": 32,
-    "occupancyPct": 10.6,
+    "occupancyPct": 11.8,
     "dateRange": "4–15 Nov",
     "sourceName": "BoxOfficeIndia24",
     "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
-    "sourceUpdatedText": "2026-11-06 05:13 IST",
-    "fetchedAt": "2026-11-06T05:15:44+05:30",
+    "sourceUpdatedText": "2026-11-06 10:03 IST",
+    "fetchedAt": "2026-11-06T10:09:11+05:30",
     "scope": "overseas_all_dates",
     "note": "Overseas all-dates advance booking; not worldwide Day 1 and not actual collection.",
     "currency": "INR"
@@ -230,18 +230,18 @@
     "status": "calculated",
     "calculationEligible": true,
     "indiaGrossCr": 127.03,
-    "overseasGrossCr": 71.52,
-    "worldwideGrossCr": 198.55,
+    "overseasGrossCr": 80.63,
+    "worldwideGrossCr": 207.66,
     "calculatedAs": "Latest valid India all-dates gross + latest valid overseas all-dates gross",
-    "calculatedAt": "2026-11-06T05:15:42+05:30",
+    "calculatedAt": "2026-11-06T10:09:09+05:30",
     "indiaSourceName": "Sacnilk",
     "indiaSourceUrl": "https://www.sacnilk.com/quicknews/ramayana_part_1_2026_Overall_Advance_Booking_Report",
     "indiaSourceUpdatedText": null,
     "indiaFetchedAt": "2026-11-05T03:34:20+05:30",
     "overseasSourceName": "BoxOfficeIndia24",
     "overseasSourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
-    "overseasSourceUpdatedText": "2026-11-06 05:13 IST",
-    "overseasFetchedAt": "2026-11-06T05:15:44+05:30",
+    "overseasSourceUpdatedText": "2026-11-06 10:03 IST",
+    "overseasFetchedAt": "2026-11-06T10:09:11+05:30",
     "indiaComponent": {
       "grossCr": 127.03,
       "sourceName": "Sacnilk",
@@ -251,11 +251,11 @@
       "scope": "india_all_dates"
     },
     "overseasComponent": {
-      "grossCr": 71.52,
+      "grossCr": 80.63,
       "sourceName": "BoxOfficeIndia24",
       "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
-      "sourceUpdatedText": "2026-11-06 05:13 IST",
-      "fetchedAt": "2026-11-06T05:15:44+05:30",
+      "sourceUpdatedText": "2026-11-06 10:03 IST",
+      "fetchedAt": "2026-11-06T10:09:11+05:30",
       "scope": "overseas_all_dates"
     },
     "note": "Calculated advance-booking snapshot using the latest valid retained India and overseas all-dates components. Components refresh independently and may have different publisher timestamps. This is not actual theatrical collection."
@@ -283,32 +283,32 @@
     "sacnilk": {
       "status": "unavailable",
       "url": "https://www.sacnilk.com/livetracker/ramayana_part_1_2026_Advance-Booking-Live",
-      "checkedAt": "2026-11-06T05:15:45+05:30",
+      "checkedAt": "2026-11-06T10:09:12+05:30",
       "warning": "No unambiguous labelled India gross found"
     },
     "boxOfficeIndia24": {
       "boi24_day_1": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
-        "checkedAt": "2026-11-06T05:15:43+05:30",
+        "checkedAt": "2026-11-06T10:09:10+05:30",
         "warning": null
       },
       "boi24_day_2": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-2-advance-booking-20261106",
-        "checkedAt": "2026-11-06T05:15:43+05:30",
+        "checkedAt": "2026-11-06T10:09:10+05:30",
         "warning": null
       },
       "boi24_day_3": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-3-advance-booking-20261107",
-        "checkedAt": "2026-11-06T05:15:44+05:30",
+        "checkedAt": "2026-11-06T10:09:11+05:30",
         "warning": null
       },
       "boi24_overseas_all_dates": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
-        "checkedAt": "2026-11-06T05:15:44+05:30",
+        "checkedAt": "2026-11-06T10:09:11+05:30",
         "warning": null
       }
     },
@@ -319,7 +319,7 @@
   },
   "ingestion": {
     "source": "BoxOfficeIndia24 + Sacnilk + TMDB",
-    "checkedAt": "2026-11-06T05:15:42+05:30",
+    "checkedAt": "2026-11-06T10:09:09+05:30",
     "refreshIntervalMinutes": 30,
     "status": "partial",
     "warnings": [
@@ -329,31 +329,31 @@
       "boi24_day_1": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
-        "checkedAt": "2026-11-06T05:15:43+05:30",
+        "checkedAt": "2026-11-06T10:09:10+05:30",
         "warning": null
       },
       "boi24_day_2": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-2-advance-booking-20261106",
-        "checkedAt": "2026-11-06T05:15:43+05:30",
+        "checkedAt": "2026-11-06T10:09:10+05:30",
         "warning": null
       },
       "boi24_day_3": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-3-advance-booking-20261107",
-        "checkedAt": "2026-11-06T05:15:44+05:30",
+        "checkedAt": "2026-11-06T10:09:11+05:30",
         "warning": null
       },
       "boi24_overseas_all_dates": {
         "status": "success",
         "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
-        "checkedAt": "2026-11-06T05:15:44+05:30",
+        "checkedAt": "2026-11-06T10:09:11+05:30",
         "warning": null
       },
       "sacnilk": {
         "status": "unavailable",
         "url": "https://www.sacnilk.com/livetracker/ramayana_part_1_2026_Advance-Booking-Live",
-        "checkedAt": "2026-11-06T05:15:45+05:30",
+        "checkedAt": "2026-11-06T10:09:12+05:30",
         "warning": "No unambiguous labelled India gross found"
       }
     },
@@ -379,17 +379,17 @@
       "parsePolicy": "labelled_values_only"
     },
     "boxOfficeIndia24Overseas": {
-      "grossCr": 71.52,
-      "tickets": 570952,
-      "shows": 32099,
-      "cinemas": 3001,
+      "grossCr": 80.63,
+      "tickets": 651466,
+      "shows": 33003,
+      "cinemas": 3015,
       "countries": 32,
-      "occupancyPct": 10.6,
+      "occupancyPct": 11.8,
       "dateRange": "4–15 Nov",
       "sourceName": "BoxOfficeIndia24",
       "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
-      "sourceUpdatedText": "2026-11-06 05:13 IST",
-      "fetchedAt": "2026-11-06T05:15:44+05:30",
+      "sourceUpdatedText": "2026-11-06 10:03 IST",
+      "fetchedAt": "2026-11-06T10:09:11+05:30",
       "scope": "overseas_all_dates",
       "note": "Overseas all-dates advance booking; not worldwide Day 1 and not actual collection.",
       "currency": "INR"
@@ -398,9 +398,9 @@
   },
   "audienceIngestion": {
     "status": "success",
-    "fetchedAt": "2026-11-06T05:15:42+05:30",
+    "fetchedAt": "2026-11-06T10:09:09+05:30",
     "reviewCount": 0,
-    "voteCount": 7
+    "voteCount": 8
   },
-  "lastChecked": "2026-11-06T05:15:42+05:30"
+  "lastChecked": "2026-11-06T10:09:09+05:30"
 }
