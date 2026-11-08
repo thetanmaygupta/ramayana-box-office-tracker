@@ -3,7 +3,7 @@
   "status": "awaiting_reviews",
   "source": "The Movie Database (TMDB)",
   "sourceUrl": "https://www.themoviedb.org/movie/656908",
-  "lastUpdated": "2026-11-08T02:09:15+05:30",
+  "lastUpdated": "2026-11-08T05:38:15+05:30",
   "tmdbScore": 77.4,
   "tmdbRating": 7.74,
   "tmdbRatingOutOf": 10,
@@ -104,6 +104,11 @@
         "url": "https://www.youtube.com/watch?v=t0NA1jWfck8"
       },
       {
+        "title": "Ramayana Rise of a Legend | Review and Explanation | Ranbir Kapoor | Yash | Sai Pallavi | Sunny Deol",
+        "publishedAt": "2026-11-07T15:10:27Z",
+        "url": "https://www.youtube.com/watch?v=vFVPmMeh4lU"
+      },
+      {
         "title": "Ramayana Movie Review 💀 | Ramayana movie | #ramayan #bollywood #shorts #viral #trending",
         "publishedAt": "2026-11-07T11:00:40Z",
         "url": "https://www.youtube.com/watch?v=HafMtNFmP3A"
@@ -137,11 +142,6 @@
         "title": "#RAMAYANA WINNING HEARTS! Critics &amp; Audience Praising  #RamayanaReview #yash #RanbirKapoor #trending",
         "publishedAt": "2026-11-07T03:13:10Z",
         "url": "https://www.youtube.com/watch?v=V4R6KBvcqJU"
-      },
-      {
-        "title": "Ramayana IMAX Experience 😱 | 80% भारतीय क्यों नहीं देख पाएंगे? | My Factology",
-        "publishedAt": "2026-11-07T01:30:09Z",
-        "url": "https://www.youtube.com/watch?v=ta4bWXz638s"
       }
     ],
     "youtubeUsedAsSentimentEvidence": false,
@@ -149,10 +149,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-07T20:39:17Z",
+  "updatedAt": "2026-11-08T00:08:17Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-07T20:39:17Z",
+    "updatedAt": "2026-11-08T00:08:17Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 0,
     "minimumReviewLength": 100,
