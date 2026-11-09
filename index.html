@@ -111,52 +111,63 @@
         .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
         .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
 
-        /* Liquid Glass Scroll Table Framework */
-        .table-scroll-container {
+        /* Liquid Flexbox Matrix Framework - Bulletproof Scrolling */
+        .matrix-scroll-wrapper {
             margin-top: 20px;
             overflow-x: auto;
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(15, 23, 42, 0.3);
+            background: rgba(15, 23, 42, 0.25);
             -webkit-overflow-scrolling: touch;
         }
-        .liquid-table {
+        .matrix-container {
+            min-width: 750px;
+            display: flex;
+            flex-direction: column;
+        }
+        .matrix-header-row, .matrix-data-row {
+            display: flex;
             width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 720px;
+            align-items: center;
+        }
+        .matrix-header-row {
+            background: rgba(15, 23, 42, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+        }
+        .matrix-data-row {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .matrix-container .matrix-data-row:last-child {
+            border-bottom: none;
+        }
+        .matrix-cell {
+            padding: 14px 16px;
+            flex: 1;
+            white-space: nowrap;
             font-size: 13px;
         }
-        .liquid-table th, .liquid-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            white-space: nowrap;
-        }
-        .liquid-table th {
-            background: rgba(15, 23, 42, 0.5);
+        .matrix-cell.head {
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             color: #94a3b8;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-        }
-        .liquid-table tr:last-child td {
-            border-bottom: none;
         }
         .timeline-cell {
             font-weight: 700;
             color: #ffffff;
-            background: rgba(15, 23, 42, 0.2);
+            background: rgba(15, 23, 42, 0.15);
+            max-width: 110px;
+            flex: 0 0 110px;
         }
         .ramayana-cell {
             color: #d4a359;
             font-weight: 800;
-            background: rgba(212, 163, 89, 0.04);
+            background: rgba(212, 163, 89, 0.03);
         }
         
         .hidden-rows { display: none; }
-        .toggle-btn-container { text-align: center; margin-top: 16px; }
+        .toggle-btn-container { text-align: center; margin-top: 18px; }
         .glass-btn {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(212, 163, 89, 0.3);
@@ -218,23 +229,14 @@
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix -->
+        <!-- Section 2: Head-to-Head Flexbox Run Matrix -->
         <section class="liquid-glass">
             <h2>Head-to-Head Run Analysis</h2>
             <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
             
-            <div class="table-scroll-container">
-                <table class="liquid-table">
-                    <thead>
-                        <tr>
-                            <th>Timeline</th>
-                            <th style="color: #ffffff; background: rgba(255,255,255,0.03);">Ramayana</th>
-                            <th>Kalki 2898 AD</th>
-                            <th>2.0</th>
-                            <th>Baahubali 2</th>
-                            <th>RRR</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="timeline-cell">Day 1</td>
+            <div class="matrix-scroll-wrapper">
+                <div class="matrix-container">
+                    <!-- Header -->
+                    <div class="matrix-header-row">
+                        <div class="matrix-cell head timeline-cell">Timeline</div>
+                        <div class="matrix-cell head ramayana-cell" style="color: #ffffff;">Ramayana</div>
