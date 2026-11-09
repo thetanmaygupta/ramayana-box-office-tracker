@@ -57,9 +57,19 @@
     "tmdbReviewPagesAvailable": 1,
     "youtubeVideosDiscovered": [
       {
-        "title": "🤯 Ramayana Movie Review | 4000 Crore Worth ஆ💥 #Ramayana #ramayanareview #yash #ranbirkapoor #shorts",
-        "publishedAt": "2026-11-09T08:30:23Z",
-        "url": "https://www.youtube.com/watch?v=GbHZ29Dq7H4"
+        "title": "Miru Movie chusara??😁 #shorts #ramayana #moviereview #telugushorts #suchithdasa",
+        "publishedAt": "2026-11-09T11:20:35Z",
+        "url": "https://www.youtube.com/watch?v=OEgTOK6UErM"
+      },
+      {
+        "title": "🔥 Ramayana – Part 1 | Tamil Movie Review! #RamayanaPart1 #Ramayana #yash #saipallavi #arrahman",
+        "publishedAt": "2026-11-09T10:30:07Z",
+        "url": "https://www.youtube.com/watch?v=jR5lKk_fCxA"
+      },
+      {
+        "title": "Ramayana: Rise of a Legend 😱 | Bangla Movie Review ➤ #Ramayana #RamayanaShorts  #RanbirYash  #Yash",
+        "publishedAt": "2026-11-09T10:24:39Z",
+        "url": "https://www.youtube.com/watch?v=x_vjbIHHF_I"
       },
       {
         "title": "Ramayana movie Public Review | Public reaction on Ramayana movie | Ranveer Kapoor | Yash #ramayana",
@@ -70,6 +80,11 @@
         "title": "Ramayana Public Talk | Yash | Ranbir Kapoor | Ramayana Review | Ramayana Public Review | Rating",
         "publishedAt": "2026-11-09T07:45:06Z",
         "url": "https://www.youtube.com/watch?v=nbAcH71JwS0"
+      },
+      {
+        "title": "Ramayana Movie Public Review Tamil | Makkal Points | Ramayanam review tamil",
+        "publishedAt": "2026-11-09T07:40:44Z",
+        "url": "https://www.youtube.com/watch?v=XcFPjp3Uim8"
       },
       {
         "title": "Ramayana Movie Public Review Tamil | Makkal Points | Ramayanam review tamil",
@@ -92,19 +107,9 @@
         "url": "https://www.youtube.com/watch?v=UuxUFpsm0Kc"
       },
       {
-        "title": "🎬 Ramayana: Rise of the Legend Movie Review",
-        "publishedAt": "2026-11-09T04:41:05Z",
-        "url": "https://www.youtube.com/watch?v=4gP7uER6nbs"
-      },
-      {
-        "title": "Can Ramayana Survive Avengers: Doomsday &amp; Dune 3? 😳",
-        "publishedAt": "2026-11-09T04:30:15Z",
-        "url": "https://www.youtube.com/watch?v=Vq7jZgi3SlI"
-      },
-      {
-        "title": "Ramayan Public Review | Fans Honest 😱 Reaction on Ravana #ranbirkapoor #yash",
-        "publishedAt": "2026-11-09T04:15:15Z",
-        "url": "https://www.youtube.com/watch?v=CPRyc8Zafbo"
+        "title": "RAMAYANA Creates HISTORY! 😱 New Record &amp; Worldwide Box Office Update",
+        "publishedAt": "2026-11-09T09:34:52Z",
+        "url": "https://www.youtube.com/watch?v=7JPDNdVugms"
       },
       {
         "title": "Ramayana: Rise of a Legend Review | The Epic Fantasy I&#39;ve Been Missing",
@@ -145,11 +150,6 @@
         "title": "Ramayana படம் எப்படி இருக்கு..??? | Ramayana Movie | Ranbir Kapoor | Yash | Ramayana | #Shorts",
         "publishedAt": "2026-11-08T06:53:17Z",
         "url": "https://www.youtube.com/watch?v=WtTx6vUkr10"
-      },
-      {
-        "title": "Ramayana Movie Public Review | Ramayana Trailer 2 Public Review 🤯🔥 | #ramayana #movie #review",
-        "publishedAt": "2026-11-08T06:40:06Z",
-        "url": "https://www.youtube.com/watch?v=x07gbEYpMGM"
       }
     ],
     "youtubeUsedAsSentimentEvidence": false,
@@ -157,10 +157,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-09T10:00:16Z",
+  "updatedAt": "2026-11-09T13:10:05Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-09T10:00:16Z",
+    "updatedAt": "2026-11-09T13:10:05Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 1,
     "minimumReviewLength": 100,
