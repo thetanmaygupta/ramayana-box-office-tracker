@@ -81,61 +81,65 @@
         .split-title { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; }
         .split-number-box { font-size: 22px; font-weight: 800; margin-top: 4px; color: #ffffff; }
 
-        /* Mobile-Resilient Trajectory Cards (Replaces Unstable HTML Tables) */
-        .trajectory-container {
-            margin-top: 16px;
+        /* Sleek Horizontal Filter Row Wrapper */
+        .filter-scroller {
             display: flex;
-            flex-direction: column;
-            gap: 14px;
+            gap: 8px;
+            overflow-x: auto;
+            margin-top: 16px;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
         }
-        .day-block {
-            background: rgba(15, 23, 42, 0.3);
+        .filter-scroller::-webkit-scrollbar {
+            height: 4px;
+        }
+        .filter-scroller::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+        }
+        .pill-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 9999px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .pill-btn.active {
+            background: rgba(212, 163, 89, 0.15);
+            border-color: #d4a359;
+            color: #d4a359;
+        }
+
+        /* Compact Data Frame Stacking Engine */
+        .matrix-data-box {
+            background: rgba(15, 23, 42, 0.35);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
-            padding: 16px;
-        }
-        .day-title {
-            font-size: 14px;
-            font-weight: 800;
-            color: #ffffff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 20px;
+            margin-top: 12px;
         }
         .competitor-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 0;
+            padding: 10px 0;
             font-size: 13px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
         .competitor-row:last-child {
             border-bottom: none;
         }
-        .comp-name { color: #94a3b8; font-weight: 500; }
+        .comp-name { color: #cbd5e1; font-weight: 500; }
         .comp-value { color: #ffffff; font-weight: 700; }
         .comp-name.highlight-film { color: #d4a359; font-weight: 700; }
         .comp-value.highlight-film { color: #d4a359; font-weight: 800; }
-        
-        .hidden-rows { display: none; }
-        .toggle-btn-container { text-align: center; margin-top: 16px; }
-        .glass-btn {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(212, 163, 89, 0.3);
-            color: #cbd5e1;
-            padding: 10px 20px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .glass-btn:hover { background: rgba(212, 163, 89, 0.1); color: #d4a359; }
 
-        .reviews-layout { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+        .reviews-layout { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; width: 100%; }
         .review-row { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
         .review-author-line { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
         .author-name { font-weight: 700; color: #ffffff; }
@@ -175,34 +179,49 @@
             </div>
         </section>
 
-        <!-- Comparison Stack Block -->
+        <!-- Compact Dynamic Filter Matrix Block -->
         <section class="liquid-glass">
             <h2>Head-to-Head Trajectory Matrix</h2>
-            <p class="section-desc">Theatrical runway comparison mapping across major historical milestones.</p>
+            <p class="section-desc">Select target milestones to view live historical velocity tracking trends.</p>
             
-            <div class="trajectory-container">
-                <!-- Day 1 Segment -->
-                <div class="day-block">
-                    <div class="day-title">Day 1 Cumulative</div>
-                    <div class="competitor-row"><span class="comp-name highlight-film">Ramayana</span><span class="comp-value highlight-film" id="matrix-r-d1">₹75.40 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">Kalki 2898 AD</span><span class="comp-value">₹175.00 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">2.0</span><span class="comp-value">₹80.00 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">Baahubali 2</span><span class="comp-value">₹214.00 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">RRR</span><span class="comp-value">₹223.00 Cr</span></div>
-                </div>
+            <!-- Horizontal Filter Buttons Hub -->
+            <div class="filter-scroller">
+                <button class="pill-btn active" onclick="switchTimelineDay(1, this)">Day 1</button>
+                <button class="pill-btn" onclick="switchTimelineDay(2, this)">Day 2</button>
+                <button class="pill-btn" onclick="switchTimelineDay(3, this)">Day 3</button>
+                <button class="pill-btn" onclick="switchTimelineDay(4, this)">Day 4</button>
+                <button class="pill-btn" onclick="switchTimelineDay(5, this)">Day 5</button>
+                <button class="pill-btn" onclick="switchTimelineDay('w1', this)">Week 1</button>
+            </div>
 
-                <!-- Day 2 Segment -->
-                <div class="day-block">
-                    <div class="day-title">Day 2 Cumulative</div>
-                    <div class="competitor-row"><span class="comp-name highlight-film">Ramayana</span><span class="comp-value highlight-film" id="matrix-r-d2">₹142.10 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">Kalki 2898 AD</span><span class="comp-value">₹278.50 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">2.0</span><span class="comp-value">₹144.00 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">Baahubali 2</span><span class="comp-value">₹382.50 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">RRR</span><span class="comp-value">₹371.00 Cr</span></div>
+            <!-- Single Reusable Clean Data Box Container -->
+            <div class="matrix-data-box">
+                <div class="competitor-row">
+                    <span class="comp-name highlight-film">Ramayana</span>
+                    <span class="comp-value highlight-film" id="matrix-active-r">—</span>
                 </div>
+                <div class="competitor-row">
+                    <span class="comp-name">Kalki 2898 AD</span>
+                    <span class="comp-value" id="matrix-active-kalki">₹175.00 Cr</span>
+                </div>
+                <div class="competitor-row">
+                    <span class="comp-name">2.0</span>
+                    <span class="comp-value" id="matrix-active-two">₹80.00 Cr</span>
+                </div>
+                <div class="competitor-row">
+                    <span class="comp-name">Baahubali 2</span>
+                    <span class="comp-value" id="matrix-active-bahubali">₹214.00 Cr</span>
+                </div>
+                <div class="competitor-row">
+                    <span class="comp-name">RRR</span>
+                    <span class="comp-value" id="matrix-active-rrr">₹223.00 Cr</span>
+                </div>
+            </div>
+        </section>
 
-                <!-- Day 3 Segment -->
-                <div class="day-block">
-                    <div class="day-title">Day 3 Cumulative</div>
-                    <div class="competitor-row"><span class="comp-name highlight-film">Ramayana</span><span class="comp-value highlight-film" id="matrix-r-d3">₹223.74 Cr</span></div>
-                    <div class="competitor-row"><span class="comp-name">Kalki 2898 AD</span><span class="comp-value">₹415.00 Cr</span></div>
+        <section class="liquid-glass">
+            <h2>Audience Pulse Sentiment Index</h2>
+            <p class="section-desc">Dynamic sentiment verification loops updated via global API vectors.</p>
+            
+            <div class="main-display-panel" style="background: rgba(15, 23, 42, 0.2); border-color: rgba(255, 255, 255, 0.05);">
+                <span class="panel-label">Verified Database Score</span>
