@@ -4,138 +4,312 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REELMETRICS / CINEMA INTELLIGENCE • LIQUID GLASS</title>
-    <script src="https://tailwindcss.com"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
             background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
                               url('https://unsplash.com');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            color: #cbd5e1;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            padding: 0 24px 64px 24px;
+            -webkit-font-smoothing: antialiased;
+        }
+        header {
+            max-width: 896px;
+            margin: 0 auto;
+            padding: 32px 24px 16px 24px;
+        }
+        .header-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            color: #fbbf24;
+            text-transform: uppercase;
+        }
+        .header-line::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 2px;
+            background-color: #fbbf24;
+        }
+        h1 {
+            font-size: 40px;
+            font-weight: 900;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-top: 24px;
+            line-height: 1;
+        }
+        .brand-highlight {
+            color: #fbbf24;
+        }
+        .header-desc {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #94a3b8;
+            max-width: 576px;
+            line-height: 1.625;
+        }
+        main {
+            max-width: 896px;
+            margin: 24px auto 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .status-area {
+            padding: 0 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .live-badge {
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            background-color: rgba(120, 53, 4, 0.2);
+            font-size: 12px;
+            font-weight: 500;
+            color: #fde68a;
+        }
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #fbbf24;
+            box-shadow: 0 0 8px #fbbf24;
+        }
+        .flex-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 4px;
+        }
+        .sub-badge {
+            font-size: 12px;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid #1e293b;
+            padding: 6px 14px;
+            border-radius: 12px;
+            color: #94a3b8;
+        }
+        .sub-badge strong {
+            color: #e2e8f0;
+            font-weight: 600;
         }
         .liquid-glass {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 
-                        0 20px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        @media (min-width: 640px) {
+            .liquid-glass {
+                padding: 32px;
+            }
+        }
+        .sec-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #fbbf24;
+            text-transform: uppercase;
+        }
+        h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-top: 4px;
+            letter-spacing: -0.025em;
+        }
+        @media (min-width: 640px) {
+            h2 { font-size: 24px; }
+        }
+        .sec-desc {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 8px;
+            line-height: 1.625;
+        }
+        @media (min-width: 640px) {
+            .sec-desc { font-size: 14px; }
         }
         .inner-glow {
             border: 1px solid rgba(212, 163, 89, 0.2);
             background: linear-gradient(135deg, rgba(212, 163, 89, 0.05), transparent);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-tag {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: rgba(251, 191, 36, 0.7);
+            text-transform: uppercase;
+        }
+        .main-val-box {
+            font-size: 36px;
+            font-weight: 900;
+            color: #fbbf24;
+            letter-spacing: -0.025em;
+            margin-top: 8px;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        @media (min-width: 640px) {
+            .main-val-box { font-size: 48px; }
+        }
+        .main-val-unit {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: normal;
+            color: rgba(251, 191, 36, 0.8);
+        }
+        .glow-desc {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 12px;
+        }
+        .cols-grid {
+            display: grid;
+            grid-template-cols: 1fr;
+            gap: 16px;
+        }
+        @media (min-width: 640px) {
+            .cols-grid {
+                grid-template-cols: repeat(2, 1fr);
+            }
+        }
+        .split-box {
+            border: 1px solid rgba(30, 41, 59, 0.8);
+            background-color: rgba(2, 6, 23, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .split-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+        .split-val-box {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.025em;
+            margin-top: 8px;
+        }
+        @media (min-width: 640px) {
+            .split-val-box { font-size: 30px; }
+        }
+        .sky-t { color: #38bdf8; }
+        .fuchsia-t { color: #e879f9; }
+        .split-unit {
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .sec-footer {
+            padding-top: 8px;
+            border-top: 1px solid rgba(30, 41, 59, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        @media (min-width: 640px) {
+            .sec-footer {
+                flex-direction: row;
+            }
+        }
+        .font-m {
+            font-family: monospace;
+            color: rgba(148, 163, 184, 0.7);
         }
     </style>
 </head>
-<body class="text-slate-300 min-h-screen font-sans antialiased selection:bg-amber-500 selection:text-slate-950 pb-16">
+<body>
 
-    <!-- Top Branding Header -->
-    <header class="max-w-4xl mx-auto px-6 pt-8 pb-4">
-        <div class="flex items-center gap-2 text-[11px] font-bold tracking-[0.25em] text-amber-400/80 uppercase">
-            <span class="w-6 h-[2px] bg-amber-400 inline-block"></span>
-            ReelMetrics / Cinema Intelligence • Liquid Glass
-        </div>
-        <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-white uppercase mt-6 leading-none">
-            REEL<span class="text-amber-400 block sm:inline">METRICS</span>
-        </h1>
-        <p class="mt-4 text-sm sm:text-base text-slate-400 max-w-xl leading-relaxed">
+    <header>
+        <div class="header-line">ReelMetrics / Cinema Intelligence • Liquid Glass</div>
+        <h1>REEL<span class="brand-highlight">METRICS</span></h1>
+        <p class="header-desc">
             A source-aware cinema intelligence platform for box-office tracking, advance bookings, audience sentiment, historical comparisons and analytical forecasting.
         </p>
     </header>
 
-    <!-- Content Sections Container -->
-    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
-
-        <!-- Status Pills Area -->
-        <div class="px-2 space-y-3">
-            <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-amber-500/30 bg-amber-950/20 text-xs font-medium text-amber-300">
-                <span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
+    <main>
+        <div class="status-area">
+            <div class="live-badge">
+                <span class="pulse-dot"></span>
                 Live Day-Wise Theatrical Tracking Configuration Active
             </div>
-            
-            <div class="flex flex-wrap gap-3 pt-1">
-                <span class="text-xs bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-400">
-                    Currently Tracking: <strong class="text-slate-200 font-semibold">Ramayana: Rise of a Legend</strong>
-                </span>
-                <span class="text-xs bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-400">
-                    Sync Execution: <strong id="clock-display" class="text-slate-200 font-semibold">—</strong>
-                </span>
+            <div class="flex-badges">
+                <div class="sub-badge">
+                    Currently Tracking: <strong>Ramayana: Rise of a Legend</strong>
+                </div>
+                <div class="sub-badge">
+                    Sync Execution: <strong id="clock-display">—</strong>
+                </div>
             </div>
         </div>
 
-        <!-- 01 / Worldwide Observation Segment -->
-        <section class="liquid-glass rounded-3xl p-6 sm:p-8 space-y-6">
+        <section class="liquid-glass">
             <div>
-                <div class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">01 / Worldwide Observation</div>
-                <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1 tracking-tight">Worldwide Box Office — Live Data</h2>
-                <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+                <div class="sec-tag">01 / Worldwide Observation</div>
+                <h2>Worldwide Box Office — Live Data</h2>
+                <p class="sec-desc">
                     Calculated worldwide cumulative gross metrics: Sacnilk India gross records integrated dynamically with verified international territory component items.
                 </p>
             </div>
 
-            <!-- Central Large Worldwide Display Box -->
-            <div class="rounded-2xl p-6 inner-glow relative overflow-hidden group">
-                <span class="text-[11px] font-bold tracking-wider text-amber-400/70 uppercase">Worldwide gross</span>
-                <div class="text-4xl sm:text-5xl font-black text-amber-400 tracking-tight mt-2 flex items-baseline gap-1">
+            <div class="inner-glow">
+                <span class="glow-tag">Worldwide gross</span>
+                <div class="main-val-box">
                     <span id="ww-gross">—</span>
-                    <span class="text-lg font-bold tracking-normal text-amber-400/80">Cr</span>
+                    <span class="main-val-unit">Cr</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-3 leading-normal">
+                <p class="glow-desc">
                     Latest valid India + overseas collections • components refresh independently • live theater data
                 </p>
             </div>
 
-            <!-- Double Split Columns Grid Layout -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- India Split Container -->
-                <div class="rounded-2xl p-5 border border-slate-800/80 bg-slate-950/40 backdrop-blur-md">
-                    <span class="text-xs font-semibold text-slate-400">India gross</span>
-                    <div class="text-2xl sm:text-3xl font-black text-sky-400 tracking-tight mt-2">
-                        ₹<span id="india-gross">—</span> <span class="text-xs font-bold text-sky-400/80">Cr</span>
+            <div class="cols-grid">
+                <div class="split-box">
+                    <span class="split-label">India gross</span>
+                    <div class="split-val-box sky-t">
+                        ₹<span id="india-gross">—</span> <span class="split-unit">Cr</span>
                     </div>
                 </div>
 
-                <!-- Overseas Split Container -->
-                <div class="rounded-2xl p-5 border border-slate-800/80 bg-slate-950/40 backdrop-blur-md">
-                    <span class="text-xs font-semibold text-slate-400">Overseas gross</span>
-                    <div class="text-2xl sm:text-3xl font-black text-fuchsia-400 tracking-tight mt-2">
-                        ₹<span id="overseas-gross">—</span> <span class="text-xs font-bold text-fuchsia-400/80">Cr</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Metadata Sources Footer Tags -->
-            <div class="pt-2 border-t border-slate-800/60 flex flex-col sm:flex-row justify-between gap-2 text-xs text-slate-500 font-medium">
-                <div>Sources: Sacnilk • International Registries</div>
-                <div id="source-time" class="font-mono text-slate-400/70">Sync: —</div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Script Layer Handling Data State Ingestions -->
-    <script>
-        async function runLiquidGlassSync() {
-            try {
-                const response = await fetch('./data.json');
-                const data = await response.json();
-                
-                if (data.worldwideAllDates) {
-                    document.getElementById('ww-gross').innerText = data.worldwideAllDates.worldwideGrossCr || '—';
-                    document.getElementById('india-gross').innerText = data.worldwideAllDates.indiaGrossCr || '—';
-                    document.getElementById('overseas-gross').innerText = data.worldwideAllDates.overseasGrossCr || '—';
-                }
-                
-                if (data.lastChecked) {
-                    const cleanTime = data.lastChecked.replace('T', ' ').substring(0, 19);
-                    document.getElementById('clock-display').innerText = cleanTime + ' IST';
-                    document.getElementById('source-time').innerText = 'Last updated: ' + cleanTime;
-                }
-            } catch (error) {
-                console.error("Theme state tracking synchronization fault:", error);
-            }
-        }
-        window.addEventListener('DOMContentLoaded', runLiquidGlassSync);
-    </script>
-</body>
-</html>
+                <div class="split-box">
+                    <span class="split-label">Overseas gross</span>
+                    <div class="split-val-box fuchsia-t">
