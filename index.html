@@ -4,193 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReelMetrics — Cinema Intelligence</title>
+    <script src="https://tailwindcss.com"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
-            background: linear-gradient(135deg, #090d16 0%, #11102b 50%, #1d0926 100%);
-            color: #f1f5f9;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            min-height: 100vh;
-            padding: 0 16px;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%),
+                        radial-gradient(circle at bottom left, #311042, #0f172a 80%);
+            background-attachment: fixed;
         }
-        header {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 24px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-b: 1px solid rgba(255, 255, 255, 0.08);
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        .brand {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            background: linear-gradient(to right, #c084fc, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .glow-purple {
+            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.25);
         }
-        .badge {
-            font-size: 11px;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 2px 8px;
-            border-radius: 12px;
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-left: 6px;
+        .glow-pink {
+            box-shadow: 0 0 25px -5px rgba(236, 72, 153, 0.25);
         }
-        main {
-            max-width: 800px;
-            margin: 24px auto;
-        }
-        .alert-banner {
-            background: rgba(147, 51, 234, 0.1);
-            border: 1px solid rgba(147, 51, 234, 0.2);
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            color: #e9d5ff;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-        .grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            padding: 20px;
-            border-radius: 16px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        .card-title {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #94a3b8;
-            margin-bottom: 12px;
-        }
-        .val-container {
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-        .val {
-            font-size: 36px;
-            font-weight: 800;
-            color: #ffffff;
-        }
-        .unit {
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .purple-t { color: #c084fc; }
-        .pink-t { color: #f472b6; }
-        .blue-t { color: #60a5fa; }
-        
-        .card-desc {
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 6px;
-        }
-        .audit-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            font-size: 13px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .audit-label { color: #94a3b8; }
-        .audit-val { font-family: monospace; color: #e2e8f0; }
-        footer {
-            text-align: center;
-            font-size: 11px;
-            color: #475569;
-            padding: 32px 0;
+        .glow-blue {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25);
         }
     </style>
 </head>
-<body>
+<body class="text-slate-100 min-h-screen font-sans antialiased selection:bg-purple-500 selection:text-white pb-12">
 
-    <header>
-        <div>
-            <span class="brand">REELMETRICS</span>
-            <span class="badge">v3.0</span>
-        </div>
-        <div style="font-size: 13px; color: #94a3b8;">
-            Tracking: <strong style="color: #f1f5f9;">Ramayana Part 1</strong>
+    <!-- Header Navigation Bar -->
+    <header class="border-b border-slate-800/40 sticky top-0 bg-slate-950/60 backdrop-blur-xl z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">REELMETRICS</span>
+                <span class="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-950/40 border border-purple-500/30 text-purple-300 uppercase">Intelligence</span>
+            </div>
+            <div class="text-xs tracking-wide text-slate-400 flex items-center gap-2 bg-slate-900/50 px-3 py-1.5 rounded-xl border border-slate-800/60">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                Live Track: <strong class="text-slate-200 font-semibold">Ramayana: Part 1</strong>
+            </div>
         </div>
     </header>
 
-    <main>
-        <div class="alert-banner">
-            <strong>📊 Data Ingestion Update:</strong> Live theatrical day-wise tracking configuration active. Figures sync from primary distribution registries.
-        </div>
-
-        <div class="grid">
-            <!-- WW Card -->
-            <div class="card">
-                <div class="card-title">Worldwide Gross</div>
-                <div class="val-container">
-                    <span id="ww-gross" class="val">—</span>
-                    <span class="unit purple-t">Cr</span>
-                </div>
-                <div class="card-desc">Aggregated global distribution returns</div>
-            </div>
-
-            <!-- Domestic Card -->
-            <div class="card">
-                <div class="card-title">India Gross</div>
-                <div class="val-container">
-                    <span id="india-gross" class="val">—</span>
-                    <span class="unit pink-t">Cr</span>
-                </div>
-                <div class="card-desc">Domestic theatrical performance share</div>
-            </div>
-
-            <!-- Intl Card -->
-            <div class="card">
-                <div class="card-title">Overseas Gross</div>
-                <div class="val-container">
-                    <span id="overseas-gross" class="val">—</span>
-                    <span class="unit blue-t">Cr</span>
-                </div>
-                <div class="card-desc">International territory collection metrics</div>
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        
+        <!-- Interactive Notification Banner -->
+        <div class="glass-panel p-4 rounded-2xl flex gap-3.5 items-center border border-purple-500/20 bg-gradient-to-r from-purple-950/20 to-transparent">
+            <span class="text-xl filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">📊</span>
+            <div class="text-xs sm:text-sm">
+                <span class="font-semibold text-purple-300">Pipeline Active:</span> The tracker has successfully switched to live daily theatrical gross mode. Metrics update dynamically.
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title" style="margin-bottom: 8px;">Pipeline Audit</div>
-            <div class="audit-row">
-                <span class="audit-label">Data Ingestion Source</span>
-                <span class="audit-val">Sacnilk Live Tracker Index</span>
+        <!-- Analytical Insights Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Global Block -->
+            <div class="glass-panel glow-purple p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:border-purple-500/30">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl"></div>
+                <h3 class="text-xs font-bold tracking-widest text-purple-400 uppercase">Worldwide Gross</h3>
+                <div class="mt-4 flex items-baseline gap-1.5">
+                    <span id="ww-gross" class="text-4xl font-black tracking-tight text-white transition-all duration-500">—</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-purple-400/80">Cr</span>
+                </div>
+                <p class="mt-2 text-[11px] text-slate-400 leading-relaxed">Aggregated operational market returns</p>
             </div>
-            <div class="audit-row">
-                <span class="audit-label">Refresh Frequency</span>
-                <span class="audit-val">Dynamic 30-Min Cron</span>
+
+            <!-- India Domestic Block -->
+            <div class="glass-panel glow-pink p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:border-pink-500/30">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl"></div>
+                <h3 class="text-xs font-bold tracking-widest text-pink-400 uppercase">India Gross</h3>
+                <div class="mt-4 flex items-baseline gap-1.5">
+                    <span id="india-gross" class="text-4xl font-black tracking-tight text-white transition-all duration-500">—</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-pink-400/80">Cr</span>
+                </div>
+                <p class="mt-2 text-[11px] text-slate-400 leading-relaxed">Domestic box office collection metrics</p>
             </div>
-            <div class="audit-row" style="border: none;">
-                <span class="audit-label">Latest Check Run</span>
-                <span id="last-checked" class="audit-val">—</span>
+
+            <!-- Overseas Block -->
+            <div class="glass-panel glow-blue p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:border-blue-500/30">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl"></div>
+                <h3 class="text-xs font-bold tracking-widest text-blue-400 uppercase">Overseas Gross</h3>
+                <div class="mt-4 flex items-baseline gap-1.5">
+                    <span id="overseas-gross" class="text-4xl font-black tracking-tight text-white transition-all duration-500">—</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-400/80">Cr</span>
+                </div>
+                <p class="mt-2 text-[11px] text-slate-400 leading-relaxed">International distribution territory data</p>
             </div>
         </div>
+
+        <!-- Ingestion Status Panel -->
+        <div class="glass-panel rounded-2xl p-6">
+            <h3 class="text-sm font-bold tracking-wider text-slate-200 mb-4 uppercase flex items-center gap-2">
+                <span class="text-purple-400">⚡</span> Core Pipeline Logs
+            </h3>
+            <div class="border-t border-slate-800/60 divide-y divide-slate-800/40 text-xs sm:text-sm">
+                <div class="py-3.5 flex justify-between items-center"><span class="text-slate-400">Tracking Engine</span><span class="font-mono text-slate-300 bg-slate-900/40 px-2.5 py-1 rounded-lg border border-slate-800/40">Sacnilk Live Tracker Index</span></div>
+                <div class="py-3.5 flex justify-between items-center"><span class="text-slate-400">Interval Frequency</span><span class="font-mono text-slate-300 bg-slate-900/40 px-2.5 py-1 rounded-lg border border-slate-800/40">Automated 30-Min Cron</span></div>
+                <div class="py-3.5 flex justify-between items-center"><span class="text-slate-400">Latest Sync Execution</span><span id="last-checked" class="font-mono text-purple-300 font-semibold bg-purple-950/20 px-2.5 py-1 rounded-lg border border-purple-500/20">—</span></div>
+            </div>
+        </div>
+
     </main>
 
-    <footer>
-        ReelMetrics Intelligence Engine • Configured by Tanmay Gupta
+    <footer class="max-w-7xl mx-auto px-4 text-center text-[11px] tracking-wide text-slate-500 mt-16">
+        ReelMetrics Data Systems • Architected by Tanmay Gupta
     </footer>
 
+    <!-- Runtime Asset Integration Engine -->
     <script>
-        async function initDashboard() {
+        async function runDashboardSync() {
             try {
                 const response = await fetch('./data.json');
                 const data = await response.json();
@@ -202,13 +123,14 @@
                 }
                 
                 if (data.lastChecked) {
-                    document.getElementById('last-checked').innerText = data.lastChecked.replace('T', ' ').substring(0, 19);
+                    const parsedTime = data.lastChecked.replace('T', ' ').substring(0, 19);
+                    document.getElementById('last-checked').innerText = parsedTime + ' IST';
                 }
             } catch (error) {
-                console.error("Payload read error:", error);
+                console.error("Dashboard asset state injection conflict:", error);
             }
         }
-        window.addEventListener('DOMContentLoaded', initDashboard);
+        window.addEventListener('DOMContentLoaded', runDashboardSync);
     </script>
 </body>
 </html>
