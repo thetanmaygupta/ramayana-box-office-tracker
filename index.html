@@ -3,299 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReelMetrics — Cinema Intelligence</title>
+    <title>REELMETRICS / CINEMA INTELLIGENCE • LIQUID GLASS</title>
+    <script src="https://tailwindcss.com"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
-            background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%),
-                        radial-gradient(circle at bottom left, #311042, #0f172a 80%);
+            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
+                              url('https://unsplash.com');
+            background-size: cover;
+            background-position: center;
             background-attachment: fixed;
-            color: #f1f5f9;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            min-height: 100vh;
-            padding: 0 16px;
-            padding-bottom: 48px;
-            -webkit-font-smoothing: antialiased;
         }
-        header {
-            max-width: 1200px;
-            margin: 0 auto;
-            height: 64px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .brand {
-            font-size: 20px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            background: linear-gradient(to right, #a78bfa, #f472b6, #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .badge {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            background: rgba(168, 85, 247, 0.15);
-            padding: 2px 8px;
-            border-radius: 9999px;
-            color: #d8b4fe;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            text-transform: uppercase;
-        }
-        .status-badge {
-            font-size: 12px;
-            background: rgba(15, 23, 42, 0.5);
-            padding: 6px 12px;
-            border-radius: 12px;
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .dot {
-            width: 6px;
-            height: 6px;
-            background-color: #34d399;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px #34d399;
-        }
-        main {
-            max-width: 1200px;
-            margin: 32px auto 0 auto;
-        }
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border-radius: 16px;
-            padding: 16px;
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 
+                        0 20px 40px rgba(0, 0, 0, 0.4);
         }
-        .banner {
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            background: linear-gradient(to right, rgba(88, 28, 135, 0.2), transparent);
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-size: 13px;
-            color: #e2e8f0;
-            margin-bottom: 32px;
-        }
-        .banner-label {
-            font-weight: 700;
-            color: #d8b4fe;
-        }
-        .grid {
-            display: grid;
-            grid-template-cols: 1fr;
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-        @media (min-width: 768px) {
-            .grid {
-                grid-template-cols: repeat(3, 1fr);
-            }
-        }
-        .metric-card {
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        .glow-purple { box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.2); }
-        .glow-pink { box-shadow: 0 0 25px -5px rgba(236, 72, 153, 0.2); }
-        .glow-blue { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.2); }
-        
-        .card-bg {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            blur: 40px;
-            filter: blur(40px);
-            opacity: 0.1;
-        }
-        .bg-purple { background-color: #a855f7; }
-        .bg-pink { background-color: #ec4899; }
-        .bg-blue { background-color: #3b82f6; }
-
-        .card-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-        }
-        .title-purple { color: #c084fc; }
-        .title-pink { color: #f472b6; }
-        .title-blue { color: #60a5fa; }
-
-        .val-container {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-        .val {
-            font-size: 40px;
-            font-weight: 900;
-            letter-spacing: -1px;
-            color: #ffffff;
-        }
-        .unit {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .card-desc {
-            font-size: 11px;
-            color: #94a3b8;
-            margin-top: 8px;
-            line-height: 1.5;
-        }
-        .section-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #e2e8f0;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .audit-panel {
-            padding: 24px;
-        }
-        .audit-list {
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .audit-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            font-size: 13px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .audit-label { color: #94a3b8; }
-        .audit-val {
-            font-family: monospace;
-            color: #cbd5e1;
-            background: rgba(15, 23, 42, 0.4);
-            padding: 4px 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .audit-val.highlight {
-            color: #d8b4fe;
-            background: rgba(168, 85, 247, 0.1);
-            border-color: rgba(168, 85, 247, 0.2);
-            font-weight: 600;
-        }
-        footer {
-            max-width: 1200px;
-            margin: 64px auto 0 auto;
-            text-align: center;
-            font-size: 11px;
-            letter-spacing: 1px;
-            color: #475569;
+        .inner-glow {
+            border: 1px solid rgba(212, 163, 89, 0.2);
+            background: linear-gradient(135deg, rgba(212, 163, 89, 0.05), transparent);
         }
     </style>
 </head>
-<body>
+<body class="text-slate-300 min-h-screen font-sans antialiased selection:bg-amber-500 selection:text-slate-950 pb-16">
 
-    <header>
-        <div class="brand-container">
-            <span class="brand">REELMETRICS</span>
-            <span class="badge">Intelligence</span>
+    <!-- Top Branding Header -->
+    <header class="max-w-4xl mx-auto px-6 pt-8 pb-4">
+        <div class="flex items-center gap-2 text-[11px] font-bold tracking-[0.25em] text-amber-400/80 uppercase">
+            <span class="w-6 h-[2px] bg-amber-400 inline-block"></span>
+            ReelMetrics / Cinema Intelligence • Liquid Glass
         </div>
-        <div class="status-badge">
-            <span class="dot"></span>
-            Live Track: <strong style="color: #f1f5f9; font-weight: 600;">Ramayana: Part 1</strong>
-        </div>
+        <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-white uppercase mt-6 leading-none">
+            REEL<span class="text-amber-400 block sm:inline">METRICS</span>
+        </h1>
+        <p class="mt-4 text-sm sm:text-base text-slate-400 max-w-xl leading-relaxed">
+            A source-aware cinema intelligence platform for box-office tracking, advance bookings, audience sentiment, historical comparisons and analytical forecasting.
+        </p>
     </header>
 
-    <main>
-        <!-- Banner -->
-        <div class="glass-panel banner">
-            <span>📊</span>
+    <!-- Content Sections Container -->
+    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
+
+        <!-- Status Pills Area -->
+        <div class="px-2 space-y-3">
+            <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-amber-500/30 bg-amber-950/20 text-xs font-medium text-amber-300">
+                <span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
+                Live Day-Wise Theatrical Tracking Configuration Active
+            </div>
+            
+            <div class="flex flex-wrap gap-3 pt-1">
+                <span class="text-xs bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-400">
+                    Currently Tracking: <strong class="text-slate-200 font-semibold">Ramayana: Rise of a Legend</strong>
+                </span>
+                <span class="text-xs bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-400">
+                    Sync Execution: <strong id="clock-display" class="text-slate-200 font-semibold">—</strong>
+                </span>
+            </div>
+        </div>
+
+        <!-- 01 / Worldwide Observation Segment -->
+        <section class="liquid-glass rounded-3xl p-6 sm:p-8 space-y-6">
             <div>
-                <span class="banner-label">Pipeline Active:</span> The tracker has successfully switched to live daily theatrical gross mode. Metrics update dynamically.
-            </div>
-        </div>
-
-        <!-- Metrics Cards -->
-        <div class="grid">
-            <!-- Worldwide -->
-            <div class="glass-panel metric-card glow-purple">
-                <div class="card-bg bg-purple"></div>
-                <div class="card-title title-purple">Worldwide Gross</div>
-                <div class="val-container">
-                    <span id="ww-gross" class="val">—</span>
-                    <span class="unit title-purple">Cr</span>
-                </div>
-                <div class="card-desc">Aggregated operational market returns</div>
+                <div class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">01 / Worldwide Observation</div>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1 tracking-tight">Worldwide Box Office — Live Data</h2>
+                <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+                    Calculated worldwide cumulative gross metrics: Sacnilk India gross records integrated dynamically with verified international territory component items.
+                </p>
             </div>
 
-            <!-- India Gross -->
-            <div class="glass-panel metric-card glow-pink">
-                <div class="card-bg bg-pink"></div>
-                <div class="card-title title-pink">India Gross</div>
-                <div class="val-container">
-                    <span id="india-gross" class="val">—</span>
-                    <span class="unit title-pink">Cr</span>
+            <!-- Central Large Worldwide Display Box -->
+            <div class="rounded-2xl p-6 inner-glow relative overflow-hidden group">
+                <span class="text-[11px] font-bold tracking-wider text-amber-400/70 uppercase">Worldwide gross</span>
+                <div class="text-4xl sm:text-5xl font-black text-amber-400 tracking-tight mt-2 flex items-baseline gap-1">
+                    <span id="ww-gross">—</span>
+                    <span class="text-lg font-bold tracking-normal text-amber-400/80">Cr</span>
                 </div>
-                <div class="card-desc">Domestic box office collection metrics</div>
+                <p class="text-xs text-slate-400 mt-3 leading-normal">
+                    Latest valid India + overseas collections • components refresh independently • live theater data
+                </p>
             </div>
 
-            <!-- Overseas Gross -->
-            <div class="glass-panel metric-card glow-blue">
-                <div class="card-bg bg-blue"></div>
-                <div class="card-title title-blue">Overseas Gross</div>
-                <div class="val-container">
-                    <span id="overseas-gross" class="val">—</span>
-                    <span class="unit title-blue">Cr</span>
+            <!-- Double Split Columns Grid Layout -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- India Split Container -->
+                <div class="rounded-2xl p-5 border border-slate-800/80 bg-slate-950/40 backdrop-blur-md">
+                    <span class="text-xs font-semibold text-slate-400">India gross</span>
+                    <div class="text-2xl sm:text-3xl font-black text-sky-400 tracking-tight mt-2">
+                        ₹<span id="india-gross">—</span> <span class="text-xs font-bold text-sky-400/80">Cr</span>
+                    </div>
                 </div>
-                <div class="card-desc">International distribution territory data</div>
-            </div>
-        </div>
 
-        <!-- Audit Panel -->
-        <div class="glass-panel audit-panel">
-            <div class="section-title">
-                <span style="color: #a855f7;">⚡</span> Core Pipeline Logs
-            </div>
-            <div class="audit-list">
-                <div class="audit-row">
-                    <span class="audit-label">Tracking Engine</span>
-                    <span class="audit-val">Sacnilk Live Tracker Index</span>
-                </div>
-                <div class="audit-row">
-                    <span class="audit-label">Interval Frequency</span>
-                    <span class="audit-val">Automated 30-Min Cron</span>
-                </div>
-                <div class="audit-row" style="border: none;">
-                    <span class="audit-label">Latest Sync Execution</span>
-                    <span id="last-checked" class="audit-val highlight">—</span>
+                <!-- Overseas Split Container -->
+                <div class="rounded-2xl p-5 border border-slate-800/80 bg-slate-950/40 backdrop-blur-md">
+                    <span class="text-xs font-semibold text-slate-400">Overseas gross</span>
+                    <div class="text-2xl sm:text-3xl font-black text-fuchsia-400 tracking-tight mt-2">
+                        ₹<span id="overseas-gross">—</span> <span class="text-xs font-bold text-fuchsia-400/80">Cr</span>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Metadata Sources Footer Tags -->
+            <div class="pt-2 border-t border-slate-800/60 flex flex-col sm:flex-row justify-between gap-2 text-xs text-slate-500 font-medium">
+                <div>Sources: Sacnilk • International Registries</div>
+                <div id="source-time" class="font-mono text-slate-400/70">Sync: —</div>
+            </div>
+        </section>
+
     </main>
 
+    <!-- Script Layer Handling Data State Ingestions -->
+    <script>
+        async function runLiquidGlassSync() {
+            try {
+                const response = await fetch('./data.json');
+                const data = await response.json();
+                
+                if (data.worldwideAllDates) {
+                    document.getElementById('ww-gross').innerText = data.worldwideAllDates.worldwideGrossCr || '—';
+                    document.getElementById('india-gross').innerText = data.worldwideAllDates.indiaGrossCr || '—';
+                    document.getElementById('overseas-gross').innerText = data.worldwideAllDates.overseasGrossCr || '—';
+                }
+                
+                if (data.lastChecked) {
+                    const cleanTime = data.lastChecked.replace('T', ' ').substring(0, 19);
+                    document.getElementById('clock-display').innerText = cleanTime + ' IST';
+                    document.getElementById('source-time').innerText = 'Last updated: ' + cleanTime;
+                }
+            } catch (error) {
+                console.error("Theme state tracking synchronization fault:", error);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', runLiquidGlassSync);
+    </script>
+</body>
+</html>
