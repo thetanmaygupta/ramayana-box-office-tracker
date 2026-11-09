@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REELMETRICS / CINEMA INTELLIGENCE • LIQUID GLASS</title>
+    <title>REELMETRICS / CINEMA INTELLIGENCE • LIVE TRACKER</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,7 +11,7 @@
             padding: 0;
         }
         body {
-            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.6)), 
+            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.7)), 
                               url('./assets/filters_quality(80)_format(webp).webp');
             background-size: cover;
             background-position: center center;
@@ -29,54 +29,26 @@
             padding: 40px 8px 16px 8px;
         }
         h1 {
-            font-size: 38px;
+            font-size: 36px;
             font-weight: 900;
             letter-spacing: -0.03em;
             color: #ffffff;
             text-transform: uppercase;
-            line-height: 1;
         }
         .highlight { color: #d4a359; }
         .header-desc {
-            margin-top: 14px;
+            margin-top: 12px;
             font-size: 13px;
-            color: #e2e8f0;
-            font-weight: 500;
+            color: #94a3b8;
             max-width: 560px;
             line-height: 1.6;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         main {
             max-width: 800px;
             margin: 20px auto 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 28px;
-        }
-        .status-container {
-            display: flex;
-            padding-left: 4px;
-        }
-        .live-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            border-radius: 9999px;
-            border: 1px solid rgba(212, 163, 89, 0.35);
-            background-color: rgba(15, 23, 42, 0.55);
-            font-size: 11px;
-            font-weight: 600;
-            color: #fde68a;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        .pulse {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: #d4a359;
-            box-shadow: 0 0 8px #d4a359;
+            gap: 24px;
         }
         
         .liquid-glass {
@@ -85,88 +57,73 @@
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.07);
             box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.35);
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 24px;
             width: 100%;
         }
         
-        h2 { font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
-        .section-desc { font-size: 12px; color: #94a3b8; margin-top: 6px; line-height: 1.5; }
+        h2 { font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; text-transform: uppercase; }
+        .section-desc { font-size: 12px; color: #64748b; margin-top: 4px; line-height: 1.5; }
         
         .main-display-panel {
-            border: 1px solid rgba(212, 163, 89, 0.2);
-            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(212, 163, 89, 0.25);
+            background: rgba(15, 23, 42, 0.45);
             border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
+            padding: 24px;
+            margin-top: 16px;
         }
-        .panel-label { font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .big-number { font-size: 42px; font-weight: 900; color: #d4a359; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 2px; }
-        .big-unit { font-size: 16px; font-weight: 700; color: rgba(212, 163, 89, 0.85); }
-        .panel-note { font-size: 11px; color: #64748b; margin-top: 8px; }
+        .panel-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .big-number { font-size: 42px; font-weight: 900; color: #d4a359; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 4px; margin-top: 4px; }
         
-        .split-grid { display: grid; grid-template-cols: 1fr; gap: 14px; margin-top: 14px; }
-        @media (min-width: 640px) { .split-grid { grid-template-cols: repeat(2, 1fr); } }
-        .split-card { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; }
-        .split-title { font-size: 11px; font-weight: 600; color: #94a3b8; }
-        .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
-        .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
+        .split-grid { display: grid; grid-template-cols: 1fr; gap: 12px; margin-top: 12px; }
+        @media (min-width: 580px) { .split-grid { grid-template-cols: repeat(2, 1fr); } }
+        .split-card { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
+        .split-title { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; }
+        .split-number-box { font-size: 22px; font-weight: 800; margin-top: 4px; color: #ffffff; }
 
-        /* Bulletproof Scrollable HTML Table Engine */
-        .table-scroll-container {
-            margin-top: 20px;
-            overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        /* Mobile-Resilient Trajectory Cards (Replaces Unstable HTML Tables) */
+        .trajectory-container {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .day-block {
             background: rgba(15, 23, 42, 0.3);
-            -webkit-overflow-scrolling: touch;
-            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
         }
-        .liquid-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 760px;
-            font-size: 13px;
-        }
-        .liquid-table th, .liquid-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            white-space: nowrap;
-        }
-        .liquid-table th {
-            background: rgba(15, 23, 42, 0.5);
-            font-size: 11px;
-            font-weight: 700;
+        .day-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
             text-transform: uppercase;
-            color: #94a3b8;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
         }
-        .liquid-table tr:last-child td {
+        .competitor-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .competitor-row:last-child {
             border-bottom: none;
         }
-        .timeline-cell {
-            font-weight: 700;
-            color: #ffffff;
-            background: rgba(15, 23, 42, 0.2);
-            width: 110px;
-        }
-        .ramayana-cell {
-            color: #d4a359;
-            font-weight: 800;
-            background: rgba(212, 163, 89, 0.04);
-            text-align: center;
-            width: 130px;
-        }
-        .liquid-table td:not(.timeline-cell):not(.ramayana-cell) {
-            text-align: center;
-        }
+        .comp-name { color: #94a3b8; font-weight: 500; }
+        .comp-value { color: #ffffff; font-weight: 700; }
+        .comp-name.highlight-film { color: #d4a359; font-weight: 700; }
+        .comp-value.highlight-film { color: #d4a359; font-weight: 800; }
         
         .hidden-rows { display: none; }
         .toggle-btn-container { text-align: center; margin-top: 16px; }
         .glass-btn {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(212, 163, 89, 0.3);
             color: #cbd5e1;
             padding: 10px 20px;
@@ -174,69 +131,78 @@
             font-weight: 600;
             border-radius: 9999px;
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
-        .glass-btn:hover {
-            background: rgba(212, 163, 89, 0.1);
-            color: #d4a359;
-            border-color: #d4a359;
-        }
+        .glass-btn:hover { background: rgba(212, 163, 89, 0.1); color: #d4a359; }
 
-        .reviews-layout { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; width: 100%; }
-        .review-row { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-        .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .reviews-layout { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+        .review-row { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
+        .review-author-line { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
         .author-name { font-weight: 700; color: #ffffff; }
-        .rating-chip { font-size: 10px; font-weight: 700; background: rgba(212, 163, 89, 0.12); color: #d4a359; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(212, 163, 89, 0.2); }
-        .review-body { font-size: 13px; color: #cbd5e1; line-height: 1.5; font-style: italic; }
+        .rating-chip { font-size: 10px; font-weight: 700; color: #d4a359; background: rgba(212, 163, 89, 0.1); padding: 2px 6px; border-radius: 4px; }
+        .review-body { font-size: 12px; color: #cbd5e1; line-height: 1.5; font-style: italic; }
+        
+        .footer-note { text-align: center; font-size: 11px; color: #475569; margin-top: 32px; padding-bottom: 32px; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>REEL<span class="highlight">METRICS</span></h1>
-        <p class="header-desc">A source-aware cinema intelligence platform mapping day-wise box office tracking, milestone analytics, trajectory pacing, and verified audience sentiment index loops.</p>
+        <p class="header-desc">Cinema Intelligence Platform • Live Theatrical Trajectory Matrix Engine</p>
     </header>
 
     <main>
-        <div class="status-container">
-            <div class="live-pill"><span class="pulse"></span>Live Parallax Analytical Grid Active</div>
-        </div>
-
-        <!-- Section 1: Box Office Gross Tracking -->
+        <!-- Box Office Block -->
         <section class="liquid-glass">
-            <h2>Worldwide Box Office Collection</h2>
-            <p class="section-desc">Calculated global cumulative gross metrics: automated local territory streams cross-verified with overseas components.</p>
+            <h2>Worldwide Box Office Observation</h2>
+            <p class="section-desc">Dynamic multi-territory tracking streams.</p>
 
             <div class="main-display-panel">
-                <span class="panel-label">Worldwide gross</span>
-                <div class="big-number"><span id="ww-gross">223.74</span><span class="big-unit">Cr</span></div>
-                <p class="panel-note">Aggregated dynamic box office updates</p>
+                <span class="panel-label">Worldwide Advance Gross</span>
+                <div class="big-number">₹<span id="total-worldwide-gross">223.74</span> Cr</div>
             </div>
 
             <div class="split-grid">
                 <div class="split-card">
-                    <span class="split-title">India gross</span>
-                    <div class="split-number-box">₹<span id="india-gross">200.00</span><span class="split-unit-text">Cr</span></div>
+                    <span class="split-title">India Gross</span>
+                    <div class="split-number-box">₹<span id="total-india-gross">200.00</span> Cr</div>
                 </div>
                 <div class="split-card">
-                    <span class="split-title">Overseas gross</span>
-                    <div class="split-number-box">₹<span id="overseas-gross">23.74</span><span class="split-unit-text">Cr</span></div>
+                    <span class="split-title">Overseas Gross</span>
+                    <div class="split-number-box">₹<span id="total-overseas-gross">23.74</span> Cr</div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Clean Run Matrix -->
+        <!-- Comparison Stack Block -->
         <section class="liquid-glass">
-            <h2>Head-to-Head Run Analysis</h2>
-            <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
+            <h2>Head-to-Head Trajectory Matrix</h2>
+            <p class="section-desc">Theatrical runway comparison mapping across major historical milestones.</p>
             
-            <div class="table-scroll-container">
-                <table class="liquid-table">
-                    <thead>
-                        <tr>
-                            <th class="timeline-cell">Timeline</th>
-                            <th class="ramayana-cell" style="color: #ffffff;">Ramayana</th>
-                            <th>Kalki 2898 AD</th>
-                            <th>2.0</th>
-                            <th>Baahubali 2</th>
+            <div class="trajectory-container">
+                <!-- Day 1 Segment -->
+                <div class="day-block">
+                    <div class="day-title">Day 1 Cumulative</div>
+                    <div class="competitor-row"><span class="comp-name highlight-film">Ramayana</span><span class="comp-value highlight-film" id="matrix-r-d1">₹75.40 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">Kalki 2898 AD</span><span class="comp-value">₹175.00 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">2.0</span><span class="comp-value">₹80.00 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">Baahubali 2</span><span class="comp-value">₹214.00 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">RRR</span><span class="comp-value">₹223.00 Cr</span></div>
+                </div>
+
+                <!-- Day 2 Segment -->
+                <div class="day-block">
+                    <div class="day-title">Day 2 Cumulative</div>
+                    <div class="competitor-row"><span class="comp-name highlight-film">Ramayana</span><span class="comp-value highlight-film" id="matrix-r-d2">₹142.10 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">Kalki 2898 AD</span><span class="comp-value">₹278.50 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">2.0</span><span class="comp-value">₹144.00 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">Baahubali 2</span><span class="comp-value">₹382.50 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">RRR</span><span class="comp-value">₹371.00 Cr</span></div>
+                </div>
+
+                <!-- Day 3 Segment -->
+                <div class="day-block">
+                    <div class="day-title">Day 3 Cumulative</div>
+                    <div class="competitor-row"><span class="comp-name highlight-film">Ramayana</span><span class="comp-value highlight-film" id="matrix-r-d3">₹223.74 Cr</span></div>
+                    <div class="competitor-row"><span class="comp-name">Kalki 2898 AD</span><span class="comp-value">₹415.00 Cr</span></div>
