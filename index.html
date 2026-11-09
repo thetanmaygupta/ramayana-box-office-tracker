@@ -145,9 +145,29 @@
         .timeline-col { font-weight: 700; color: #ffffff; background: rgba(15, 23, 42, 0.15); }
         .ramayana-col { color: #d4a359; font-weight: 800; background: rgba(212, 163, 89, 0.03); }
         
+        /* Expandable Table Elements */
+        .hidden-rows { display: none; }
+        .toggle-btn-container { text-align: center; margin-top: 16px; }
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 163, 89, 0.3);
+            color: #cbd5e1;
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 9999px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+        }
+        .glass-btn:hover {
+            background: rgba(212, 163, 89, 0.1);
+            color: #d4a359;
+            border-color: #d4a359;
+        }
+
         .reviews-layout { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
         .review-row { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-        .review-row:last-child { margin-bottom: 0; }
         .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .author-name { font-weight: 700; color: #ffffff; }
         .rating-chip { font-size: 10px; font-weight: 700; background: rgba(212, 163, 89, 0.12); color: #d4a359; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(212, 163, 89, 0.2); }
@@ -189,7 +209,7 @@
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix (Fixed Table Bug) -->
+        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix (Critic Optimization) -->
         <section class="liquid-glass">
             <h2>Head-to-Head Run Analysis</h2>
             <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
@@ -207,21 +227,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Crucial High-Velocity Days -->
                         <tr>
                             <td class="timeline-col">Day 1</td>
                             <td class="ramayana-col">₹75.40 Cr</td>
-                            <td>₹175.00 Cr</td>
-                            <td>₹80.00 Cr</td>
-                            <td>₹214.00 Cr</td>
-                            <td>₹223.00 Cr</td>
-                        </tr>
-                        <tr>
-                            <td class="timeline-col">Day 2</td>
-                            <td class="ramayana-col">₹142.10 Cr</td>
-                            <td>₹278.50 Cr</td>
-                            <td>₹144.00 Cr</td>
-                            <td>₹382.50 Cr</td>
-                            <td>₹371.00 Cr</td>
-                        </tr>
-                        <tr>
-                            <td class="timeline-col">Day 3</td>
