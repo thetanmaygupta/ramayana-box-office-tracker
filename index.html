@@ -11,23 +11,23 @@
             padding: 0;
         }
         body {
-            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
+            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.96)), 
                               url('https://unsplash.com');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: #cbd5e1;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             min-height: 100vh;
-            padding: 0 24px 64px 24px;
+            padding: 0 20px 48px 20px;
             -webkit-font-smoothing: antialiased;
         }
         header {
-            max-width: 896px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 32px 24px 16px 24px;
+            padding: 40px 12px 16px 12px;
         }
-        .header-line {
+        .header-tag {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -37,279 +37,242 @@
             color: #fbbf24;
             text-transform: uppercase;
         }
-        .header-line::before {
+        .header-tag::before {
             content: '';
             display: inline-block;
-            width: 24px;
+            width: 20px;
             height: 2px;
             background-color: #fbbf24;
         }
         h1 {
-            font-size: 40px;
+            font-size: 42px;
             font-weight: 900;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.03em;
             color: #ffffff;
             text-transform: uppercase;
-            margin-top: 24px;
+            margin-top: 20px;
             line-height: 1;
         }
-        .brand-highlight {
-            color: #fbbf24;
-        }
+        .highlight { color: #fbbf24; }
         .header-desc {
             margin-top: 16px;
             font-size: 14px;
             color: #94a3b8;
-            max-width: 576px;
-            line-height: 1.625;
+            max-width: 540px;
+            line-height: 1.6;
         }
         main {
-            max-width: 896px;
+            max-width: 800px;
             margin: 24px auto 0 auto;
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
-        .status-area {
-            padding: 0 8px;
+        .status-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
+            padding-left: 4px;
         }
-        .live-badge {
+        .live-pill {
             align-self: flex-start;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 16px;
+            gap: 8px;
+            padding: 6px 16px;
             border-radius: 9999px;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            background-color: rgba(120, 53, 4, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            background-color: rgba(120, 53, 4, 0.15);
             font-size: 12px;
             font-weight: 500;
             color: #fde68a;
         }
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
+        .pulse {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background-color: #fbbf24;
             box-shadow: 0 0 8px #fbbf24;
         }
-        .flex-badges {
+        .meta-badges {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            padding-top: 4px;
+            gap: 10px;
         }
-        .sub-badge {
+        .badge {
             font-size: 12px;
-            background-color: rgba(15, 23, 42, 0.6);
-            border: 1px solid #1e293b;
-            padding: 6px 14px;
+            background-color: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
             border-radius: 12px;
             color: #94a3b8;
         }
-        .sub-badge strong {
-            color: #e2e8f0;
-            font-weight: 600;
-        }
+        .badge strong { color: #e2e8f0; font-weight: 600; }
         .liquid-glass {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), 0 20px 40px rgba(0, 0, 0, 0.45);
             border-radius: 24px;
             padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
         }
-        @media (min-width: 640px) {
-            .liquid-glass {
-                padding: 32px;
-            }
-        }
-        .sec-tag {
-            font-size: 10px;
+        @media (min-width: 640px) { .liquid-glass { padding: 32px; } }
+        .section-tag {
+            font-size: 11px;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             color: #fbbf24;
             text-transform: uppercase;
         }
         h2 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             color: #ffffff;
             margin-top: 4px;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.02em;
         }
-        @media (min-width: 640px) {
-            h2 { font-size: 24px; }
-        }
-        .sec-desc {
+        .section-desc {
             font-size: 13px;
             color: #94a3b8;
             margin-top: 8px;
-            line-height: 1.625;
+            line-height: 1.6;
         }
-        @media (min-width: 640px) {
-            .sec-desc { font-size: 14px; }
-        }
-        .inner-glow {
-            border: 1px solid rgba(212, 163, 89, 0.2);
-            background: linear-gradient(135deg, rgba(212, 163, 89, 0.05), transparent);
+        .main-display-panel {
+            border: 1px solid rgba(212, 163, 89, 0.15);
+            background: linear-gradient(135deg, rgba(212, 163, 89, 0.04), transparent);
             border-radius: 16px;
             padding: 24px;
-            position: relative;
-            overflow: hidden;
+            margin-top: 24px;
         }
-        .glow-tag {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: rgba(251, 191, 36, 0.7);
-            text-transform: uppercase;
-        }
-        .main-val-box {
-            font-size: 36px;
-            font-weight: 900;
-            color: #fbbf24;
-            letter-spacing: -0.025em;
-            margin-top: 8px;
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-        @media (min-width: 640px) {
-            .main-val-box { font-size: 48px; }
-        }
-        .main-val-unit {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: normal;
-            color: rgba(251, 191, 36, 0.8);
-        }
-        .glow-desc {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 12px;
-        }
-        .cols-grid {
-            display: grid;
-            grid-template-cols: 1fr;
-            gap: 16px;
-        }
-        @media (min-width: 640px) {
-            .cols-grid {
-                grid-template-cols: repeat(2, 1fr);
-            }
-        }
-        .split-box {
-            border: 1px solid rgba(30, 41, 59, 0.8);
-            background-color: rgba(2, 6, 23, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 20px;
-        }
-        .split-label {
+        .panel-label {
             font-size: 12px;
             font-weight: 600;
             color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .split-val-box {
-            font-size: 24px;
+        .big-number {
+            font-size: 44px;
             font-weight: 900;
-            letter-spacing: -0.025em;
-            margin-top: 8px;
+            color: #fbbf24;
+            letter-spacing: -0.02em;
+            margin-top: 4px;
+            display: flex;
+            align-items: baseline;
+            gap: 2px;
         }
-        @media (min-width: 640px) {
-            .split-val-box { font-size: 30px; }
+        @media (min-width: 640px) { .big-number { font-size: 48px; } }
+        .big-unit { font-size: 18px; font-weight: 700; color: rgba(251, 191, 36, 0.9); }
+        .panel-note { font-size: 12px; color: #64748b; margin-top: 12px; }
+        .split-grid {
+            display: grid;
+            grid-template-cols: 1fr;
+            gap: 16px;
+            margin-top: 16px;
         }
-        .sky-t { color: #38bdf8; }
-        .fuchsia-t { color: #e879f9; }
-        .split-unit {
-            font-size: 12px;
-            font-weight: 700;
+        @media (min-width: 640px) { .split-grid { grid-template-cols: repeat(2, 1fr); } }
+        .split-card {
+            background-color: rgba(2, 6, 23, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
         }
-        .sec-footer {
-            padding-top: 8px;
-            border-top: 1px solid rgba(30, 41, 59, 0.6);
+        .split-title { font-size: 12px; font-weight: 600; color: #94a3b8; }
+        .split-number-box { font-size: 26px; font-weight: 900; tracking: -0.02em; margin-top: 6px; }
+        @media (min-width: 640px) { .split-number-box { font-size: 28px; } }
+        .color-india { color: #38bdf8; }
+        .color-overseas { color: #e879f9; }
+        .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
+        .footer-metrics {
+            margin-top: 24px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 8px;
+            gap: 6px;
             font-size: 12px;
             color: #64748b;
-            font-weight: 500;
         }
-        @media (min-width: 640px) {
-            .sec-footer {
-                flex-direction: row;
-            }
-        }
-        .font-m {
-            font-family: monospace;
-            color: rgba(148, 163, 184, 0.7);
-        }
+        @media (min-width: 640px) { .footer-metrics { flex-direction: row; } }
+        .time-label { font-family: monospace; color: rgba(148, 163, 184, 0.6); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-line">ReelMetrics / Cinema Intelligence • Liquid Glass</div>
-        <h1>REEL<span class="brand-highlight">METRICS</span></h1>
+        <div class="header-tag">ReelMetrics / Cinema Intelligence • Liquid Glass</div>
+        <h1>REEL<span class="highlight">METRICS</span></h1>
         <p class="header-desc">
             A source-aware cinema intelligence platform for box-office tracking, advance bookings, audience sentiment, historical comparisons and analytical forecasting.
         </p>
     </header>
 
     <main>
-        <div class="status-area">
-            <div class="live-badge">
-                <span class="pulse-dot"></span>
-                Live Day-Wise Theatrical Tracking Configuration Active
+        <div class="status-container">
+            <div class="live-pill">
+                <span class="pulse"></span>
+                Live Day-Wise Theatrical Tracking Active
             </div>
-            <div class="flex-badges">
-                <div class="sub-badge">
-                    Currently Tracking: <strong>Ramayana: Rise of a Legend</strong>
-                </div>
-                <div class="sub-badge">
-                    Sync Execution: <strong id="clock-display">—</strong>
-                </div>
+            <div class="meta-badges">
+                <div class="badge">Currently Tracking: <strong>Ramayana: Rise of a Legend</strong></div>
+                <div class="badge">Browser check: <strong id="browser-clock">—</strong></div>
             </div>
         </div>
 
         <section class="liquid-glass">
             <div>
-                <div class="sec-tag">01 / Worldwide Observation</div>
+                <div class="section-tag">01 / Worldwide Observation</div>
                 <h2>Worldwide Box Office — Live Data</h2>
-                <p class="sec-desc">
+                <p class="section-desc">
                     Calculated worldwide cumulative gross metrics: Sacnilk India gross records integrated dynamically with verified international territory component items.
                 </p>
             </div>
 
-            <div class="inner-glow">
-                <span class="glow-tag">Worldwide gross</span>
-                <div class="main-val-box">
+            <!-- Central Worldwide Value Container -->
+            <div class="main-display-panel">
+                <span class="panel-label">Worldwide gross</span>
+                <div class="big-number">
                     <span id="ww-gross">—</span>
-                    <span class="main-val-unit">Cr</span>
+                    <span class="big-unit">Cr</span>
                 </div>
-                <p class="glow-desc">
-                    Latest valid India + overseas collections • components refresh independently • live theater data
+                <p class="panel-note">
+                    Latest valid India + overseas collections • sources refresh independently • live theater metrics
                 </p>
             </div>
 
-            <div class="cols-grid">
-                <div class="split-box">
-                    <span class="split-label">India gross</span>
-                    <div class="split-val-box sky-t">
-                        ₹<span id="india-gross">—</span> <span class="split-unit">Cr</span>
+            <!-- Double Split Columns Grid Layout -->
+            <div class="split-grid">
+                <!-- India Split -->
+                <div class="split-card">
+                    <span class="split-title">India gross</span>
+                    <div class="split-number-box color-india">
+                        ₹<span id="india-gross">—</span><span class="split-unit-text">Cr</span>
                     </div>
                 </div>
 
-                <div class="split-box">
-                    <span class="split-label">Overseas gross</span>
-                    <div class="split-val-box fuchsia-t">
+                <!-- Overseas Split -->
+                <div class="split-card">
+                    <span class="split-title">Overseas gross</span>
+                    <div class="split-number-box color-overseas">
+                        ₹<span id="overseas-gross">—</span><span class="split-unit-text">Cr</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-metrics">
+                <div>Sources: Sacnilk • International Registries</div>
+                <div id="sync-time" class="time-label">Sync: —</div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        async function refreshDashboard() {
+            try {
+                const res = await fetch('./data.json');
+                const data = await res.json();
+                
+                if (data.worldwideAllDates) {
+                    document.getElementById('ww-gross').innerText = data.worldwideAllDates.worldwideGrossCr || '—';
