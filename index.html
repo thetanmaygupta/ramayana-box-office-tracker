@@ -4,12 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReelMetrics — Cinema Intelligence</title>
-    <script src="https://tailwindcss.com"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
             background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%),
                         radial-gradient(circle at bottom left, #311042, #0f172a 80%);
             background-attachment: fixed;
+            color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            padding: 0 16px;
+            padding-bottom: 48px;
+            -webkit-font-smoothing: antialiased;
+        }
+        header {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #a78bfa, #f472b6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: rgba(168, 85, 247, 0.15);
+            padding: 2px 8px;
+            border-radius: 9999px;
+            color: #d8b4fe;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            text-transform: uppercase;
+        }
+        .status-badge {
+            font-size: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 6px 12px;
+            border-radius: 12px;
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: #34d399;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #34d399;
+        }
+        main {
+            max-width: 1200px;
+            margin: 32px auto 0 auto;
         }
         .glass-panel {
             background: rgba(15, 23, 42, 0.45);
@@ -17,120 +83,219 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 16px;
+            padding: 16px;
         }
-        .glow-purple {
-            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.25);
+        .banner {
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            background: linear-gradient(to right, rgba(88, 28, 135, 0.2), transparent);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 13px;
+            color: #e2e8f0;
+            margin-bottom: 32px;
         }
-        .glow-pink {
-            box-shadow: 0 0 25px -5px rgba(236, 72, 153, 0.25);
+        .banner-label {
+            font-weight: 700;
+            color: #d8b4fe;
         }
-        .glow-blue {
-            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25);
+        .grid {
+            display: grid;
+            grid-template-cols: 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-cols: repeat(3, 1fr);
+            }
+        }
+        .metric-card {
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-purple { box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.2); }
+        .glow-pink { box-shadow: 0 0 25px -5px rgba(236, 72, 153, 0.2); }
+        .glow-blue { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.2); }
+        
+        .card-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            blur: 40px;
+            filter: blur(40px);
+            opacity: 0.1;
+        }
+        .bg-purple { background-color: #a855f7; }
+        .bg-pink { background-color: #ec4899; }
+        .bg-blue { background-color: #3b82f6; }
+
+        .card-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+        .title-purple { color: #c084fc; }
+        .title-pink { color: #f472b6; }
+        .title-blue { color: #60a5fa; }
+
+        .val-container {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .val {
+            font-size: 40px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+        .unit {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .card-desc {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #e2e8f0;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .audit-panel {
+            padding: 24px;
+        }
+        .audit-list {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .audit-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .audit-label { color: #94a3b8; }
+        .audit-val {
+            font-family: monospace;
+            color: #cbd5e1;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .audit-val.highlight {
+            color: #d8b4fe;
+            background: rgba(168, 85, 247, 0.1);
+            border-color: rgba(168, 85, 247, 0.2);
+            font-weight: 600;
+        }
+        footer {
+            max-width: 1200px;
+            margin: 64px auto 0 auto;
+            text-align: center;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #475569;
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen font-sans antialiased selection:bg-purple-500 selection:text-white pb-12">
+<body>
 
-    <!-- Header Navigation Bar -->
-    <header class="border-b border-slate-800/40 sticky top-0 bg-slate-950/60 backdrop-blur-xl z-50 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="text-xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">REELMETRICS</span>
-                <span class="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-950/40 border border-purple-500/30 text-purple-300 uppercase">Intelligence</span>
-            </div>
-            <div class="text-xs tracking-wide text-slate-400 flex items-center gap-2 bg-slate-900/50 px-3 py-1.5 rounded-xl border border-slate-800/60">
-                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                Live Track: <strong class="text-slate-200 font-semibold">Ramayana: Part 1</strong>
-            </div>
+    <header>
+        <div class="brand-container">
+            <span class="brand">REELMETRICS</span>
+            <span class="badge">Intelligence</span>
+        </div>
+        <div class="status-badge">
+            <span class="dot"></span>
+            Live Track: <strong style="color: #f1f5f9; font-weight: 600;">Ramayana: Part 1</strong>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
-        
-        <!-- Interactive Notification Banner -->
-        <div class="glass-panel p-4 rounded-2xl flex gap-3.5 items-center border border-purple-500/20 bg-gradient-to-r from-purple-950/20 to-transparent">
-            <span class="text-xl filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">📊</span>
-            <div class="text-xs sm:text-sm">
-                <span class="font-semibold text-purple-300">Pipeline Active:</span> The tracker has successfully switched to live daily theatrical gross mode. Metrics update dynamically.
+    <main>
+        <!-- Banner -->
+        <div class="glass-panel banner">
+            <span>📊</span>
+            <div>
+                <span class="banner-label">Pipeline Active:</span> The tracker has successfully switched to live daily theatrical gross mode. Metrics update dynamically.
             </div>
         </div>
 
-        <!-- Analytical Insights Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Global Block -->
-            <div class="glass-panel glow-purple p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:border-purple-500/30">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl"></div>
-                <h3 class="text-xs font-bold tracking-widest text-purple-400 uppercase">Worldwide Gross</h3>
-                <div class="mt-4 flex items-baseline gap-1.5">
-                    <span id="ww-gross" class="text-4xl font-black tracking-tight text-white transition-all duration-500">—</span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-purple-400/80">Cr</span>
+        <!-- Metrics Cards -->
+        <div class="grid">
+            <!-- Worldwide -->
+            <div class="glass-panel metric-card glow-purple">
+                <div class="card-bg bg-purple"></div>
+                <div class="card-title title-purple">Worldwide Gross</div>
+                <div class="val-container">
+                    <span id="ww-gross" class="val">—</span>
+                    <span class="unit title-purple">Cr</span>
                 </div>
-                <p class="mt-2 text-[11px] text-slate-400 leading-relaxed">Aggregated operational market returns</p>
+                <div class="card-desc">Aggregated operational market returns</div>
             </div>
 
-            <!-- India Domestic Block -->
-            <div class="glass-panel glow-pink p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:border-pink-500/30">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl"></div>
-                <h3 class="text-xs font-bold tracking-widest text-pink-400 uppercase">India Gross</h3>
-                <div class="mt-4 flex items-baseline gap-1.5">
-                    <span id="india-gross" class="text-4xl font-black tracking-tight text-white transition-all duration-500">—</span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-pink-400/80">Cr</span>
+            <!-- India Gross -->
+            <div class="glass-panel metric-card glow-pink">
+                <div class="card-bg bg-pink"></div>
+                <div class="card-title title-pink">India Gross</div>
+                <div class="val-container">
+                    <span id="india-gross" class="val">—</span>
+                    <span class="unit title-pink">Cr</span>
                 </div>
-                <p class="mt-2 text-[11px] text-slate-400 leading-relaxed">Domestic box office collection metrics</p>
+                <div class="card-desc">Domestic box office collection metrics</div>
             </div>
 
-            <!-- Overseas Block -->
-            <div class="glass-panel glow-blue p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:border-blue-500/30">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl"></div>
-                <h3 class="text-xs font-bold tracking-widest text-blue-400 uppercase">Overseas Gross</h3>
-                <div class="mt-4 flex items-baseline gap-1.5">
-                    <span id="overseas-gross" class="text-4xl font-black tracking-tight text-white transition-all duration-500">—</span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-blue-400/80">Cr</span>
+            <!-- Overseas Gross -->
+            <div class="glass-panel metric-card glow-blue">
+                <div class="card-bg bg-blue"></div>
+                <div class="card-title title-blue">Overseas Gross</div>
+                <div class="val-container">
+                    <span id="overseas-gross" class="val">—</span>
+                    <span class="unit title-blue">Cr</span>
                 </div>
-                <p class="mt-2 text-[11px] text-slate-400 leading-relaxed">International distribution territory data</p>
+                <div class="card-desc">International distribution territory data</div>
             </div>
         </div>
 
-        <!-- Ingestion Status Panel -->
-        <div class="glass-panel rounded-2xl p-6">
-            <h3 class="text-sm font-bold tracking-wider text-slate-200 mb-4 uppercase flex items-center gap-2">
-                <span class="text-purple-400">⚡</span> Core Pipeline Logs
-            </h3>
-            <div class="border-t border-slate-800/60 divide-y divide-slate-800/40 text-xs sm:text-sm">
-                <div class="py-3.5 flex justify-between items-center"><span class="text-slate-400">Tracking Engine</span><span class="font-mono text-slate-300 bg-slate-900/40 px-2.5 py-1 rounded-lg border border-slate-800/40">Sacnilk Live Tracker Index</span></div>
-                <div class="py-3.5 flex justify-between items-center"><span class="text-slate-400">Interval Frequency</span><span class="font-mono text-slate-300 bg-slate-900/40 px-2.5 py-1 rounded-lg border border-slate-800/40">Automated 30-Min Cron</span></div>
-                <div class="py-3.5 flex justify-between items-center"><span class="text-slate-400">Latest Sync Execution</span><span id="last-checked" class="font-mono text-purple-300 font-semibold bg-purple-950/20 px-2.5 py-1 rounded-lg border border-purple-500/20">—</span></div>
+        <!-- Audit Panel -->
+        <div class="glass-panel audit-panel">
+            <div class="section-title">
+                <span style="color: #a855f7;">⚡</span> Core Pipeline Logs
+            </div>
+            <div class="audit-list">
+                <div class="audit-row">
+                    <span class="audit-label">Tracking Engine</span>
+                    <span class="audit-val">Sacnilk Live Tracker Index</span>
+                </div>
+                <div class="audit-row">
+                    <span class="audit-label">Interval Frequency</span>
+                    <span class="audit-val">Automated 30-Min Cron</span>
+                </div>
+                <div class="audit-row" style="border: none;">
+                    <span class="audit-label">Latest Sync Execution</span>
+                    <span id="last-checked" class="audit-val highlight">—</span>
+                </div>
             </div>
         </div>
-
     </main>
 
-    <footer class="max-w-7xl mx-auto px-4 text-center text-[11px] tracking-wide text-slate-500 mt-16">
-        ReelMetrics Data Systems • Architected by Tanmay Gupta
-    </footer>
-
-    <!-- Runtime Asset Integration Engine -->
-    <script>
-        async function runDashboardSync() {
-            try {
-                const response = await fetch('./data.json');
-                const data = await response.json();
-                
-                if (data.worldwideAllDates) {
-                    document.getElementById('ww-gross').innerText = data.worldwideAllDates.worldwideGrossCr || '—';
-                    document.getElementById('india-gross').innerText = data.worldwideAllDates.indiaGrossCr || '—';
-                    document.getElementById('overseas-gross').innerText = data.worldwideAllDates.overseasGrossCr || '—';
-                }
-                
-                if (data.lastChecked) {
-                    const parsedTime = data.lastChecked.replace('T', ' ').substring(0, 19);
-                    document.getElementById('last-checked').innerText = parsedTime + ' IST';
-                }
-            } catch (error) {
-                console.error("Dashboard asset state injection conflict:", error);
-            }
-        }
-        window.addEventListener('DOMContentLoaded', runDashboardSync);
-    </script>
-</body>
-</html>
