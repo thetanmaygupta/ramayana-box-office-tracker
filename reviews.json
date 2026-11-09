@@ -162,10 +162,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-09T21:19:12Z",
+  "updatedAt": "2026-11-09T21:50:56Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-09T21:19:12Z",
+    "updatedAt": "2026-11-09T21:50:56Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 1,
     "minimumReviewLength": 100,
