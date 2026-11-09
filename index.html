@@ -87,6 +87,7 @@
             box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.35);
             border-radius: 24px;
             padding: 24px;
+            width: 100%;
         }
         
         h2 { font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
@@ -111,7 +112,7 @@
         .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
         .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
 
-        /* Liquid Flexbox Matrix Framework - Bulletproof Scrolling */
+        /* Hard Fixed Grid Layout System - Zero Mobile Collapsing Errors */
         .matrix-scroll-wrapper {
             margin-top: 20px;
             overflow-x: auto;
@@ -119,16 +120,16 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(15, 23, 42, 0.25);
             -webkit-overflow-scrolling: touch;
+            width: 100%;
         }
         .matrix-container {
-            min-width: 750px;
-            display: flex;
-            flex-direction: column;
+            width: 760px; /* Locked explicit layout baseline size */
+            display: block;
         }
         .matrix-header-row, .matrix-data-row {
-            display: flex;
+            display: block;
+            clear: both;
             width: 100%;
-            align-items: center;
         }
         .matrix-header-row {
             background: rgba(15, 23, 42, 0.5);
@@ -137,15 +138,23 @@
         .matrix-data-row {
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
-        .matrix-container .matrix-data-row:last-child {
-            border-bottom: none;
-        }
         .matrix-cell {
-            padding: 14px 16px;
-            flex: 1;
+            float: left;
+            padding: 14px 12px;
             white-space: nowrap;
             font-size: 13px;
+            height: 48px;
+            line-height: 20px;
         }
+        
+        /* Locked explicit grid sizes prevent dynamic column collapsing */
+        .w-timeline  { width: 100px; font-weight: 700; color: #ffffff; background: rgba(15, 23, 42, 0.15); padding-left: 16px; }
+        .w-ramayana  { width: 130px; font-weight: 800; color: #d4a359; background: rgba(212, 163, 89, 0.03); text-align: center; }
+        .w-kalki     { width: 140px; text-align: center; }
+        .w-two-point { width: 110px; text-align: center; }
+        .w-bahubali  { width: 140px; text-align: center; }
+        .w-rrr       { width: 140px; text-align: center; }
+
         .matrix-cell.head {
             font-size: 11px;
             font-weight: 700;
@@ -153,21 +162,10 @@
             color: #94a3b8;
             letter-spacing: 0.5px;
         }
-        .timeline-cell {
-            font-weight: 700;
-            color: #ffffff;
-            background: rgba(15, 23, 42, 0.15);
-            max-width: 110px;
-            flex: 0 0 110px;
-        }
-        .ramayana-cell {
-            color: #d4a359;
-            font-weight: 800;
-            background: rgba(212, 163, 89, 0.03);
-        }
-        
+        .matrix-cell.head.w-ramayana { color: #ffffff; }
+
         .hidden-rows { display: none; }
-        .toggle-btn-container { text-align: center; margin-top: 18px; }
+        .toggle-btn-container { text-align: center; margin-top: 18px; clear: both; }
         .glass-btn {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(212, 163, 89, 0.3);
@@ -186,7 +184,7 @@
             border-color: #d4a359;
         }
 
-        .reviews-layout { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
+        .reviews-layout { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; width: 100%; }
         .review-row { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
         .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .author-name { font-weight: 700; color: #ffffff; }
@@ -229,14 +227,10 @@
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Flexbox Run Matrix -->
+        <!-- Section 2: Head-to-Head Fixed Pixel Matrix -->
         <section class="liquid-glass">
             <h2>Head-to-Head Run Analysis</h2>
             <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
             
             <div class="matrix-scroll-wrapper">
                 <div class="matrix-container">
-                    <!-- Header -->
-                    <div class="matrix-header-row">
-                        <div class="matrix-cell head timeline-cell">Timeline</div>
-                        <div class="matrix-cell head ramayana-cell" style="color: #ffffff;">Ramayana</div>
