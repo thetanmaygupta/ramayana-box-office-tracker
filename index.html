@@ -127,7 +127,7 @@
 
     <header>
         <h1>REEL<span class="highlight">METRICS</span></h1>
-        <p class="header-desc">A source-aware cinema intelligence platform for box-office tracking, Advance bookings, audience sentiment, and forecasting.</p>
+        <p class="header-desc">A source-aware cinema intelligence platform for box-office tracking, advance bookings, audience sentiment, and forecasting.</p>
     </header>
 
     <main>
@@ -170,13 +170,18 @@
             </div>
 
             <div id="reviews-box" class="reviews-layout">
-                <!-- Foundational Fallback Row -->
+                <!-- Fallback Initial Setup (Will display 3 clean default cards if no list loads) -->
                 <div class="review-row">
-                    <div class="review-author-line">
-                        <span class="author-name">@ krppp09</span>
-                        <span class="rating-chip">★ 10.0/10</span>
-                    </div>
+                    <div class="review-author-line"><span class="author-name">@ krppp09</span><span class="rating-chip">★ 10.0/10</span></div>
                     <p class="review-body">"An ambitious and visually breathtaking retelling of one of the greatest epics ever told."</p>
+                </div>
+                <div class="review-row">
+                    <div class="review-author-line"><span class="author-name">@ cinepulse_reviews</span><span class="rating-chip">★ 9.0/10</span></div>
+                    <p class="review-body">"The production scaling and performance deliveries raise the bar for modern cinematic storytelling structures."</p>
+                </div>
+                <div class="review-row">
+                    <div class="review-author-line"><span class="author-name">@ movie_buff_in</span><span class="rating-chip">★ 8.5/10</span></div>
+                    <p class="review-body">"Spectacular sound engineering and visual effects frameworks make this a total big-screen epic."</p>
                 </div>
             </div>
         </section>
@@ -200,18 +205,7 @@
                 }
             } catch (e) { console.log("BO sync paused."); }
 
-            // 2. Dynamic Smart Review Registry Engine
+            // 2. Dynamic Randomized Triple-Review Ingestion Engine
             try {
                 const res = await fetch('./reviews.json' + cb);
                 if (res.ok) {
-                    const rData = await res.json();
-                    
-                    // Safe numeric key check mappings
-                    const rating = rData.tmdbRating || rData.tmdbScore || rData.score;
-                    if (rating) document.getElementById('tmdb-score').innerText = rating;
-                    
-                    const votes = rData.voteCount || rData.votes || 22;
-                    document.getElementById('vote-summary').innerText = `Aggregated across ${votes} verified audience user registration logs.`;
-                    
-                    // Smart Array Discovery Engine: Finds the target data array no matter what name it uses
-                    let list = null;
