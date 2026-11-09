@@ -1,289 +1,120 @@
-#!/usr/bin/env python3
-"""
-ReelMetrics — automated box-office and audience-data updater.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReelMetrics — Cinema Intelligence</title>
+    <script src="https://tailwindcss.com"></script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen font-sans selection:bg-purple-500 selection:text-white">
 
-Design goals
-------------
-* Track live theatrical collections on a day-wise operational basis.
-* Map metrics cleanly into legacy formats to prevent front-end breaks.
-* Update reviews.json independently; TMDB failure never blocks box-office data.
-* Write JSON atomically so an interrupted run cannot corrupt the files.
-"""
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800/60 sticky top-0 bg-slate-950/40 backdrop-blur-md z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">REELMETRICS</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400">v3.0</span>
+            </div>
+            <div class="text-sm text-slate-400 flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                Tracking: <strong class="text-slate-200">Ramayana Part 1</strong>
+            </div>
+        </div>
+    </header>
 
-from __future__ import annotations
-
-import json
-import os
-import re
-import sys
-import tempfile
-from datetime import datetime, timedelta, timezone
-from html.parser import HTMLParser
-from pathlib import Path
-from typing import Any
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
-from zoneinfo import ZoneInfo
-
-
-# ---------------------------------------------------------------------------
-# CONFIGURATION
-# ---------------------------------------------------------------------------
-
-ROOT = Path(__file__).resolve().parents[1]
-DATA_FILE = ROOT / "data.json"
-REVIEWS_FILE = ROOT / "reviews.json"
-
-IST = ZoneInfo("Asia/Kolkata")
-UTC = timezone.utc
-
-USER_AGENT = (
-    "Mozilla/5.0 (compatible; ReelMetrics/3.0; "
-    "+https://github.com)"
-)
-HTTP_TIMEOUT_SECONDS = 25
-MAX_HTML_BYTES = 8_000_000
-
-RELEASE_DATE = "2026-11-05"
-TMDB_MOVIE_ID = 656908
-TMDB_API_BASE = "https://themoviedb.org"
-TMDB_REVIEW_PAGES_MAX = 3
-TMDB_REVIEW_TEXT_MAX_CHARS = 5000
-
-LIVE_BOX_OFFICE_URL = "https://sacnilk.com"
-
-SOURCES = [
-    {
-        "name": "Sacnilk",
-        "tier": "primary",
-        "url": "https://sacnilk.com",
-        "role": "India & Worldwide day-wise live theatrical collection tracker",
-    },
-    {
-        "name": "The Movie Database (TMDB)",
-        "tier": "primary",
-        "url": "https://themoviedb.org",
-        "role": "Audience metrics and user reviews verification platform",
-    }
-]
-
-
-# ---------------------------------------------------------------------------
-# GENERAL UTILITIES
-# ---------------------------------------------------------------------------
-
-def now_ist() -> str:
-    return datetime.now(IST).isoformat(timespec="seconds")
-
-
-def parse_datetime(value: Any) -> datetime | None:
-    if not value or not isinstance(value, str):
-        return None
-    raw = value.strip()
-    candidates = [raw, raw.replace(" IST", "+05:30")]
-    for candidate in candidates:
-        try:
-            parsed = datetime.fromisoformat(candidate.replace("Z", "+00:00"))
-            if parsed.tzinfo is None:
-                parsed = parsed.replace(tzinfo=IST)
-            return parsed.astimezone(UTC)
-        except ValueError:
-            pass
-    return None
-
-
-def atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, temp_name = tempfile.mkstemp(
-        prefix=f".{path.name}.",
-        suffix=".tmp",
-        dir=str(path.parent),
-    )
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(payload, handle, ensure_ascii=False, indent=2)
-            handle.write("\n")
-        os.replace(temp_name, path)
-    except Exception:
-        try:
-            os.unlink(temp_name)
-        except OSError:
-            pass
-        raise
-
-
-def load_json(path: Path, default: dict[str, Any]) -> dict[str, Any]:
-    if not path.exists():
-        return default
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(value, dict):
-            raise ValueError("JSON root must be an object")
-        return value
-    except Exception as exc:
-        raise RuntimeError(f"Cannot read {path.name}: {exc}") from exc
-
-
-def fetch_bytes(url: str, accept: str = "text/html,application/json") -> bytes:
-    request = Request(url, headers={"User-Agent": USER_AGENT, "Accept": accept})
-    with urlopen(request, timeout=HTTP_TIMEOUT_SECONDS) as response:
-        if response.status != 200:
-            raise RuntimeError(f"HTTP {response.status} for {url}")
-        body = response.read(MAX_HTML_BYTES + 1)
-        if len(body) > MAX_HTML_BYTES:
-            raise RuntimeError(f"Response too large: {url}")
-        return body
-
-
-def fetch_page(url: str) -> str:
-    return fetch_bytes(url).decode("utf-8", errors="replace")
-
-
-def fetch_json(url: str, headers: dict[str, str] | None = None) -> dict[str, Any]:
-    request_headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
-    if headers:
-        request_headers.update(headers)
-    request = Request(url, headers=request_headers)
-    with urlopen(request, timeout=HTTP_TIMEOUT_SECONDS) as response:
-        if response.status != 200:
-            raise RuntimeError("HTTP error for API request")
-        payload = json.loads(response.read().decode("utf-8", errors="replace"))
-    return payload
-
-
-# ---------------------------------------------------------------------------
-# HTML PROCESSING
-# ---------------------------------------------------------------------------
-
-class VisibleTextParser(HTMLParser):
-    SKIP = {"script", "style", "noscript", "svg", "template"}
-
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.parts: list[str] = []
-        self.skip_stack: list[str] = []
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        if tag.lower() in self.SKIP:
-            self.skip_stack.append(tag.lower())
-
-    def handle_endtag(self, tag: str) -> None:
-        if tag.lower() in self.skip_stack:
-            self.skip_stack.remove(tag.lower())
-
-    def handle_data(self, data: str) -> None:
-        if not self.skip_stack and data.strip():
-            self.parts.append(data.strip())
-
-
-def visible_text(raw_html: str) -> str:
-    parser = VisibleTextParser()
-    parser.feed(raw_html)
-    return re.sub(r"\s+", " ", " ".join(parser.parts)).strip()
-
-
-def clean_number(value: str) -> float | None:
-    try:
-        return float(value.replace(",", "").strip())
-    except (TypeError, ValueError):
-        return None
-
-
-def merge_non_null(previous: dict[str, Any], candidate: dict[str, Any]) -> dict[str, Any]:
-    merged = dict(previous)
-    for key, value in candidate.items():
-        if value is not None:
-            merged[key] = value
-    return merged
-
-
-# ---------------------------------------------------------------------------
-# LIVE COLLECTION STRIPPING ENGINE
-# ---------------------------------------------------------------------------
-
-def extract_daywise_worldwide_collections(raw_html: str) -> dict[str, dict[str, Any]]:
-    text = visible_text(raw_html)
-    clean_text = re.sub(r'\s+', ' ', text)
-    
-    # Target table pattern extraction
-    day_regex = r'(?:Day\s*(\d+)).*?(?:Worldwide|WW).*?([0-9,]+(?:\.[0-9]+)?)\s*(?:Cr|Crore)'
-    matches = re.findall(day_regex, clean_text, re.IGNORECASE)
-    
-    day_wise_collection = {}
-    base_date = datetime.strptime(RELEASE_DATE, "%Y-%m-%d")
-    
-    for day_str, gross_str in matches:
-        day_num = int(day_str)
-        gross_value = clean_number(gross_str)
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
         
-        if gross_value and 0 < gross_value < 3000:
-            target_delta = day_num - 1
-            target_date = (base_date + timedelta(days=target_delta)).strftime("%Y-%m-%d")
-            
-            # Map parameters cleanly to legacy schemas to fit frontend layout expectation
-            day_wise_collection[target_date] = {
-                "date": target_date,
-                "day": day_num,
-                "worldwideGrossCr": round(gross_value, 2),
-                "indiaGrossCr": round(gross_value * 0.75, 2),  # Inferred India Net split balance
-                "scope": "single_day_advance",
-                "currency": "INR",
-                "fetchedAt": now_ist()
+        <!-- Live Alert Banner -->
+        <div class="p-4 rounded-xl bg-purple-950/30 border border-purple-500/20 flex gap-3 items-center">
+            <span class="text-xl">📊</span>
+            <p class="text-sm text-purple-200">
+                <strong>Data Ingestion Alert:</strong> The layout has successfully transitioned to tracking day-wise live theatrical collection metrics natively.
+            </p>
+        </div>
+
+        <!-- Metric Cards Layout Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Worldwide Total Panel -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                <h3 class="text-sm font-medium tracking-wide text-slate-400 uppercase">Worldwide Gross</h3>
+                <div class="mt-4 flex items-baseline gap-2">
+                    <span id="ww-gross" class="text-4xl font-extrabold tracking-tight text-white">—</span>
+                    <span class="text-sm font-semibold text-purple-400">Cr</span>
+                </div>
+                <p class="mt-2 text-xs text-slate-500">Aggregated dynamic box office calculations</p>
+            </div>
+
+            <!-- India Net Split Panel -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                <h3 class="text-sm font-medium tracking-wide text-slate-400 uppercase">India Gross</h3>
+                <div class="mt-4 flex items-baseline gap-2">
+                    <span id="india-gross" class="text-4xl font-extrabold tracking-tight text-white">—</span>
+                    <span class="text-sm font-semibold text-pink-400">Cr</span>
+                </div>
+                <p class="mt-2 text-xs text-slate-500">Domestic theatrical market share</p>
+            </div>
+
+            <!-- Overseas Split Panel -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                <h3 class="text-sm font-medium tracking-wide text-slate-400 uppercase">Overseas Gross</h3>
+                <div class="mt-4 flex items-baseline gap-2">
+                    <span id="overseas-gross" class="text-4xl font-extrabold tracking-tight text-white">—</span>
+                    <span class="text-sm font-semibold text-blue-400">Cr</span>
+                </div>
+                <p class="mt-2 text-xs text-slate-500">International distribution calculations</p>
+            </div>
+        </div>
+
+        <!-- System Audit Log Trail -->
+        <div class="glass-panel rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                <span>⏱️</span> Ingestion Pipeline Audit
+            </h3>
+            <div class="border-t border-slate-800/80 divide-y divide-slate-800/60 text-sm">
+                <div class="py-3 flex justify-between"><span class="text-slate-400">Source Platform</span><span class="font-mono text-slate-200">Sacnilk Live Index</span></div>
+                <div class="py-3 flex justify-between"><span class="text-slate-400">Refresh Frequency</span><span class="font-mono text-slate-200">Every 30 Minutes</span></div>
+                <div class="py-3 flex justify-between"><span class="text-slate-400">Last System Check</span><span id="last-checked" class="font-mono text-slate-200">—</span></div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-600 border-t border-slate-900/60 mt-12">
+        ReelMetrics Intelligence Engine • Configured by Tanmay Gupta
+    </footer>
+
+    <!-- JSON Asset Data Integration Script -->
+    <script>
+        async function initDashboard() {
+            try {
+                const response = await fetch('./data.json');
+                const data = await response.json();
+                
+                if (data.worldwideAllDates) {
+                    document.getElementById('ww-gross').innerText = data.worldwideAllDates.worldwideGrossCr || '—';
+                    document.getElementById('india-gross').innerText = data.worldwideAllDates.indiaGrossCr || '—';
+                    document.getElementById('overseas-gross').innerText = data.worldwideAllDates.overseasGrossCr || '—';
+                }
+                
+                if (data.lastChecked) {
+                    document.getElementById('last-checked').innerText = data.lastChecked.replace('T', ' ').substring(0, 19);
+                }
+            } catch (error) {
+                console.error("Failed loading automated JSON asset maps:", error);
             }
-            
-    return day_wise_collection
-
-
-# ---------------------------------------------------------------------------
-# TMDB REVIEW CAPTURE ENGINE
-# ---------------------------------------------------------------------------
-
-def tmdb_request(path: str, token: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
-    query = f"?{urlencode(params)}" if params else ""
-    return fetch_json(f"{TMDB_API_BASE}{path}{query}", headers={"Authorization": f"Bearer {token}"})
-
-
-def fetch_tmdb_audience_data() -> dict[str, Any]:
-    token = os.getenv("TMDB_READ_ACCESS_TOKEN", "").strip()
-    if not token:
-        raise RuntimeError("TMDB_READ_ACCESS_TOKEN is not configured")
-
-    movie_id = int(os.getenv("TMDB_MOVIE_ID", str(TMDB_MOVIE_ID)).strip())
-    movie = tmdb_request(f"/movie/{movie_id}", token, {"language": "en-US"})
-
-    average = movie.get("vote_average")
-    votes = movie.get("vote_count")
-
-    first = tmdb_request(f"/movie/{movie_id}/reviews", token, {"language": "en-US", "page": 1})
-    total_results = max(0, int(first.get("total_results") or 0))
-    
-    reviews = []
-    for item in first.get("results", []):
-        author_details = item.get("author_details") or {}
-        reviews.append({
-            "id": item.get("id"),
-            "author": item.get("author"),
-            "rating": author_details.get("rating"),
-            "content": str(item.get("content") or "")[:TMDB_REVIEW_TEXT_MAX_CHARS],
-            "source": "TMDB"
-        })
-
-    fetched_at = now_ist()
-    return {
-        "movie": movie.get("title", "Ramayana: Rise of a Legend"),
-        "status": "success",
-        "lastUpdated": fetched_at,
-        "tmdbScore": round(float(average) * 10, 1) if average else None,
-        "tmdbRating": round(float(average), 2) if average else None,
-        "tmdbRatingOutOf": 10,
-        "voteCount": votes,
-        "reviewCount": total_results,
-        "reviews": reviews
-    }
-
-
-def update_reviews() -> dict[str, Any]:
-    try:
-        payload = fetch_tmdb_audience_data()
-        atomic_write_json(REVIEWS_FILE, payload)
-          
+        }
+        window.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
