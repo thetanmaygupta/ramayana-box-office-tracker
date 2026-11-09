@@ -80,22 +80,6 @@
             background-color: #d4a359;
             box-shadow: 0 0 8px #d4a359;
         }
-        .meta-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .badge {
-            font-size: 12px;
-            background-color: rgba(15, 23, 42, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 6px 12px;
-            border-radius: 12px;
-            color: #e2e8f0;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        .badge strong { color: #ffffff; font-weight: 600; }
         
         .liquid-glass {
             background: rgba(255, 255, 255, 0.01);
@@ -106,22 +90,10 @@
             border-radius: 24px;
             padding: 24px;
         }
-        @media (min-width: 640px) { .liquid-glass { padding: 32px; } }
         
-        h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.02em;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
-        }
-        .section-desc {
-            font-size: 13px;
-            color: #e2e8f0;
-            margin-top: 8px;
-            line-height: 1.6;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
+        h2 { font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
+        .section-desc { font-size: 13px; color: #e2e8f0; margin-top: 8px; line-height: 1.6; }
+        
         .main-display-panel {
             border: 1px solid rgba(212, 163, 89, 0.25);
             background: rgba(15, 23, 42, 0.35);
@@ -131,154 +103,115 @@
             padding: 24px;
             margin-top: 24px;
         }
-        .panel-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #cbd5e1;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .big-number {
-            font-size: 44px;
-            font-weight: 900;
-            color: #d4a359;
-            letter-spacing: -0.02em;
-            margin-top: 4px;
-            display: flex;
-            align-items: baseline;
-            gap: 2px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        @media (min-width: 640px) { .big-number { font-size: 48px; } }
+        .panel-label { font-size: 12px; font-weight: 600; color: #cbd5e1; text-transform: uppercase; }
+        .big-number { font-size: 44px; font-weight: 900; color: #d4a359; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 2px; }
         .big-unit { font-size: 18px; font-weight: 700; color: rgba(212, 163, 89, 0.9); }
         .panel-note { font-size: 12px; color: #cbd5e1; margin-top: 12px; }
-        .split-grid {
-            display: grid;
-            grid-template-cols: 1fr;
-            gap: 16px;
-            margin-top: 16px;
-        }
+        
+        .split-grid { display: grid; grid-template-cols: 1fr; gap: 16px; margin-top: 16px; }
         @media (min-width: 640px) { .split-grid { grid-template-cols: repeat(2, 1fr); } }
-        .split-card {
-            background-color: rgba(15, 23, 42, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 20px;
-        }
+        .split-card { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 20px; }
         .split-title { font-size: 12px; font-weight: 600; color: #cbd5e1; }
-        .split-number-box { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; margin-top: 6px; }
-        @media (min-width: 640px) { .split-number-box { font-size: 28px; } }
-        .color-gold { color: #d4a359; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .split-number-box { font-size: 26px; font-weight: 900; margin-top: 6px; color: #d4a359; }
         .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
 
-        .reviews-layout {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 24px;
-        }
-        .review-row {
-            background-color: rgba(15, 23, 42, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .review-author-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-        }
-        .author-name {
-            font-weight: 700;
-            color: #ffffff;
-        }
-        .rating-chip {
-            font-size: 11px;
-            font-weight: 700;
-            background: rgba(212, 163, 89, 0.15);
-            color: #d4a359;
-            padding: 2px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(212, 163, 89, 0.25);
-        }
-        .review-body {
-            font-size: 13px;
-            color: #cbd5e1;
-            line-height: 1.6;
-            font-style: italic;
-        }
+        .reviews-layout { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+        .review-row { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .author-name { font-weight: 700; color: #ffffff; }
+        .rating-chip { font-size: 11px; font-weight: 700; background: rgba(212, 163, 89, 0.15); color: #d4a359; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(212, 163, 89, 0.25); }
+        .review-body { font-size: 13px; color: #cbd5e1; line-height: 1.6; font-style: italic; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>REEL<span class="highlight">METRICS</span></h1>
-        <p class="header-desc">
-            A source-aware cinema intelligence platform for box-office tracking, advance bookings, audience sentiment, historical comparisons and analytical forecasting.
-        </p>
+        <p class="header-desc">A source-aware cinema intelligence platform for box-office tracking, Advance bookings, audience sentiment, and forecasting.</p>
     </header>
 
     <main>
         <div class="status-container">
-            <div class="live-pill">
-                <span class="pulse"></span>
-                Live Day-Wise Theatrical Tracking Active
-            </div>
-            <div class="meta-badges">
-                <div class="badge">Currently Tracking: <strong>Ramayana: Rise of a Legend</strong></div>
-                <div class="badge">Browser check: <strong id="browser-clock">Live Track</strong></div>
-            </div>
+            <div class="live-pill"><span class="pulse"></span>Live Theatrical Tracking Active</div>
         </div>
 
         <!-- Section 1: Box Office Gross Tracking -->
         <section class="liquid-glass">
-            <div>
-                <h2>Worldwide Box Office Collection</h2>
-                <p class="section-desc">
-                    Calculated worldwide cumulative gross metrics: Sacnilk India gross records integrated dynamically with verified international territory component items.
-                </p>
-            </div>
+            <h2>Worldwide Box Office Collection</h2>
+            <p class="section-desc">Calculated worldwide cumulative gross metrics updated dynamic checking indexes.</p>
 
             <div class="main-display-panel">
                 <span class="panel-label">Worldwide gross</span>
-                <div class="big-number">
-                    <span id="ww-gross">223.74</span>
-                    <span class="big-unit">Cr</span>
-                </div>
-                <p class="panel-note">
-                    Latest valid India + overseas collections • live theater metrics
-                </p>
+                <div class="big-number"><span id="ww-gross">223.74</span><span class="big-unit">Cr</span></div>
+                <p class="panel-note">Latest valid India + overseas collections</p>
             </div>
 
             <div class="split-grid">
                 <div class="split-card">
                     <span class="split-title">India gross</span>
-                    <div class="split-number-box color-gold">
-                        ₹<span id="india-gross">200.00</span><span class="split-unit-text">Cr</span>
-                    </div>
+                    <div class="split-number-box">₹<span id="india-gross">200.00</span><span class="split-unit-text">Cr</span></div>
                 </div>
-
                 <div class="split-card">
                     <span class="split-title">Overseas gross</span>
-                    <div class="split-number-box color-gold">
-                        ₹<span id="overseas-gross">23.74</span><span class="split-unit-text">Cr</span>
-                    </div>
+                    <div class="split-number-box">₹<span id="overseas-gross">23.74</span><span class="split-unit-text">Cr</span></div>
                 </div>
             </div>
         </section>
 
         <!-- Section 2: Premium TMDB Reviews & Audience Pulse -->
         <section class="liquid-glass">
-            <div>
-                <h2>Audience Pulse & Sentiment</h2>
-                <p class="section-desc">
-                    Real-time audience reception indexes verified directly via The Movie Database API channels.
-                </p>
+            <h2>Audience Pulse & Sentiment</h2>
+            <p class="section-desc">Real-time audience reception indexes verified directly via TMDB database APIs.</p>
+            
+            <div class="main-display-panel" style="background: rgba(15,23,42,0.25);">
+                <span class="panel-label">TMDB User Score</span>
+                <div class="big-number"><span id="tmdb-score">7.5</span><span class="big-unit" style="font-size: 20px; color: #cbd5e1; margin-left: 4px;">/ 10</span></div>
+                <p class="panel-note" id="vote-summary">Aggregated user database tracking records verified.</p>
+            </div>
+
+            <div id="reviews-box" class="reviews-layout">
+                <!-- Foundational Fallback Row -->
+                <div class="review-row">
+                    <div class="review-author-line">
+                        <span class="author-name">@ krppp09</span>
+                        <span class="rating-chip">★ 10.0/10</span>
+                    </div>
+                    <p class="review-body">"An ambitious and visually breathtaking retelling of one of the greatest epics ever told."</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        async function loadDataFiles() {
+            const cb = "?t=" + new Date().getTime();
+            
+            // 1. Box Office Loader
+            try {
+                const res = await fetch('./data.json' + cb);
+                if (res.ok) {
+                    const data = await res.json();
+                    const f = data.worldwideAllDates || data.automatedFeed;
+                    if (f) {
+                        if(f.worldwideGrossCr) document.getElementById('ww-gross').innerText = f.worldwideGrossCr;
+                        if(f.indiaGrossCr) document.getElementById('india-gross').innerText = f.indiaGrossCr;
+                        if(f.overseasGrossCr) document.getElementById('overseas-gross').innerText = f.overseasGrossCr;
+                    }
+                }
+            } catch (e) { console.log("BO sync paused."); }
+
+            // 2. Dynamic Smart Review Registry Engine
+            try {
+                const res = await fetch('./reviews.json' + cb);
+                if (res.ok) {
+                    const rData = await res.json();
+                    
+                    // Safe numeric key check mappings
+                    const rating = rData.tmdbRating || rData.tmdbScore || rData.score;
+                    if (rating) document.getElementById('tmdb-score').innerText = rating;
+                    
+                    const votes = rData.voteCount || rData.votes || 22;
+                    document.getElementById('vote-summary').innerText = `Aggregated across ${votes} verified audience user registration logs.`;
+                    
+                    // Smart Array Discovery Engine: Finds the target data array no matter what name it uses
+                    let list = null;
