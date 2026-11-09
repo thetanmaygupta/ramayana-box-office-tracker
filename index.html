@@ -147,6 +147,7 @@
         
         .reviews-layout { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
         .review-row { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+        .review-row:last-child { margin-bottom: 0; }
         .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .author-name { font-weight: 700; color: #ffffff; }
         .rating-chip { font-size: 10px; font-weight: 700; background: rgba(212, 163, 89, 0.12); color: #d4a359; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(212, 163, 89, 0.2); }
@@ -188,7 +189,7 @@
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix (Unbloated Layout) -->
+        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix (Fixed Table Bug) -->
         <section class="liquid-glass">
             <h2>Head-to-Head Run Analysis</h2>
             <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
@@ -224,4 +225,3 @@
                         </tr>
                         <tr>
                             <td class="timeline-col">Day 3</td>
-                            <td class="ramayana-col">₹223.74 Cr</td>
