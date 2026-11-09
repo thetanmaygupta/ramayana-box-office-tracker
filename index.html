@@ -111,38 +111,39 @@
         .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
         .split-unit-text { font-size: 13px; font-weight: 700; margin-left: 2px; }
 
-        /* Trajectory Analytics Grid Framework */
-        .chart-container {
+        /* Liquid Glass Horizontal Table Framework */
+        .table-responsive-wrapper {
             margin-top: 20px;
-            background: rgba(15, 23, 42, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-x: auto;
             border-radius: 16px;
-            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(15, 23, 42, 0.25);
+            -webkit-overflow-scrolling: touch;
         }
-        .chart-header-row {
-            display: grid;
-            grid-template-cols: 1.5fr 2fr 2fr;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 650px;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+        }
+        th {
+            background: rgba(15, 23, 42, 0.45);
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             color: #94a3b8;
             letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .chart-data-row {
-            display: grid;
-            grid-template-cols: 1.5fr 2fr 2fr;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 13px;
-            align-items: center;
-        }
-        .chart-data-row:last-child { border-bottom: none; }
-        .day-label { font-weight: 700; color: #ffffff; }
-        .active-value { color: #d4a359; font-weight: 800; }
-        .comp-value { color: #94a3b8; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+        .timeline-col { font-weight: 700; color: #ffffff; background: rgba(15, 23, 42, 0.15); }
+        .ramayana-col { color: #d4a359; font-weight: 800; background: rgba(212, 163, 89, 0.03); }
         
         .reviews-layout { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
         .review-row { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
@@ -187,43 +188,40 @@
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Trajectory Chart (Competitor: 2.0) -->
+        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix (Unbloated Layout) -->
         <section class="liquid-glass">
             <h2>Head-to-Head Run Analysis</h2>
-            <p class="section-desc">Comparing cumulative day-by-day theatrical tracking velocity against the benchmark run pattern of Shankar's epic event film, <b>2.0</b>.</p>
+            <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
             
-            <div class="chart-container">
-                <div class="chart-header-row">
-                    <div>Timeline</div>
-                    <div style="color: #ffffff;">Ramayana</div>
-                    <div>Competitor (2.0)</div>
-                </div>
-                <div class="chart-data-row">
-                    <div class="day-label">Day 1</div>
-                    <div class="active-value">₹75.40 Cr</div>
-                    <div class="comp-value">₹80.00 Cr</div>
-                </div>
-                <div class="chart-data-row">
-                    <div class="day-label">Day 2</div>
-                    <div class="active-value">₹142.10 Cr</div>
-                    <div class="comp-value">₹144.00 Cr</div>
-                </div>
-                <div class="chart-data-row">
-                    <div class="day-label">Day 3</div>
-                    <div class="active-value">₹223.74 Cr</div>
-                    <div class="comp-value">₹221.50 Cr</div>
-                </div>
-                <div class="chart-data-row">
-                    <div class="day-label">Day 4</div>
-                    <div class="active-value" id="chart-d4">—</div>
-                    <div class="comp-value">₹278.00 Cr</div>
-                </div>
-                <div class="chart-data-row">
-                    <div class="day-label">Day 5</div>
-                    <div class="active-value" id="chart-d5">—</div>
-                    <div class="comp-value">₹332.50 Cr</div>
-                </div>
-            </div>
-        </section>
-
-        
+            <div class="table-responsive-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timeline</th>
+                            <th style="color: #ffffff; background: rgba(255,255,255,0.03);">Ramayana</th>
+                            <th>Kalki 2898 AD</th>
+                            <th>2.0</th>
+                            <th>Baahubali 2</th>
+                            <th>RRR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="timeline-col">Day 1</td>
+                            <td class="ramayana-col">₹75.40 Cr</td>
+                            <td>₹175.00 Cr</td>
+                            <td>₹80.00 Cr</td>
+                            <td>₹214.00 Cr</td>
+                            <td>₹223.00 Cr</td>
+                        </tr>
+                        <tr>
+                            <td class="timeline-col">Day 2</td>
+                            <td class="ramayana-col">₹142.10 Cr</td>
+                            <td>₹278.50 Cr</td>
+                            <td>₹144.00 Cr</td>
+                            <td>₹382.50 Cr</td>
+                            <td>₹371.00 Cr</td>
+                        </tr>
+                        <tr>
+                            <td class="timeline-col">Day 3</td>
+                            <td class="ramayana-col">₹223.74 Cr</td>
