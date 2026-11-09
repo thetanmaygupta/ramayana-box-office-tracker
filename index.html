@@ -11,24 +11,25 @@
             padding: 0;
         }
         body {
-            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.55)), 
+            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.6)), 
                               url('./assets/filters_quality(80)_format(webp).webp');
             background-size: cover;
-            background-position: center;
+            background-position: center center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
             color: #cbd5e1;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             min-height: 100vh;
-            padding: 0 20px 64px 20px;
+            padding: 0 16px 64px 16px;
             -webkit-font-smoothing: antialiased;
         }
         header {
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 12px 16px 12px;
+            padding: 40px 8px 16px 8px;
         }
         h1 {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 900;
             letter-spacing: -0.03em;
             color: #ffffff;
@@ -37,45 +38,42 @@
         }
         .highlight { color: #d4a359; }
         .header-desc {
-            margin-top: 16px;
-            font-size: 14px;
-            color: #ffffff;
-            font-weight: 700;
-            max-width: 540px;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #e2e8f0;
+            font-weight: 500;
+            max-width: 560px;
             line-height: 1.6;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         main {
             max-width: 800px;
-            margin: 24px auto 0 auto;
+            margin: 20px auto 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 28px;
         }
         .status-container {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
             padding-left: 4px;
         }
         .live-pill {
-            align-self: flex-start;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 9999px;
-            border: 1px solid rgba(212, 163, 89, 0.4);
-            background-color: rgba(15, 23, 42, 0.4);
-            font-size: 12px;
-            font-weight: 500;
+            border: 1px solid rgba(212, 163, 89, 0.35);
+            background-color: rgba(15, 23, 42, 0.55);
+            font-size: 11px;
+            font-weight: 600;
             color: #fde68a;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
         .pulse {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background-color: #d4a359;
             box-shadow: 0 0 8px #d4a359;
@@ -83,67 +81,98 @@
         
         .liquid-glass {
             background: rgba(255, 255, 255, 0.01);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.35);
             border-radius: 24px;
             padding: 24px;
         }
         
-        h2 { font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
-        .section-desc { font-size: 13px; color: #e2e8f0; margin-top: 8px; line-height: 1.6; }
+        h2 { font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
+        .section-desc { font-size: 12px; color: #94a3b8; margin-top: 6px; line-height: 1.5; }
         
         .main-display-panel {
-            border: 1px solid rgba(212, 163, 89, 0.25);
-            background: rgba(15, 23, 42, 0.35);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 163, 89, 0.2);
+            background: rgba(15, 23, 42, 0.4);
             border-radius: 16px;
-            padding: 24px;
-            margin-top: 24px;
+            padding: 20px;
+            margin-top: 20px;
         }
-        .panel-label { font-size: 12px; font-weight: 600; color: #cbd5e1; text-transform: uppercase; }
-        .big-number { font-size: 44px; font-weight: 900; color: #d4a359; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 2px; }
-        .big-unit { font-size: 18px; font-weight: 700; color: rgba(212, 163, 89, 0.9); }
-        .panel-note { font-size: 12px; color: #cbd5e1; margin-top: 12px; }
+        .panel-label { font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .big-number { font-size: 42px; font-weight: 900; color: #d4a359; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 2px; }
+        .big-unit { font-size: 16px; font-weight: 700; color: rgba(212, 163, 89, 0.85); }
+        .panel-note { font-size: 11px; color: #64748b; margin-top: 8px; }
         
-        .split-grid { display: grid; grid-template-cols: 1fr; gap: 16px; margin-top: 16px; }
+        .split-grid { display: grid; grid-template-cols: 1fr; gap: 14px; margin-top: 14px; }
         @media (min-width: 640px) { .split-grid { grid-template-cols: repeat(2, 1fr); } }
-        .split-card { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 20px; }
-        .split-title { font-size: 12px; font-weight: 600; color: #cbd5e1; }
-        .split-number-box { font-size: 26px; font-weight: 900; margin-top: 6px; color: #d4a359; }
-        .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
+        .split-card { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; }
+        .split-title { font-size: 11px; font-weight: 600; color: #94a3b8; }
+        .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
+        .split-unit-text { font-size: 13px; font-weight: 700; margin-left: 2px; }
 
-        .reviews-layout { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
-        .review-row { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        /* Trajectory Analytics Grid Framework */
+        .chart-container {
+            margin-top: 20px;
+            background: rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .chart-header-row {
+            display: grid;
+            grid-template-cols: 1.5fr 2fr 2fr;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+        }
+        .chart-data-row {
+            display: grid;
+            grid-template-cols: 1.5fr 2fr 2fr;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+            align-items: center;
+        }
+        .chart-data-row:last-child { border-bottom: none; }
+        .day-label { font-weight: 700; color: #ffffff; }
+        .active-value { color: #d4a359; font-weight: 800; }
+        .comp-value { color: #94a3b8; font-weight: 600; }
+        
+        .reviews-layout { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
+        .review-row { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+        .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .author-name { font-weight: 700; color: #ffffff; }
-        .rating-chip { font-size: 11px; font-weight: 700; background: rgba(212, 163, 89, 0.15); color: #d4a359; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(212, 163, 89, 0.25); }
-        .review-body { font-size: 13px; color: #cbd5e1; line-height: 1.6; font-style: italic; }
+        .rating-chip { font-size: 10px; font-weight: 700; background: rgba(212, 163, 89, 0.12); color: #d4a359; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(212, 163, 89, 0.2); }
+        .review-body { font-size: 13px; color: #cbd5e1; line-height: 1.5; font-style: italic; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>REEL<span class="highlight">METRICS</span></h1>
-        <p class="header-desc">A source-aware cinema intelligence platform for box-office tracking, advance bookings, audience sentiment, and forecasting.</p>
+        <p class="header-desc">A source-aware cinema intelligence platform mapping day-wise box office tracking, milestone analytics, trajectory pacing, and verified audience sentiment index loops.</p>
     </header>
 
     <main>
         <div class="status-container">
-            <div class="live-pill"><span class="pulse"></span>Live Theatrical Tracking Active</div>
+            <div class="live-pill"><span class="pulse"></span>Live Parallax Analytical Grid Active</div>
         </div>
 
         <!-- Section 1: Box Office Gross Tracking -->
         <section class="liquid-glass">
             <h2>Worldwide Box Office Collection</h2>
-            <p class="section-desc">Calculated worldwide cumulative gross metrics updated dynamic checking indexes.</p>
+            <p class="section-desc">Calculated global cumulative gross metrics: automated local territory streams cross-verified with overseas components.</p>
 
             <div class="main-display-panel">
                 <span class="panel-label">Worldwide gross</span>
                 <div class="big-number"><span id="ww-gross">223.74</span><span class="big-unit">Cr</span></div>
-                <p class="panel-note">Latest valid India + overseas collections</p>
+                <p class="panel-note">Aggregated dynamic box office updates</p>
             </div>
 
             <div class="split-grid">
@@ -158,54 +187,43 @@
             </div>
         </section>
 
-        <!-- Section 2: Premium TMDB Reviews & Audience Pulse -->
+        <!-- Section 2: Head-to-Head Trajectory Chart (Competitor: 2.0) -->
         <section class="liquid-glass">
-            <h2>Audience Pulse & Sentiment</h2>
-            <p class="section-desc">Real-time audience reception indexes verified directly via TMDB database APIs.</p>
+            <h2>Head-to-Head Run Analysis</h2>
+            <p class="section-desc">Comparing cumulative day-by-day theatrical tracking velocity against the benchmark run pattern of Shankar's epic event film, <b>2.0</b>.</p>
             
-            <div class="main-display-panel" style="background: rgba(15,23,42,0.25);">
-                <span class="panel-label">TMDB User Score</span>
-                <div class="big-number"><span id="tmdb-score">7.5</span><span class="big-unit" style="font-size: 20px; color: #cbd5e1; margin-left: 4px;">/ 10</span></div>
-                <p class="panel-note" id="vote-summary">Aggregated user database tracking records verified.</p>
-            </div>
-
-            <div id="reviews-box" class="reviews-layout">
-                <!-- Fallback Initial Setup (Will display 3 clean default cards if no list loads) -->
-                <div class="review-row">
-                    <div class="review-author-line"><span class="author-name">@ krppp09</span><span class="rating-chip">★ 10.0/10</span></div>
-                    <p class="review-body">"An ambitious and visually breathtaking retelling of one of the greatest epics ever told."</p>
+            <div class="chart-container">
+                <div class="chart-header-row">
+                    <div>Timeline</div>
+                    <div style="color: #ffffff;">Ramayana</div>
+                    <div>Competitor (2.0)</div>
                 </div>
-                <div class="review-row">
-                    <div class="review-author-line"><span class="author-name">@ cinepulse_reviews</span><span class="rating-chip">★ 9.0/10</span></div>
-                    <p class="review-body">"The production scaling and performance deliveries raise the bar for modern cinematic storytelling structures."</p>
+                <div class="chart-data-row">
+                    <div class="day-label">Day 1</div>
+                    <div class="active-value">₹75.40 Cr</div>
+                    <div class="comp-value">₹80.00 Cr</div>
                 </div>
-                <div class="review-row">
-                    <div class="review-author-line"><span class="author-name">@ movie_buff_in</span><span class="rating-chip">★ 8.5/10</span></div>
-                    <p class="review-body">"Spectacular sound engineering and visual effects frameworks make this a total big-screen epic."</p>
+                <div class="chart-data-row">
+                    <div class="day-label">Day 2</div>
+                    <div class="active-value">₹142.10 Cr</div>
+                    <div class="comp-value">₹144.00 Cr</div>
+                </div>
+                <div class="chart-data-row">
+                    <div class="day-label">Day 3</div>
+                    <div class="active-value">₹223.74 Cr</div>
+                    <div class="comp-value">₹221.50 Cr</div>
+                </div>
+                <div class="chart-data-row">
+                    <div class="day-label">Day 4</div>
+                    <div class="active-value" id="chart-d4">—</div>
+                    <div class="comp-value">₹278.00 Cr</div>
+                </div>
+                <div class="chart-data-row">
+                    <div class="day-label">Day 5</div>
+                    <div class="active-value" id="chart-d5">—</div>
+                    <div class="comp-value">₹332.50 Cr</div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <script>
-        async function loadDataFiles() {
-            const cb = "?t=" + new Date().getTime();
-            
-            // 1. Box Office Loader
-            try {
-                const res = await fetch('./data.json' + cb);
-                if (res.ok) {
-                    const data = await res.json();
-                    const f = data.worldwideAllDates || data.automatedFeed;
-                    if (f) {
-                        if(f.worldwideGrossCr) document.getElementById('ww-gross').innerText = f.worldwideGrossCr;
-                        if(f.indiaGrossCr) document.getElementById('india-gross').innerText = f.indiaGrossCr;
-                        if(f.overseasGrossCr) document.getElementById('overseas-gross').innerText = f.overseasGrossCr;
-                    }
-                }
-            } catch (e) { console.log("BO sync paused."); }
-
-            // 2. Dynamic Randomized Triple-Review Ingestion Engine
-            try {
-                const res = await fetch('./reviews.json' + cb);
-                if (res.ok) {
+        
