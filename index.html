@@ -112,7 +112,7 @@
         .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
         .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
 
-        /* Hard Fixed Grid Layout System - Zero Mobile Collapsing Errors */
+        /* Hard Block Grid Framework - Resilient Mobile Scrolling */
         .matrix-scroll-wrapper {
             margin-top: 20px;
             overflow-x: auto;
@@ -123,7 +123,7 @@
             width: 100%;
         }
         .matrix-container {
-            width: 760px; /* Locked explicit layout baseline size */
+            width: 760px;
             display: block;
         }
         .matrix-header-row, .matrix-data-row {
@@ -147,7 +147,6 @@
             line-height: 20px;
         }
         
-        /* Locked explicit grid sizes prevent dynamic column collapsing */
         .w-timeline  { width: 100px; font-weight: 700; color: #ffffff; background: rgba(15, 23, 42, 0.15); padding-left: 16px; }
         .w-ramayana  { width: 130px; font-weight: 800; color: #d4a359; background: rgba(212, 163, 89, 0.03); text-align: center; }
         .w-kalki     { width: 140px; text-align: center; }
@@ -234,3 +233,4 @@
             
             <div class="matrix-scroll-wrapper">
                 <div class="matrix-container">
+                    <div class="matrix-header-row">
