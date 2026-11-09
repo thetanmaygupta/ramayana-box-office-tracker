@@ -141,7 +141,7 @@
 
         .reviews-layout { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; width: 100%; }
         .review-row { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
-        .review-author-line { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+        .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 6px; }
         .author-name { font-weight: 700; color: #ffffff; }
         .rating-chip { font-size: 10px; font-weight: 700; color: #d4a359; background: rgba(212, 163, 89, 0.1); padding: 2px 6px; border-radius: 4px; }
         .review-body { font-size: 12px; color: #cbd5e1; line-height: 1.5; font-style: italic; }
@@ -186,11 +186,11 @@
             
             <!-- Horizontal Filter Buttons Hub -->
             <div class="filter-scroller">
-                <button class="pill-btn active" onclick="switchTimelineDay(1, this)">Day 1</button>
-                <button class="pill-btn" onclick="switchTimelineDay(2, this)">Day 2</button>
-                <button class="pill-btn" onclick="switchTimelineDay(3, this)">Day 3</button>
-                <button class="pill-btn" onclick="switchTimelineDay(4, this)">Day 4</button>
-                <button class="pill-btn" onclick="switchTimelineDay(5, this)">Day 5</button>
+                <button class="pill-btn active" onclick="switchTimelineDay('1', this)">Day 1</button>
+                <button class="pill-btn" onclick="switchTimelineDay('2', this)">Day 2</button>
+                <button class="pill-btn" onclick="switchTimelineDay('3', this)">Day 3</button>
+                <button class="pill-btn" onclick="switchTimelineDay('4', this)">Day 4</button>
+                <button class="pill-btn" onclick="switchTimelineDay('5', this)">Day 5</button>
                 <button class="pill-btn" onclick="switchTimelineDay('w1', this)">Week 1</button>
             </div>
 
@@ -198,7 +198,7 @@
             <div class="matrix-data-box">
                 <div class="competitor-row">
                     <span class="comp-name highlight-film">Ramayana</span>
-                    <span class="comp-value highlight-film" id="matrix-active-r">—</span>
+                    <span class="comp-value highlight-film" id="matrix-active-r">₹75.40 Cr</span>
                 </div>
                 <div class="competitor-row">
                     <span class="comp-name">Kalki 2898 AD</span>
