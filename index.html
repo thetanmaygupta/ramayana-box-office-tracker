@@ -109,43 +109,52 @@
         .split-card { background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 18px; }
         .split-title { font-size: 11px; font-weight: 600; color: #94a3b8; }
         .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
-        .split-unit-text { font-size: 13px; font-weight: 700; margin-left: 2px; }
+        .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
 
-        /* Liquid Glass Horizontal Table Framework */
-        .table-responsive-wrapper {
+        /* Robust Liquid Glass Flex-Scroll Matrix Table Engine */
+        .table-scroll-container {
             margin-top: 20px;
             overflow-x: auto;
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(15, 23, 42, 0.25);
+            background: rgba(15, 23, 42, 0.3);
             -webkit-overflow-scrolling: touch;
         }
-        table {
+        .liquid-table {
             width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 650px;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 720px;
             font-size: 13px;
         }
-        th, td {
+        .liquid-table th, .liquid-table td {
             padding: 14px 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             white-space: nowrap;
         }
-        th {
-            background: rgba(15, 23, 42, 0.45);
+        .liquid-table th {
+            background: rgba(15, 23, 42, 0.5);
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             color: #94a3b8;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
         }
-        tr:last-child td { border-bottom: none; }
-        .timeline-col { font-weight: 700; color: #ffffff; background: rgba(15, 23, 42, 0.15); }
-        .ramayana-col { color: #d4a359; font-weight: 800; background: rgba(212, 163, 89, 0.03); }
+        .liquid-table tr:last-child td {
+            border-bottom: none;
+        }
+        .timeline-cell {
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(15, 23, 42, 0.2);
+        }
+        .ramayana-cell {
+            color: #d4a359;
+            font-weight: 800;
+            background: rgba(212, 163, 89, 0.04);
+        }
         
-        /* Expandable Table Elements */
         .hidden-rows { display: none; }
         .toggle-btn-container { text-align: center; margin-top: 16px; }
         .glass-btn {
@@ -209,13 +218,13 @@
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix (Critic Optimization) -->
+        <!-- Section 2: Head-to-Head Multi-Competitor Run Matrix -->
         <section class="liquid-glass">
             <h2>Head-to-Head Run Analysis</h2>
             <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
             
-            <div class="table-responsive-wrapper">
-                <table>
+            <div class="table-scroll-container">
+                <table class="liquid-table">
                     <thead>
                         <tr>
                             <th>Timeline</th>
@@ -227,7 +236,5 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Crucial High-Velocity Days -->
                         <tr>
-                            <td class="timeline-col">Day 1</td>
-                            <td class="ramayana-col">₹75.40 Cr</td>
+                            <td class="timeline-cell">Day 1</td>
