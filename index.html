@@ -112,59 +112,59 @@
         .split-number-box { font-size: 24px; font-weight: 900; margin-top: 4px; color: #d4a359; }
         .split-unit-text { font-size: 14px; font-weight: 700; margin-left: 2px; }
 
-        /* Hard Block Grid Framework - Resilient Mobile Scrolling */
-        .matrix-scroll-wrapper {
+        /* Bulletproof Scrollable HTML Table Engine */
+        .table-scroll-container {
             margin-top: 20px;
             overflow-x: auto;
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(15, 23, 42, 0.25);
+            background: rgba(15, 23, 42, 0.3);
             -webkit-overflow-scrolling: touch;
             width: 100%;
         }
-        .matrix-container {
-            width: 760px;
-            display: block;
-        }
-        .matrix-header-row, .matrix-data-row {
-            display: block;
-            clear: both;
+        .liquid-table {
             width: 100%;
-        }
-        .matrix-header-row {
-            background: rgba(15, 23, 42, 0.5);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-        }
-        .matrix-data-row {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .matrix-cell {
-            float: left;
-            padding: 14px 12px;
-            white-space: nowrap;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 760px;
             font-size: 13px;
-            height: 48px;
-            line-height: 20px;
         }
-        
-        .w-timeline  { width: 100px; font-weight: 700; color: #ffffff; background: rgba(15, 23, 42, 0.15); padding-left: 16px; }
-        .w-ramayana  { width: 130px; font-weight: 800; color: #d4a359; background: rgba(212, 163, 89, 0.03); text-align: center; }
-        .w-kalki     { width: 140px; text-align: center; }
-        .w-two-point { width: 110px; text-align: center; }
-        .w-bahubali  { width: 140px; text-align: center; }
-        .w-rrr       { width: 140px; text-align: center; }
-
-        .matrix-cell.head {
+        .liquid-table th, .liquid-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+        }
+        .liquid-table th {
+            background: rgba(15, 23, 42, 0.5);
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             color: #94a3b8;
             letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
         }
-        .matrix-cell.head.w-ramayana { color: #ffffff; }
-
+        .liquid-table tr:last-child td {
+            border-bottom: none;
+        }
+        .timeline-cell {
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(15, 23, 42, 0.2);
+            width: 110px;
+        }
+        .ramayana-cell {
+            color: #d4a359;
+            font-weight: 800;
+            background: rgba(212, 163, 89, 0.04);
+            text-align: center;
+            width: 130px;
+        }
+        .liquid-table td:not(.timeline-cell):not(.ramayana-cell) {
+            text-align: center;
+        }
+        
         .hidden-rows { display: none; }
-        .toggle-btn-container { text-align: center; margin-top: 18px; clear: both; }
+        .toggle-btn-container { text-align: center; margin-top: 16px; }
         .glass-btn {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(212, 163, 89, 0.3);
@@ -226,11 +226,17 @@
             </div>
         </section>
 
-        <!-- Section 2: Head-to-Head Fixed Pixel Matrix -->
+        <!-- Section 2: Head-to-Head Clean Run Matrix -->
         <section class="liquid-glass">
             <h2>Head-to-Head Run Analysis</h2>
             <p class="section-desc">Comparing cumulative worldwide theatrical velocity against the historic trajectory blueprints of Indian Cinema's absolute greatest box office titans.</p>
             
-            <div class="matrix-scroll-wrapper">
-                <div class="matrix-container">
-                    <div class="matrix-header-row">
+            <div class="table-scroll-container">
+                <table class="liquid-table">
+                    <thead>
+                        <tr>
+                            <th class="timeline-cell">Timeline</th>
+                            <th class="ramayana-cell" style="color: #ffffff;">Ramayana</th>
+                            <th>Kalki 2898 AD</th>
+                            <th>2.0</th>
+                            <th>Baahubali 2</th>
