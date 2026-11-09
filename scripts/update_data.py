@@ -23,7 +23,8 @@ from zoneinfo import ZoneInfo
 # CONFIGURATION
 # ---------------------------------------------------------------------------
 
-ROOT = Path(__file__).resolve().parents
+# Fixed the path initialization mapping to point to the repository root directory
+ROOT = Path(__file__).resolve().parent.parent
 DATA_FILE = ROOT / "data.json"
 REVIEWS_FILE = ROOT / "reviews.json"
 
@@ -102,10 +103,8 @@ def extract_numbers_from_text(raw_html: str) -> dict[str, float]:
     parser.feed(raw_html)
     text = " ".join(parser.parts)
     
-    # Adaptive extraction logic targeting dynamic collection terms
     metrics = {"ww": 223.74, "india": 200.00, "overseas": 23.74}
     
-    # Try finding large structural patterns inside text blocks
     ww_match = re.search(r'(?:Worldwide|WW)\s*(?:Gross)?[:\-\s]*([0-9,]+(?:\.[0-9]+)?)\s*(?:Cr|Crore)', text, re.IGNORECASE)
     if ww_match:
         val = float(ww_match.group(1).replace(",", ""))
@@ -121,17 +120,14 @@ def main() -> int:
     data = load_json(DATA_FILE, {})
     fetched_at = now_ist()
     
-    # Ensure nested dictionary keys exist structurally
     data.setdefault("dayWiseAdvance", {})
     
     try:
         html = fetch_page(LIVE_BOX_OFFICE_URL)
         extracted = extract_numbers_from_text(html)
     except Exception:
-        # Fallback values preserve state if connection times out or breaks
         extracted = {"ww": 223.74, "india": 200.00, "overseas": 23.74}
 
-    # Atomically format data mappings matching the frontend listener expectation
     data["worldwideAllDates"] = {
         "scope": "all_dates",
         "currency": "INR",
@@ -159,4 +155,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-    
