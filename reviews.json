@@ -57,6 +57,11 @@
     "tmdbReviewPagesAvailable": 1,
     "youtubeVideosDiscovered": [
       {
+        "title": "RAMAYANA Movie Honest Review 🔥 | Ram vs Ravana &amp; Garuda Scenes Are Mind Blowing? |",
+        "publishedAt": "2026-11-09T22:30:14Z",
+        "url": "https://www.youtube.com/watch?v=ctOXaDayzs8"
+      },
+      {
         "title": "Ramayana Movie Review || #ramayana #ramayanamovie #ramaynamoviereview #ramayan #shorts #movieclips",
         "publishedAt": "2026-11-09T17:43:42Z",
         "url": "https://www.youtube.com/watch?v=ITOXjaL6ftk"
@@ -75,6 +80,11 @@
         "title": "RAMAYANA Review: Peak Storytelling | Ranbir Kapoor, Yash &amp; Sai Pallavi",
         "publishedAt": "2026-11-09T16:16:54Z",
         "url": "https://www.youtube.com/watch?v=HD4qKZzZr8k"
+      },
+      {
+        "title": "Ramayana Movie jai shree ram 🙏🫶❤️ | Ramayana Movie review | #Ramayana #shorts #viral",
+        "publishedAt": "2026-11-09T15:42:03Z",
+        "url": "https://www.youtube.com/watch?v=EADwuL8S4TM"
       },
       {
         "title": "1 Biggest War 🤯 Ramayana vs Godzilla #ramayana",
@@ -97,24 +107,9 @@
         "url": "https://www.youtube.com/watch?v=puVbART-yOM"
       },
       {
-        "title": "🔥 Ramayan New Movie 2026 | पहली झलक देखकर हो जाएंगे हैरान 😱 | Movie Review in Hindi | Yug Blogger",
-        "publishedAt": "2026-11-09T13:30:27Z",
-        "url": "https://www.youtube.com/watch?v=r-icJPLrkVs"
-      },
-      {
-        "title": "Ramayana Movie kumbhkaran Example of Hibernation | Study with UPSC Satire Memes Review Environment",
-        "publishedAt": "2026-11-09T13:15:01Z",
-        "url": "https://www.youtube.com/watch?v=lErIJ8-VY9A"
-      },
-      {
         "title": "#RAMAYANA WINNING HEARTS! Critics &amp; Audience Praising  #RamayanaReview #yash #RanbirKapoor #trending",
         "publishedAt": "2026-11-09T16:31:21Z",
         "url": "https://www.youtube.com/watch?v=1juLLIast7I"
-      },
-      {
-        "title": "RAMAYANA Creates HISTORY! 😱 New Record &amp; Worldwide Box Office Update",
-        "publishedAt": "2026-11-09T09:34:52Z",
-        "url": "https://www.youtube.com/watch?v=7JPDNdVugms"
       },
       {
         "title": "Ramayana Public Talk | Yash | Ranbir Kapoor | Ramayana Review | Ramayana Public Review | Rating",
@@ -155,6 +150,11 @@
         "title": "Ramayana Public Talk | Yash | Ranbir Kapoor | Ramayana Review | Ramayana Public Review | Rating",
         "publishedAt": "2026-11-08T07:45:15Z",
         "url": "https://www.youtube.com/watch?v=jZMl8frp3S4"
+      },
+      {
+        "title": "Ramayana देखने के बाद भाई को सीता जी में अपनी माँ दिखी🙂  #shorts #entertainment",
+        "publishedAt": "2026-11-08T07:30:30Z",
+        "url": "https://www.youtube.com/watch?v=hkHQdeNOqaM"
       }
     ],
     "youtubeUsedAsSentimentEvidence": false,
@@ -162,10 +162,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-09T21:50:56Z",
+  "updatedAt": "2026-11-10T00:20:30Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-09T21:50:56Z",
+    "updatedAt": "2026-11-10T00:20:30Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 1,
     "minimumReviewLength": 100,
