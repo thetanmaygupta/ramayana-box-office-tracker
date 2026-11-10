@@ -1,6 +1,6 @@
 {
   "project": "Ramayana: Rise of a Legend — Box Office Tracker",
-  "lastUpdated": "2026-11-10T16:58:59+05:30",
+  "lastUpdated": "2026-11-11T00:16:21+05:30",
   "dataStatus": "source_scoped_snapshot",
   "statusNote": "Worldwide all-dates advance gross is calculated from separately timestamped Sacnilk India and BoxOfficeIndia24 overseas snapshots. This is not a live feed or a fully harmonised worldwide measurement.",
   "releaseDate": "2026-11-05",
@@ -140,7 +140,7 @@
   ],
   "automatedFeed": {
     "status": "success",
-    "fetchedAt": "2026-11-10T16:58:59+05:30",
+    "fetchedAt": "2026-11-11T00:16:21+05:30",
     "worldwideGrossCr": 223.74,
     "indiaGrossCr": 200.0,
     "overseasGrossCr": 23.74
@@ -221,7 +221,7 @@
     "worldwideGrossCr": 223.74,
     "indiaGrossCr": 200.0,
     "overseasGrossCr": 23.74,
-    "calculatedAt": "2026-11-10T16:58:59+05:30"
+    "calculatedAt": "2026-11-11T00:16:21+05:30"
   },
   "sourcePolicy": {
     "primary": [
@@ -367,5 +367,5 @@
     "reviewCount": 1,
     "voteCount": 22
   },
-  "lastChecked": "2026-11-10T16:58:59+05:30"
+  "lastChecked": "2026-11-11T00:16:21+05:30"
 }

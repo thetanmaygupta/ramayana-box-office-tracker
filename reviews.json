@@ -57,6 +57,31 @@
     "tmdbReviewPagesAvailable": 1,
     "youtubeVideosDiscovered": [
       {
+        "title": "Ramayana: Rise of a Legend | Ramayan Trailer | Ram Siya k Luv Kush #Ramayana #movie #song",
+        "publishedAt": "2026-11-10T18:30:01Z",
+        "url": "https://www.youtube.com/watch?v=PQ2lKzh6laM"
+      },
+      {
+        "title": "Ramayana Movie Review | What I Loved About Ramayan Part 1",
+        "publishedAt": "2026-11-10T17:50:13Z",
+        "url": "https://www.youtube.com/watch?v=mFmr8y_G6VQ"
+      },
+      {
+        "title": "🔴🔥Ramayana Part 1 Public review#shorts #ramayana #yash #saipallavi #moviereview",
+        "publishedAt": "2026-11-10T17:44:15Z",
+        "url": "https://www.youtube.com/watch?v=WddFK3Otgyg"
+      },
+      {
+        "title": "രാമായണ movie കണ്ടു 🫡🔥💥 | #dailyvlog | #moviereview | #ramayana | #ramayanamovie | #movievlog",
+        "publishedAt": "2026-11-10T15:30:29Z",
+        "url": "https://www.youtube.com/watch?v=G6NrUkOE4-M"
+      },
+      {
+        "title": "Ramayana Movie Review 🤔 #shorts #trending #ramayan",
+        "publishedAt": "2026-11-10T14:30:12Z",
+        "url": "https://www.youtube.com/watch?v=vFCG8u3gEsk"
+      },
+      {
         "title": "Ramayana Movie Review 2026 Telugu 🔥 | Negative Talk ఎందుకు? నాకు మాత్రం సినిమా నచ్చింది!",
         "publishedAt": "2026-11-10T12:30:02Z",
         "url": "https://www.youtube.com/watch?v=g0xEP1gsFhs"
@@ -82,29 +107,9 @@
         "url": "https://www.youtube.com/watch?v=m8viur3iL20"
       },
       {
-        "title": "Ramayana Movie Review 😱 | देखने से पहले ये जरूर जान लो! | Full Review in Hindi | 3D Collection",
-        "publishedAt": "2026-11-10T07:40:18Z",
-        "url": "https://www.youtube.com/watch?v=27TPGsuBCH8"
-      },
-      {
-        "title": "Ramayana Movie Honest Review? 🔥 ₹4000 Crore VFX! 😱 #ramayana​ #yash​ #review​ #shortvideo #review",
-        "publishedAt": "2026-11-10T07:10:22Z",
-        "url": "https://www.youtube.com/watch?v=pA-oO59LmHs"
-      },
-      {
-        "title": "Ramayana Movie 🗿 X Audience 🤡 #shorts #viral #review #ramayana",
-        "publishedAt": "2026-11-10T07:03:03Z",
-        "url": "https://www.youtube.com/watch?v=bfr1t4u8H9s"
-      },
-      {
-        "title": "Ramayana Movie Review: 30 Minute Ka Sequence! Ravan Ka Ye Avatar Dekha? 🔥",
-        "publishedAt": "2026-11-10T06:45:25Z",
-        "url": "https://www.youtube.com/watch?v=g9jAxyr4ju0"
-      },
-      {
-        "title": "#ramayana #moviereview #ranbirkapoor #saipallavi #yash #arrahman #hanszimmer #namitmalhotra",
-        "publishedAt": "2026-11-10T06:43:26Z",
-        "url": "https://www.youtube.com/watch?v=PoGA6_pNBEk"
+        "title": "भाई ने बोला मै Ramayana में हनुमान का रोल करता😃||#shorts #entertainment",
+        "publishedAt": "2026-11-10T15:30:16Z",
+        "url": "https://www.youtube.com/watch?v=6W714HkuOZM"
       },
       {
         "title": "Ramayana Part 3? 😱 Ranbir Kapoor&#39;s Film Could Become a Trilogy! #Shorts #ramayana #yash #ranbir",
@@ -150,11 +155,6 @@
         "title": "Ramayana को Mythological बोलने वालों को भाई का करारा जवाब🤬||#shorts #entertainment",
         "publishedAt": "2026-11-08T15:30:13Z",
         "url": "https://www.youtube.com/watch?v=diLX4whpV70"
-      },
-      {
-        "title": "Ramayana: Rise of Legends Movie Review #shorts #viral #ramayana",
-        "publishedAt": "2026-11-08T12:10:00Z",
-        "url": "https://www.youtube.com/watch?v=rulma1b7I8s"
       }
     ],
     "youtubeUsedAsSentimentEvidence": false,
@@ -162,10 +162,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-10T12:50:38Z",
+  "updatedAt": "2026-11-10T18:46:21Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-10T12:50:38Z",
+    "updatedAt": "2026-11-10T18:46:21Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 1,
     "minimumReviewLength": 100,
