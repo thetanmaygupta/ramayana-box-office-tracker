@@ -57,16 +57,6 @@
     "tmdbReviewPagesAvailable": 1,
     "youtubeVideosDiscovered": [
       {
-        "title": "RAMAYANA Mein Ravan Ko Glorify Kiya Ja Raha Hai?😱🔥#ramayana #ramayan #ravan #ram",
-        "publishedAt": "2026-11-11T18:58:40Z",
-        "url": "https://www.youtube.com/watch?v=X_kkPV8T2cA"
-      },
-      {
-        "title": "Ramayana movie 🍿 review 😱 |vivekcrafty| #moviereview #ramayana #moview",
-        "publishedAt": "2026-11-11T17:40:42Z",
-        "url": "https://www.youtube.com/watch?v=y449Fl6JIFw"
-      },
-      {
         "title": "Ramayana: The Rise Of The Legend #ramayan",
         "publishedAt": "2026-11-11T17:22:05Z",
         "url": "https://www.youtube.com/watch?v=jHgAtFs25e4"
@@ -80,11 +70,6 @@
         "title": "Ramayana Review Telugu | పెద్ద Screenపై ఆ Feeling వేరు! 🔥 #shorts",
         "publishedAt": "2026-11-11T16:15:52Z",
         "url": "https://www.youtube.com/watch?v=aetcLp8o1RA"
-      },
-      {
-        "title": "Ramayana Part 1 Honest Review 🔥 | रावण से शुरू होती है कहानी! | Ranbir Kapoor, Yash",
-        "publishedAt": "2026-11-11T15:45:42Z",
-        "url": "https://www.youtube.com/watch?v=i9njiQJJibM"
       },
       {
         "title": "#ramayana #ravana #ramayanareview #ranbirkapoor #saipallavi #yash #shorts #moviereview",
@@ -102,9 +87,29 @@
         "url": "https://www.youtube.com/watch?v=Pk73SUlvMho"
       },
       {
+        "title": "Ramayana: Rise of a Legend | Ramayan Trailer | Ramayana: Jai Jai Ram #Ramayana #movie #song",
+        "publishedAt": "2026-11-11T14:38:04Z",
+        "url": "https://www.youtube.com/watch?v=kNvK5rMw4yU"
+      },
+      {
         "title": "RAMAYANA MOVIE எப்படி இருக்கு? 😳🔥 | Honest Review in Tamil",
         "publishedAt": "2026-11-11T14:30:12Z",
         "url": "https://www.youtube.com/watch?v=ZBGKfMKnYTE"
+      },
+      {
+        "title": "Ramayana Movie Review 🎬#ramayana #moviereview #review",
+        "publishedAt": "2026-11-11T14:30:15Z",
+        "url": "https://www.youtube.com/watch?v=SsJmYVvxBd0"
+      },
+      {
+        "title": "did you notice in Ramayana movie| Young sita Shiv dhanush scene | review| Reaction",
+        "publishedAt": "2026-11-11T13:00:00Z",
+        "url": "https://www.youtube.com/watch?v=qnTs_EmynQ4"
+      },
+      {
+        "title": "Ramayana: Rise of a Legend की अद्भुत कहानी 🚩Movie Explained श्रीराम, माता सीता और रावण #ytviral #yt",
+        "publishedAt": "2026-11-11T18:44:45Z",
+        "url": "https://www.youtube.com/watch?v=azSwBeL0ljk"
       },
       {
         "title": "Ramayana Public Review | Ramayana Public Reaction | Ramayana Movie Public Review | Ramayana Review",
@@ -150,11 +155,6 @@
         "title": "Money follows😘#ramayan#ramayanareview#trandingshorts#viralshorts#youtubesearch@GameON099-w9z",
         "publishedAt": "2026-11-10T07:13:01Z",
         "url": "https://www.youtube.com/watch?v=KgM6RWxu5Vk"
-      },
-      {
-        "title": "#Yash Calls Hans Zimmer &amp; A.R. Rahman Collab a DREAM COME TRUE! 🔥🎶 | #Ramayana #trending #HansZimmer",
-        "publishedAt": "2026-11-10T03:06:02Z",
-        "url": "https://www.youtube.com/watch?v=Aa27i8GgnzE"
       }
     ],
     "youtubeUsedAsSentimentEvidence": false,
@@ -162,10 +162,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-11T19:27:30Z",
+  "updatedAt": "2026-11-11T22:53:15Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-11T19:27:30Z",
+    "updatedAt": "2026-11-11T22:53:15Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 1,
     "minimumReviewLength": 100,
