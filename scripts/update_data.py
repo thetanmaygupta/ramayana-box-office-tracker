@@ -1,214 +1,228 @@
-#!/usr/bin/env python3
-"""
-ReelMetrics — automated week-wise box-office updater.
-"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REELMETRICS / CINEMA INTELLIGENCE • LIVE TRACKER</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.7)), 
+                              url('./assets/filters_quality(80)_format(webp).webp');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: #cbd5e1;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 0 16px 64px 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+        header {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 8px 16px 8px;
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        .highlight { color: #d4a359; }
+        .header-desc {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #94a3b8;
+            max-width: 560px;
+            line-height: 1.6;
+        }
+        .status-badge {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #d4a359;
+            background: rgba(212, 163, 89, 0.12);
+            border: 1px solid rgba(212, 163, 89, 0.25);
+            padding: 4px 10px;
+            border-radius: 9999px;
+        }
+        main {
+            max-width: 800px;
+            margin: 20px auto 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .liquid-glass {
+            position: relative;
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.35);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+        }
+        h2 { font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; text-transform: uppercase; }
+        .section-desc { font-size: 12px; color: #64748b; margin-top: 4px; line-height: 1.5; }
+        
+        .main-display-panel {
+            border: 1px solid rgba(212, 163, 89, 0.25);
+            background: rgba(15, 23, 42, 0.45);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+        .panel-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .big-number { font-size: 42px; font-weight: 900; color: #d4a359; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 4px; margin-top: 4px; }
+        
+        .split-grid { display: grid; grid-template-cols: 1fr; gap: 12px; margin-top: 12px; }
+        @media (min-width: 580px) { .split-grid { grid-template-cols: repeat(2, 1fr); } }
+        .split-card { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
+        .split-title { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; }
+        .split-number-box { font-size: 22px; font-weight: 800; margin-top: 4px; color: #ffffff; }
 
-from __future__ import annotations
+        /* Elevated Mobile-Safe Filter Scroller */
+        .filter-scroller {
+            position: relative;
+            z-index: 50;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-top: 16px;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .filter-scroller::-webkit-scrollbar { height: 4px; }
+        .filter-scroller::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 9999px; }
+        .pill-btn {
+            position: relative;
+            z-index: 51;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            padding: 10px 18px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 9999px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .pill-btn.active {
+            background: rgba(212, 163, 89, 0.15);
+            border-color: #d4a359;
+            color: #d4a359;
+        }
 
-import json
-import os
-import re
-import sys
-import tempfile
-from datetime import datetime, timezone
-from html.parser import HTMLParser
-from pathlib import Path
-from typing import Any
-from urllib.request import Request, urlopen
-from zoneinfo import ZoneInfo
+        .matrix-data-box {
+            background: rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 12px;
+        }
+        .week-meta-strip {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-bottom: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .week-meta-strip span strong { color: #ffffff; }
+        .competitor-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .competitor-row:last-child { border-bottom: none; }
+        .comp-name { color: #cbd5e1; font-weight: 500; }
+        .comp-value { color: #ffffff; font-weight: 700; }
+        .comp-name.highlight-film { color: #d4a359; font-weight: 700; }
+        .comp-value.highlight-film { color: #d4a359; font-weight: 800; }
 
-ROOT = Path(__file__).resolve().parent.parent
-DATA_FILE = ROOT / "data.json"
+        .reviews-layout { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; width: 100%; }
+        .review-row { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
+        .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 6px; }
+        .author-name { font-weight: 700; color: #ffffff; }
+        .rating-chip { font-size: 10px; font-weight: 700; color: #d4a359; background: rgba(212, 163, 89, 0.1); padding: 2px 6px; border-radius: 4px; }
+        .review-body { font-size: 12px; color: #cbd5e1; line-height: 1.5; font-style: italic; }
+        
+        .footer-note { text-align: center; font-size: 11px; color: #475569; margin-top: 32px; padding-bottom: 32px; line-height: 1.6; }
+    </style>
+</head>
+<body>
 
-IST = ZoneInfo("Asia/Kolkata")
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-)
-HTTP_TIMEOUT_SECONDS = 25
-MAX_HTML_BYTES = 8_000_000
+    <header>
+        <h1>REEL<span class="highlight">METRICS</span></h1>
+        <p class="header-desc">Ramayana: Rise of a Legend • Week-Wise Worldwide Box Office Tracker</p>
+        <div class="status-badge" id="last-updated-badge">Syncing live box office...</div>
+    </header>
 
-RELEASE_DATE = "2026-11-05"
+    <main>
+        <!-- Lifetime Worldwide Gross Block -->
+        <section class="liquid-glass">
+            <h2>Worldwide Box Office Collection</h2>
+            <p class="section-desc">Cumulative theatrical gross across India and Overseas territories.</p>
 
-# Target URLs for Ramayana box office reports
-TARGET_URLS = [
-    "https://sacnilk.com",
-    "https://sacnilk.com",
-    "https://sacnilk.com"
-]
+            <div class="main-display-panel">
+                <span class="panel-label">Total Worldwide Gross</span>
+                <div class="big-number">₹<span id="total-worldwide-gross">895.00</span> Cr</div>
+            </div>
 
+            <div class="split-grid">
+                <div class="split-card">
+                    <span class="split-title">India Gross</span>
+                    <div class="split-number-box">₹<span id="total-india-gross">700.00</span> Cr</div>
+                </div>
+                <div class="split-card">
+                    <span class="split-title">Overseas Gross</span>
+                    <div class="split-number-box">₹<span id="total-overseas-gross">195.00</span> Cr</div>
+                </div>
+            </div>
+        </section>
 
-def now_ist() -> str:
-    return datetime.now(IST).isoformat(timespec="seconds")
+        <!-- Week-Wise Trajectory Matrix Block -->
+        <section class="liquid-glass">
+            <h2>Week-Wise Trajectory Matrix</h2>
+            <p class="section-desc">Tap a week below to view Ramayana's weekly collections and historical benchmarks.</p>
+            
+            <div class="filter-scroller" id="week-filter-bar">
+                <button type="button" class="pill-btn active" data-week="week1">Week 1</button>
+                <button type="button" class="pill-btn" data-week="week2">Week 2</button>
+                <button type="button" class="pill-btn" data-week="week3">Week 3</button>
+                <button type="button" class="pill-btn" data-week="week4">Week 4</button>
+                <button type="button" class="pill-btn" data-week="lifetime">Lifetime Total</button>
+            </div>
 
+            <div class="matrix-data-box">
+                <div class="week-meta-strip">
+                    <span>India: <strong id="meta-india">₹585.00 Cr</strong></span>
+                    <span>Overseas: <strong id="meta-overseas">₹160.00 Cr</strong></span>
+                    <span>Period: <strong id="meta-period">Days 1–7</strong></span>
+                </div>
 
-def atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, temp_name = tempfile.mkstemp(
-        prefix=f".{path.name}.", suffix=".tmp", dir=str(path.parent)
-    )
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(payload, handle, ensure_ascii=False, indent=2)
-            handle.write("\n")
-        os.replace(temp_name, path)
-    except Exception:
-        try:
-            os.unlink(temp_name)
-        except OSError:
-            pass
-        raise
-
-
-def load_json(path: Path, default: dict[str, Any]) -> dict[str, Any]:
-    if not path.exists():
-        return default
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return default
-
-
-def fetch_page(url: str) -> str:
-    request = Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html"})
-    with urlopen(request, timeout=HTTP_TIMEOUT_SECONDS) as response:
-        return response.read(MAX_HTML_BYTES).decode("utf-8", errors="replace")
-
-
-class VisibleTextParser(HTMLParser):
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.parts: list[str] = []
-
-    def handle_data(self, data: str) -> None:
-        if data.strip():
-            self.parts.append(data.strip())
-
-
-def parse_box_office_text(raw_html: str) -> dict[str, Any]:
-    parser = VisibleTextParser()
-    parser.feed(raw_html)
-    text = " ".join(parser.parts)
-
-    result: dict[str, Any] = {"weeks": {}}
-
-    # Extract Worldwide Total Gross
-    ww_match = re.search(
-        r"(?:Worldwide|WW)\s*(?:Total|Gross|Collection)?[:\-\s₹]*([0-9,]+(?:\.[0-9]+)?)\s*(?:Cr|Crore)",
-        text,
-        re.IGNORECASE,
-    )
-    if ww_match:
-        val = float(ww_match.group(1).replace(",", ""))
-        if val > 50:
-            result["worldwideGrossCr"] = val
-
-    # Extract India Gross / Net
-    ind_match = re.search(
-        r"India\s*(?:Gross|Net|Collection)?[:\-\s₹]*([0-9,]+(?:\.[0-9]+)?)\s*(?:Cr|Crore)",
-        text,
-        re.IGNORECASE,
-    )
-    if ind_match:
-        val = float(ind_match.group(1).replace(",", ""))
-        if val > 40:
-            result["indiaGrossCr"] = val
-
-    # Extract Overseas Gross
-    ov_match = re.search(
-        r"Overseas\s*(?:Gross|Collection)?[:\-\s₹]*([0-9,]+(?:\.[0-9]+)?)\s*(?:Cr|Crore)",
-        text,
-        re.IGNORECASE,
-    )
-    if ov_match:
-        val = float(ov_match.group(1).replace(",", ""))
-        if val > 10:
-            result["overseasGrossCr"] = val
-
-    # Extract Week 1, Week 2, Week 3, Week 4 collections
-    for wk in range(1, 5):
-        wk_match = re.search(
-            rf"Week\s*{wk}\s*(?:Collection|Total|Gross|Net)?[:\-\s₹]*([0-9,]+(?:\.[0-9]+)?)\s*(?:Cr|Crore)",
-            text,
-            re.IGNORECASE,
-        )
-        if wk_match:
-            val = float(wk_match.group(1).replace(",", ""))
-            if val > 1:
-                result["weeks"][f"week{wk}"] = val
-
-    return result
-
-
-def main() -> int:
-    data = load_json(DATA_FILE, {})
-    fetched_at = now_ist()
-
-    # Preserve existing weeklyCollections structure
-    weekly = data.setdefault(
-        "weeklyCollections",
-        {
-            "week1": {"label": "Week 1 (Days 1–7)", "worldwideCr": None, "indiaCr": None, "overseasCr": None},
-            "week2": {"label": "Week 2 (Days 8–14)", "worldwideCr": None, "indiaCr": None, "overseasCr": None},
-            "week3": {"label": "Week 3 (Days 15–21)", "worldwideCr": None, "indiaCr": None, "overseasCr": None},
-            "week4": {"label": "Week 4 (Days 22–28)", "worldwideCr": None, "indiaCr": None, "overseasCr": None},
-        },
-    )
-
-    extracted: dict[str, Any] = {"weeks": {}}
-    source_used = None
-
-    for url in TARGET_URLS:
-        try:
-            html = fetch_page(url)
-            if "ramayana" in html.lower():
-                parsed = parse_box_office_text(html)
-                if parsed.get("worldwideGrossCr") or parsed.get("weeks"):
-                    extracted = parsed
-                    source_used = url
-                    break
-        except Exception:
-            continue
-
-    # Update weekly numbers if newly scraped
-    for wk_key, val in extracted.get("weeks", {}).items():
-        if wk_key in weekly and val is not None:
-            weekly[wk_key]["worldwideCr"] = val
-            weekly[wk_key]["indiaCr"] = round(val * 0.78, 2)
-            weekly[wk_key]["overseasCr"] = round(val * 0.22, 2)
-
-    # Update top-level totals only if valid new figures were found
-    prev_feed = data.get("automatedFeed", {})
-    ww_total = extracted.get("worldwideGrossCr") or prev_feed.get("worldwideGrossCr", 0)
-    ind_total = extracted.get("indiaGrossCr") or prev_feed.get("indiaGrossCr", 0)
-    ov_total = extracted.get("overseasGrossCr") or prev_feed.get("overseasGrossCr", 0)
-
-    data["automatedFeed"] = {
-        "status": "success" if source_used else "retained_snapshot",
-        "sourceUrl": source_used or "retained",
-        "fetchedAt": fetched_at,
-        "worldwideGrossCr": ww_total,
-        "indiaGrossCr": ind_total,
-        "overseasGrossCr": ov_total,
-    }
-
-    data["worldwideAllDates"] = {
-        "scope": "lifetime_total",
-        "currency": "INR",
-        "status": "calculated",
-        "worldwideGrossCr": ww_total,
-        "indiaGrossCr": ind_total,
-        "overseasGrossCr": ov_total,
-        "calculatedAt": fetched_at,
-    }
-
-    data["lastChecked"] = fetched_at
-    data["lastUpdated"] = fetched_at
-
-    atomic_write_json(DATA_FILE, data)
-    print(f"Update complete: WW={ww_total} Cr, Weeks={extracted.get('weeks')}")
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+                <div class="competitor-row">
+                    <span class="comp-name highlight-film" id="matrix-r-label">Ramayana (Week 1)</span>
+                    <span class="comp-value highlight-film" id="matrix-active-r">₹745.00 Cr</span>
+                </div>
+                <div class="competitor-row">
+                    <span class="comp-name">Baahubali 2 (Benchmark)</span>
