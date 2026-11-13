@@ -92,6 +92,16 @@
     "tmdbReviewPagesAvailable": 1,
     "youtubeVideosDiscovered": [
       {
+        "title": "इंडियन सिनेमा का बाप है ये फिल्म! 🔥 Ramayana Movie Review &amp; Reaction",
+        "publishedAt": "2026-11-13T20:08:35Z",
+        "url": "https://www.youtube.com/watch?v=Iik_pFDdna4"
+      },
+      {
+        "title": "बहोत अच्छी मोवी है रामायण | Ramayana movie Honest Public Review #ramayana #shorts #yash",
+        "publishedAt": "2026-11-13T19:19:56Z",
+        "url": "https://www.youtube.com/watch?v=-afCvk_W-ww"
+      },
+      {
         "title": "Bilkul Hollywood Type || Ramayana Movie Public Review #shorts#ramayanamoviepublicreview#ytshorts",
         "publishedAt": "2026-11-13T18:15:39Z",
         "url": "https://www.youtube.com/watch?v=uLp7wT2XI3E"
@@ -105,6 +115,11 @@
         "title": "Ramayana: Rise of a Legend | Ramayana full Movie | Ramayana: Jai Jai Ram #Ramayana #movie #song",
         "publishedAt": "2026-11-13T16:49:20Z",
         "url": "https://www.youtube.com/watch?v=dHRQhG96PKg"
+      },
+      {
+        "title": "Ramayana Movie Review 🔥 Yash &amp; Sunny Deol Gave Me GOOSEBUMPS 🥶 #sunnydeoldailog #ravan #yash #shorts",
+        "publishedAt": "2026-11-13T16:38:14Z",
+        "url": "https://www.youtube.com/watch?v=HXfeKwhCNcM"
       },
       {
         "title": "KRK Ramayana Review Roast Reel 😂🔥",
@@ -125,21 +140,6 @@
         "title": "Who Was the BEST Performer in Ramayana? 😱 | My Ranking #Ramayana",
         "publishedAt": "2026-11-13T14:46:06Z",
         "url": "https://www.youtube.com/watch?v=xMOs6qN-RKc"
-      },
-      {
-        "title": "Ramayana Movie Review : 5 Weak Points #shorts",
-        "publishedAt": "2026-11-13T14:45:39Z",
-        "url": "https://www.youtube.com/watch?v=zAjZHc-QC1Y"
-      },
-      {
-        "title": "Ravana EGO On PEAK🔥",
-        "publishedAt": "2026-11-13T14:20:42Z",
-        "url": "https://www.youtube.com/watch?v=DA6o-fC8tPg"
-      },
-      {
-        "title": "Ramayana Review 🔥 Is It Worth the Hype? #ramayana #shorts",
-        "publishedAt": "2026-11-13T14:06:12Z",
-        "url": "https://www.youtube.com/watch?v=bEF3EUaC-hw"
       },
       {
         "title": "Ramayana Movie ने भौकाल बना दिया 😱😱 / Ramayana Movie Review #ramayana #movie #shorts #viral #news",
@@ -192,10 +192,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 2
   },
-  "updatedAt": "2026-11-13T18:38:56Z",
+  "updatedAt": "2026-11-13T22:03:47Z",
   "audiencePulse": {
     "status": "success",
-    "updatedAt": "2026-11-13T18:38:56Z",
+    "updatedAt": "2026-11-13T22:03:47Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 2,
     "minimumReviewLength": 100,
