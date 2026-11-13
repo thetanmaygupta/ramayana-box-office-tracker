@@ -57,6 +57,16 @@
     "tmdbReviewPagesAvailable": 1,
     "youtubeVideosDiscovered": [
       {
+        "title": "Don’t Watch Ramayana Movie 😡 #bollywood #yash #ravan #ram #movie #ramayana #film #moviereview #news",
+        "publishedAt": "2026-11-13T12:06:53Z",
+        "url": "https://www.youtube.com/watch?v=doNu1uqzxpo"
+      },
+      {
+        "title": "RAMAYANA 🔥 இவ்வளவு பிரம்மாண்டமா? | Ramayana Movie Review in Tamil | Rise of a Legend",
+        "publishedAt": "2026-11-13T11:40:58Z",
+        "url": "https://www.youtube.com/watch?v=R4cdnZfdYpU"
+      },
+      {
         "title": "Excellent movie hai Ramayana Public review | Ramayana movie Public Opinion #ramayana #yash #shorts",
         "publishedAt": "2026-11-13T09:48:04Z",
         "url": "https://www.youtube.com/watch?v=8NxkQI7e5VQ"
@@ -87,24 +97,14 @@
         "url": "https://www.youtube.com/watch?v=uZXxUZ_OjyM"
       },
       {
+        "title": "#ramayan #movie #trending #video #niteshtiwari #namitmalhotra #viral #trendingvideo #moviereview",
+        "publishedAt": "2026-11-13T08:23:48Z",
+        "url": "https://www.youtube.com/watch?v=hDDxyXL43fo"
+      },
+      {
         "title": "Ramayana Movie Public Review 🔥 Ram Vs Ravan 🔥🔥 #shorts",
         "publishedAt": "2026-11-13T08:22:18Z",
         "url": "https://www.youtube.com/watch?v=dvfxhhLnKk0"
-      },
-      {
-        "title": "Ramayana vs Adipurush 😱 | Kya Ranbir Kapoor Ki Ramayana Adipurush Se Behtar Hogi? 🔥",
-        "publishedAt": "2026-11-13T08:04:38Z",
-        "url": "https://www.youtube.com/watch?v=qLulqs5w4hQ"
-      },
-      {
-        "title": "RAMAYANA vs ANIMAL #collection #moviereview #newmovie #2026 #songs # #bollywood #ramayana #1 #2 #3 #",
-        "publishedAt": "2026-11-13T07:54:42Z",
-        "url": "https://www.youtube.com/watch?v=SeiPLJTI4wY"
-      },
-      {
-        "title": "Ramayana Honest Public Review 🔥 Top 5 Audience Reviews | What Are People Saying About Ramayana ? 😱",
-        "publishedAt": "2026-11-13T07:45:22Z",
-        "url": "https://www.youtube.com/watch?v=EwLOZNs6MFQ"
       },
       {
         "title": "2026, Ramayana shorts  #edit #ramayana #shorts",
@@ -162,10 +162,10 @@
     "sentimentEngine": "VADER",
     "publishedHighlightCount": 0
   },
-  "updatedAt": "2026-11-13T11:26:38Z",
+  "updatedAt": "2026-11-13T12:27:25Z",
   "audiencePulse": {
     "status": "awaiting_reviews",
-    "updatedAt": "2026-11-13T11:26:38Z",
+    "updatedAt": "2026-11-13T12:27:25Z",
     "sentimentEngine": "VADER",
     "reviewsAnalysed": 1,
     "minimumReviewLength": 100,
