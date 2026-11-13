@@ -1,236 +1,371 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REELMETRICS / CINEMA INTELLIGENCE • LIVE TRACKER</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.7)), 
-                              url('./assets/filters_quality(80)_format(webp).webp');
-            background-size: cover;
-            background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            color: #cbd5e1;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            min-height: 100vh;
-            padding: 0 16px 64px 16px;
-            -webkit-font-smoothing: antialiased;
-        }
-        header {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 8px 16px 8px;
-        }
-        h1 {
-            font-size: 36px;
-            font-weight: 900;
-            letter-spacing: -0.03em;
-            color: #ffffff;
-            text-transform: uppercase;
-        }
-        .highlight { color: #d4a359; }
-        .header-desc {
-            margin-top: 12px;
-            font-size: 13px;
-            color: #94a3b8;
-            max-width: 560px;
-            line-height: 1.6;
-        }
-        .status-badge {
-            display: inline-block;
-            margin-top: 10px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #d4a359;
-            background: rgba(212, 163, 89, 0.12);
-            border: 1px solid rgba(212, 163, 89, 0.25);
-            padding: 4px 10px;
-            border-radius: 9999px;
-        }
-        main {
-            max-width: 800px;
-            margin: 20px auto 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        
-        .liquid-glass {
-            position: relative;
-            background: rgba(255, 255, 255, 0.01);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.35);
-            border-radius: 20px;
-            padding: 24px;
-            width: 100%;
-        }
-        
-        h2 { font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; text-transform: uppercase; }
-        .section-desc { font-size: 12px; color: #64748b; margin-top: 4px; line-height: 1.5; }
-        
-        .main-display-panel {
-            border: 1px solid rgba(212, 163, 89, 0.25);
-            background: rgba(15, 23, 42, 0.45);
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 16px;
-        }
-        .panel-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .big-number { font-size: 42px; font-weight: 900; color: #d4a359; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 4px; margin-top: 4px; }
-        
-        .split-grid { display: grid; grid-template-cols: 1fr; gap: 12px; margin-top: 12px; }
-        @media (min-width: 580px) { .split-grid { grid-template-cols: repeat(2, 1fr); } }
-        .split-card { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
-        .split-title { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; }
-        .split-number-box { font-size: 22px; font-weight: 800; margin-top: 4px; color: #ffffff; }
-
-        /* Elevated Mobile-Safe Filter Scroller */
-        .filter-scroller {
-            position: relative;
-            z-index: 50;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            margin-top: 16px;
-            padding-bottom: 8px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .filter-scroller::-webkit-scrollbar {
-            height: 4px;
-        }
-        .filter-scroller::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 9999px;
-        }
-        .pill-btn {
-            position: relative;
-            z-index: 51;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #94a3b8;
-            padding: 10px 18px;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 9999px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-        .pill-btn.active {
-            background: rgba(212, 163, 89, 0.15);
-            border-color: #d4a359;
-            color: #d4a359;
-        }
-
-        /* Compact Data Frame Stacking Engine */
-        .matrix-data-box {
-            background: rgba(15, 23, 42, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 12px;
-        }
-        .day-meta-strip {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding-bottom: 12px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 11px;
-            color: #94a3b8;
-        }
-        .day-meta-strip span strong {
-            color: #ffffff;
-        }
-        .competitor-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            font-size: 13px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .competitor-row:last-child {
-            border-bottom: none;
-        }
-        .comp-name { color: #cbd5e1; font-weight: 500; }
-        .comp-value { color: #ffffff; font-weight: 700; }
-        .comp-name.highlight-film { color: #d4a359; font-weight: 700; }
-        .comp-value.highlight-film { color: #d4a359; font-weight: 800; }
-
-        .reviews-layout { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; width: 100%; }
-        .review-row { background-color: rgba(15, 23, 42, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 16px; }
-        .review-author-line { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 6px; }
-        .author-name { font-weight: 700; color: #ffffff; }
-        .rating-chip { font-size: 10px; font-weight: 700; color: #d4a359; background: rgba(212, 163, 89, 0.1); padding: 2px 6px; border-radius: 4px; }
-        .review-body { font-size: 12px; color: #cbd5e1; line-height: 1.5; font-style: italic; }
-        
-        .footer-note { text-align: center; font-size: 11px; color: #475569; margin-top: 32px; padding-bottom: 32px; line-height: 1.6; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>REEL<span class="highlight">METRICS</span></h1>
-        <p class="header-desc">Ramayana: Rise of a Legend • Live Theatrical & Advance Tracking Engine</p>
-        <div class="status-badge" id="last-updated-badge">Syncing latest snapshot...</div>
-    </header>
-
-    <main>
-        <!-- Box Office Block -->
-        <section class="liquid-glass">
-            <h2>Worldwide Advance Observation</h2>
-            <p class="section-desc">All-dates advance gross from verified Sacnilk & BoxOfficeIndia24 snapshots.</p>
-
-            <div class="main-display-panel">
-                <span class="panel-label">Worldwide All-Dates Advance Gross</span>
-                <div class="big-number">₹<span id="total-worldwide-gross">223.74</span> Cr</div>
-            </div>
-
-            <div class="split-grid">
-                <div class="split-card">
-                    <span class="split-title">India All-Dates Gross</span>
-                    <div class="split-number-box">₹<span id="total-india-gross">200.00</span> Cr</div>
-                </div>
-                <div class="split-card">
-                    <span class="split-title">Overseas All-Dates Gross</span>
-                    <div class="split-number-box">₹<span id="total-overseas-gross">23.74</span> Cr</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Compact Dynamic Filter Matrix Block -->
-        <section class="liquid-glass">
-            <h2>Day-Wise Advance & Benchmarks</h2>
-            <p class="section-desc">Select a day to inspect Ramayana's single-day advance breakdown and benchmarks.</p>
-            
-            <!-- Clean Data-Attribute Filter Buttons -->
-            <div class="filter-scroller" id="day-filter-bar">
-                <button type="button" class="pill-btn active" data-day="1">Day 1 (Nov 5)</button>
-                <button type="button" class="pill-btn" data-day="2">Day 2 (Nov 6)</button>
-                <button type="button" class="pill-btn" data-day="3">Day 3 (Nov 7)</button>
-                <button type="button" class="pill-btn" data-day="4">Day 4</button>
-                <button type="button" class="pill-btn" data-day="5">Day 5</button>
-                <button type="button" class="pill-btn" data-day="all">All-Dates Total</button>
-            </div>
-
-            <!-- Single Reusable Clean Data Box Container -->
-            <div class="matrix-data-box">
-                <div class="day-meta-strip" id="day-meta-strip">
-                    <span>India: <strong id="meta-india">₹43.63 Cr</strong></span>
-                    <span>Overseas: <strong id="meta-overseas">₹34.55 Cr</strong></span>
-                    <span>Occupancy: <strong id="meta-occ">19.2%</strong></span>
-                </div>
+{
+  "project": "Ramayana: Rise of a Legend — Box Office Tracker",
+  "lastUpdated": "2026-11-13T16:56:38+05:30",
+  "dataStatus": "source_scoped_snapshot",
+  "statusNote": "Worldwide all-dates advance gross is calculated from separately timestamped Sacnilk India and BoxOfficeIndia24 overseas snapshots. This is not a live feed or a fully harmonised worldwide measurement.",
+  "releaseDate": "2026-11-05",
+  "currency": "INR",
+  "bookingSnapshots": [
+    {
+      "label": "The Week — worldwide all-dates advance bookings",
+      "timestamp": "2026-11-01T14:21:00+05:30",
+      "scope": "all_dates",
+      "worldwideCr": 63.48,
+      "indiaCr": 34.01,
+      "overseasCr": 29.47,
+      "sourceName": "The Week",
+      "sourceUrl": "https://www.theweek.in/",
+      "notes": "Published snapshot reported worldwide all-date advance bookings; India opening-day-only figure was reported separately as ₹22.77 Cr. Verify the original article and scope before treating as current."
+    },
+    {
+      "label": "BoxOfficeIndia24 — tracked dates snapshot",
+      "timestamp": "2026-11-01T23:23:00+05:30",
+      "scope": "tracked_dates",
+      "worldwideCr": 40.64,
+      "indiaCr": 21.38,
+      "overseasCr": 19.25,
+      "tickets": 592258,
+      "shows": 21240,
+      "screensOrTheatres": 3446,
+      "occupancyPct": 13.0,
+      "sourceName": "BoxOfficeIndia24",
+      "sourceUrl": "https://boxofficeindia24.com/",
+      "notes": "Different timestamp and potentially different date coverage/definition from other reports. Do not compare as a like-for-like change until scope is verified."
+    }
+  ],
+  "openingDayComparisons": [
+    {
+      "title": "2.0",
+      "worldwideCr": 105,
+      "type": "reported_estimate",
+      "note": "Approximate reported Day 1 figure; estimates vary."
+    },
+    {
+      "title": "Kalki 2898 AD",
+      "worldwideCr": 178,
+      "type": "reported_estimate",
+      "note": "Approximate benchmark; published figures vary by source."
+    },
+    {
+      "title": "Ramayana: Rise of a Legend",
+      "worldwideCr": 180,
+      "type": "forecast",
+      "note": "Illustrative base-case forecast, not an actual collection."
+    }
+  ],
+  "forecastScenarios": [
+    {
+      "name": "Worst case",
+      "valueCr": 100
+    },
+    {
+      "name": "Pessimistic",
+      "valueCr": 135
+    },
+    {
+      "name": "Moderate",
+      "valueCr": 155
+    },
+    {
+      "name": "Base case",
+      "valueCr": 180
+    },
+    {
+      "name": "Optimistic",
+      "valueCr": 200
+    },
+    {
+      "name": "Best case",
+      "valueCr": 230
+    }
+  ],
+  "riskDrivers": [
+    {
+      "name": "Advance-booking conversion",
+      "sharePct": 30
+    },
+    {
+      "name": "Overseas performance",
+      "sharePct": 25
+    },
+    {
+      "name": "Walk-ins and occupancy",
+      "sharePct": 20
+    },
+    {
+      "name": "Show count and screen reach",
+      "sharePct": 15
+    },
+    {
+      "name": "Ticket pricing and other factors",
+      "sharePct": 10
+    }
+  ],
+  "methodology": {
+    "forecastLabel": "Illustrative scenario model",
+    "warning": "India Day 1 advance-booking figures in the automated panel are parsed from BoxOfficeIndia24. Worldwide and overseas figures may come from separately reported snapshots. Source coverage, timestamps and definitions can differ; forecasts are illustrative, not official results.",
+    "refreshIntervalMinutes": 15
+  },
+  "sources": [
+    {
+      "name": "Sacnilk",
+      "tier": "primary",
+      "url": "https://www.sacnilk.com/",
+      "role": "India advance-booking tracker and cross-check"
+    },
+    {
+      "name": "BoxOfficeIndia24",
+      "tier": "primary",
+      "url": "https://www.boxofficeindia24.com/",
+      "role": "Day-wise India and overseas advance-booking reports"
+    },
+    {
+      "name": "The Week",
+      "tier": "secondary",
+      "url": "https://www.theweek.in/",
+      "role": "Editorial validation; not an independent tracker when citing primary data"
+    },
+    {
+      "name": "Financial Express",
+      "tier": "secondary",
+      "url": "https://www.financialexpress.com/",
+      "role": "Editorial validation; not an independent tracker when citing primary data"
+    },
+    {
+      "name": "Koimoi",
+      "tier": "secondary",
+      "url": "https://www.koimoi.com/",
+      "role": "Trade-report validation; not an independent tracker when citing primary data"
+    }
+  ],
+  "automatedFeed": {
+    "status": "success",
+    "fetchedAt": "2026-11-13T16:56:38+05:30",
+    "worldwideGrossCr": 223.74,
+    "indiaGrossCr": 200.0,
+    "overseasGrossCr": 23.74
+  },
+  "dayWiseAdvance": {
+    "2026-11-05": {
+      "date": "2026-11-05",
+      "day": 1,
+      "indiaGrossCr": 43.63,
+      "sourceName": "BoxOfficeIndia24",
+      "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
+      "sourceUpdatedText": "2026-11-09 15:23 IST",
+      "fetchedAt": "2026-11-09T15:30:14+05:30",
+      "scope": "single_day_advance",
+      "tickets": 1160243,
+      "shows": 26407,
+      "occupancyPct": 19.2,
+      "worldwideGrossCr": 78.18,
+      "overseasGrossCr": 34.55,
+      "worldwideVerifiedFromPublisher": true,
+      "currency": "INR"
+    },
+    "2026-11-06": {
+      "date": "2026-11-06",
+      "day": 2,
+      "indiaGrossCr": 30.89,
+      "sourceName": "BoxOfficeIndia24",
+      "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-2-advance-booking-20261106",
+      "sourceUpdatedText": "2026-11-06 10:03 IST",
+      "fetchedAt": "2026-11-06T10:09:10+05:30",
+      "scope": "single_day_advance",
+      "tickets": 827385,
+      "shows": 24875,
+      "occupancyPct": 15.1,
+      "worldwideGrossCr": 44.53,
+      "overseasGrossCr": 13.63,
+      "worldwideVerifiedFromPublisher": true,
+      "currency": "INR"
+    },
+    "2026-11-07": {
+      "date": "2026-11-07",
+      "day": 3,
+      "indiaGrossCr": 51.09,
+      "sourceName": "BoxOfficeIndia24",
+      "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-3-advance-booking-20261107",
+      "sourceUpdatedText": "2026-11-07 09:23 IST",
+      "fetchedAt": "2026-11-07T09:34:39+05:30",
+      "scope": "single_day_advance",
+      "tickets": 1335608,
+      "shows": 25017,
+      "occupancyPct": 23.9,
+      "worldwideGrossCr": 68.61,
+      "overseasGrossCr": 17.51,
+      "worldwideVerifiedFromPublisher": true,
+      "currency": "INR"
+    }
+  },
+  "overseasAllDates": {
+    "grossCr": 23.74,
+    "tickets": 236947,
+    "shows": 12585,
+    "cinemas": 1513,
+    "countries": 31,
+    "occupancyPct": 10.7,
+    "dateRange": "9–18 Nov",
+    "sourceName": "BoxOfficeIndia24",
+    "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
+    "sourceUpdatedText": "2026-11-09 15:23 IST",
+    "fetchedAt": "2026-11-09T15:30:15+05:30",
+    "scope": "overseas_all_dates",
+    "note": "Overseas all-dates advance booking; not worldwide Day 1 and not actual collection.",
+    "currency": "INR"
+  },
+  "worldwideAllDates": {
+    "scope": "all_dates",
+    "currency": "INR",
+    "status": "calculated",
+    "worldwideGrossCr": 223.74,
+    "indiaGrossCr": 200.0,
+    "overseasGrossCr": 23.74,
+    "calculatedAt": "2026-11-13T16:56:38+05:30"
+  },
+  "sourcePolicy": {
+    "primary": [
+      "Sacnilk",
+      "BoxOfficeIndia24"
+    ],
+    "secondary": [
+      "The Week",
+      "Financial Express",
+      "Koimoi"
+    ],
+    "actualCollections": "Separate dataset. Never combine with advance bookings.",
+    "independenceRule": "Secondary publications citing a primary tracker are not independent measurements.",
+    "comparisonRule": "Compare matching dates, territories, gross/net definitions, blocked-seat treatment and publisher timestamps."
+  },
+  "actualCollections": {
+    "status": "awaiting_verified_trade_reports",
+    "records": [],
+    "note": "Actual theatrical collections are separate from advance-booking figures."
+  },
+  "sourceValidation": {
+    "sacnilk": {
+      "status": "unavailable",
+      "url": "https://www.sacnilk.com/livetracker/ramayana_part_1_2026_Advance-Booking-Live",
+      "checkedAt": "2026-11-09T15:30:16+05:30",
+      "warning": "No unambiguous labelled India gross found"
+    },
+    "boxOfficeIndia24": {
+      "boi24_day_1": {
+        "status": "success",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
+        "checkedAt": "2026-11-09T15:30:14+05:30",
+        "warning": null
+      },
+      "boi24_day_2": {
+        "status": "retained_previous",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-2-advance-booking-20261106",
+        "checkedAt": "2026-11-09T15:30:14+05:30",
+        "warning": "Could not identify a labelled India gross figure"
+      },
+      "boi24_day_3": {
+        "status": "retained_previous",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-3-advance-booking-20261107",
+        "checkedAt": "2026-11-09T15:30:15+05:30",
+        "warning": "Could not identify a labelled India gross figure"
+      },
+      "boi24_overseas_all_dates": {
+        "status": "success",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
+        "checkedAt": "2026-11-09T15:30:15+05:30",
+        "warning": null
+      }
+    },
+    "secondary": {
+      "status": "registered_for_manual_validation",
+      "note": "Secondary reports are validation references, not independent measurements when they cite primary trackers."
+    }
+  },
+  "ingestion": {
+    "source": "BoxOfficeIndia24 + Sacnilk + TMDB",
+    "checkedAt": "2026-11-09T15:30:13+05:30",
+    "refreshIntervalMinutes": 30,
+    "status": "partial",
+    "warnings": [
+      "BOI24 Day 2: Could not identify a labelled India gross figure",
+      "BOI24 Day 3: Could not identify a labelled India gross figure",
+      "Sacnilk india_all_dates: No unambiguous labelled India gross found on Sacnilk; previous snapshot retained"
+    ],
+    "sourceStatuses": {
+      "boi24_day_1": {
+        "status": "success",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105",
+        "checkedAt": "2026-11-09T15:30:14+05:30",
+        "warning": null
+      },
+      "boi24_day_2": {
+        "status": "retained_previous",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-2-advance-booking-20261106",
+        "checkedAt": "2026-11-09T15:30:14+05:30",
+        "warning": "Could not identify a labelled India gross figure"
+      },
+      "boi24_day_3": {
+        "status": "retained_previous",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-3-advance-booking-20261107",
+        "checkedAt": "2026-11-09T15:30:15+05:30",
+        "warning": "Could not identify a labelled India gross figure"
+      },
+      "boi24_overseas_all_dates": {
+        "status": "success",
+        "url": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
+        "checkedAt": "2026-11-09T15:30:15+05:30",
+        "warning": null
+      },
+      "sacnilk": {
+        "status": "unavailable",
+        "url": "https://www.sacnilk.com/livetracker/ramayana_part_1_2026_Advance-Booking-Live",
+        "checkedAt": "2026-11-09T15:30:16+05:30",
+        "warning": "No unambiguous labelled India gross found"
+      }
+    },
+    "note": "Each source is validated and retained independently. A failed source does not erase its last valid snapshot; the worldwide advance total is recalculated from the latest valid all-dates components. Publisher estimates are not producer-confirmed."
+  },
+  "sacnilkSnapshot": {
+    "indiaGrossCr": 200.0,
+    "sourceName": "Sacnilk",
+    "sourceUrl": "https://www.sacnilk.com/quicknews/ramayana_part_1_2026_Overall_Advance_Booking_Report",
+    "fetchedAt": "2026-11-09T07:48:22+05:30",
+    "scope": "india_all_dates",
+    "currency": "INR",
+    "parsePolicy": "labelled_values_only"
+  },
+  "sourceSnapshots": {
+    "sacnilkIndia": {
+      "indiaGrossCr": 200.0,
+      "sourceName": "Sacnilk",
+      "sourceUrl": "https://www.sacnilk.com/quicknews/ramayana_part_1_2026_Overall_Advance_Booking_Report",
+      "fetchedAt": "2026-11-09T07:48:22+05:30",
+      "scope": "india_all_dates",
+      "currency": "INR",
+      "parsePolicy": "labelled_values_only"
+    },
+    "boxOfficeIndia24Overseas": {
+      "grossCr": 23.74,
+      "tickets": 236947,
+      "shows": 12585,
+      "cinemas": 1513,
+      "countries": 31,
+      "occupancyPct": 10.7,
+      "dateRange": "9–18 Nov",
+      "sourceName": "BoxOfficeIndia24",
+      "sourceUrl": "https://www.boxofficeindia24.com/quicknews/ramayana-day-1-advance-booking-20261105?view=overseas",
+      "sourceUpdatedText": "2026-11-09 15:23 IST",
+      "fetchedAt": "2026-11-09T15:30:15+05:30",
+      "scope": "overseas_all_dates",
+      "note": "Overseas all-dates advance booking; not worldwide Day 1 and not actual collection.",
+      "currency": "INR"
+    },
+    "note": "India and overseas all-dates snapshots are retained and refreshed independently. The worldwide total is recalculated from the latest valid component values."
+  },
+  "audienceIngestion": {
+    "status": "success",
+    "fetchedAt": "2026-11-09T15:30:14+05:30",
+    "reviewCount": 1,
+    "voteCount": 22
+  },
+  "lastChecked": "2026-11-13T16:56:38+05:30"
+}
